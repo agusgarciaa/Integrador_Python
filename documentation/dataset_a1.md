@@ -161,6 +161,288 @@ eventType: Tipo de evento (ej. muestreo). Ej: No se encuentra información en el
 
 fieldNumber: Número de campo asignado. Ej: No se encuentra información en el dataset.
 
+atributo 62:event date  
+las fecha-hora o intervalo en el que ocurrio el evento  
+ejemplo:1900/1909, 2009-02-20T08:40Z
+
+atributo 63: event time  
+tiempo o intervalo donde ocurrio un evento  
+ejemplo:14:07-06:00
+
+atributo 64:start day of year  
+el dia integer mas pronto en el que ocurrio el evento   
+ejemplo:(1)1 de febrero,(366) 31 de diciembre
+
+atributo 65:end day of year  
+el dia integer mas lejano que ocurrio un evento   
+ejemplo:(1)1 de enero,(366) 31 de diciembre
+
+atributo 66:year  
+el año en cuatro digitos en el que ocurrio el evento   
+ejemplo:2015,2016
+
+atributo 67:month  
+el mes integer en el que ocurrio el evento   
+ejemplo:(1)enero,(11)noviembre
+
+atributo 68:day  
+el dia integer en el que ocurrio el evento   
+ejemplo:13,25
+
+atributo 69:verbatim eventdate  
+la representacion textual de la fecha y tiempo que ocurrio un evento   
+ejemplo:marzo 2015,2016-4-10
+
+atributo 70:habitat  
+una categoria o descripción string del habitat donde ocurrio el evento   
+ejemplo:cordillera,bosques patagonicos
+
+atributo 71:sampling protocol  
+los protocolos,metodos usados en el evento  en string  
+ejemplo:trampilla de luz uv
+
+atributo 72:sample size value  
+un valor numerico de la medida del area,volumen,largo o tiempo de la muestra del evento   
+ejemplo:5 metros
+
+atributo 73:sample size unit  
+la medida que se uso en la muestra correspondiente al evento  
+ejemplo:hora,metro
+
+atributo 74:sampling effort  
+el esfuerzo aplicado al evento   
+ejemplo:10 horas de caminatas,2 horas de observacion  
+atributo 75:field notes  
+referencia o texto de notas sobre el evento dwc  
+ejemplo:notas disponibles en la libreria nacional
+
+atributo 76:event remarks  
+comentarios del evento  
+ejemplo: intensa lluvia e inundaciones
+
+atributo 77:location id  
+identificacion del set de coordenadas,registros y lugar  
+ejemplo:
+
+| [https://opencontext.org/subjects/768A875F-E205-4D0B-DE55-BAB7598D0FD1](https://opencontext.org/subjects/768A875F-E205-4D0B-DE55-BAB7598D0FD1) |
+| :---- |
+
+atributo 78:higher geography id  
+identificador de la region geografica  
+ejemplo: [http://vocab.getty.edu/tgn/1002002](http://vocab.getty.edu/tgn/1002002)
+
+atributo 79:higher geography  
+una lista string menos especifica de nombres geograficos  
+ejemplo: South America | Argentina | Patagonia | Parque Nacional Nahuel Huapi | Neuquén | Los Lagos
+
+atributo 80:continent  
+nombre string en el que ocurre el evento  
+ejemplo:sur america
+
+atributo 81:water body  
+el nombre string del cuerpo de agua en el que ocurre el evento  
+ejemplo:lago nahuel huapi
+
+atributo 82:island group  
+nombre string del grupo de islas en el que ocurre el evento  
+ejemplo:archipielago diego ramirez
+
+atributo 83:island  
+nombre string de la isla donde ocurre o esta cerca del evento  
+ejemplo:vancouver
+
+atributo 84:country code  
+el codigo string estandar representativo del pais del evento  
+ejemplo: AR
+
+atributo 85:state province  
+nombre string de la division administrativa del evento mas chica que el pais  
+ejemplo:cordoba,rio negro
+
+atributo 86:county  
+el nombre string de la division del evento mas chica que provincia  
+ejemplo:bariloche,los lagos
+
+atributo 87:municipality  
+el nombre string de la municipalidad del evento  
+ejemplo: aracatuba
+
+atributo 88:locality  
+informacion string menos especifica del lugar del evento  
+ejemplo: lago nahuel huapi,zapata
+
+atributo 89:verbatim locality  
+descripcion string textual del lugar  
+ejemplo:
+
+| 25 km NNE Bariloche por R. Nac. 237 |
+| :---- |
+
+atributo 90:verbatim elevation  
+descripcion string de la elevacion de la localidad  
+ejemplo: 100-200m
+
+atributo 91:vertica ldatum  
+string del datum vertical en el que se basa la medicion de elevacion  
+ejemplo egm84
+
+atributo 92:verbatim depth  
+descripcion string de la profundidad del lugar del evento  
+ejemplo:100-200m
+
+atributo 93:Minimum Distance Above Surface In Meters  
+la distancia integer menor en una distancia desde una superficie de referencia en la direccion vertical,en metros,positivo sobre la superficie,negativo por debajo  
+ejemplo:-1.5
+
+atributo 94: maximum distance above surface in meters  
+la distancia integer maxima en una distancia desde una superficie de referencia en la direccion vertical,en metros,positivo sobre la superficie,negativo por debajo  
+ejemplo:4.5
+
+atributo 95:location according to  
+informacion string de la fuente de la localidad del evento  
+ejemplo:gadm
+
+atributo 96:location remarks  
+comentarios string de la localidad  
+ejemplo: zona inundada
+
+atributo 97:decimal latitude  
+la latitud geografica en decimales(reales)  
+ejemplo:-41.09388
+
+atributo 98:decimal longitude  
+la longitud geografica en decimales(reales)  
+ejemplo:-121.176111
+
+atributo 99:Coordinate Uncertainty In Meters  
+la distancia horizontal en metros integer dada decimallatitude y decimallongitude conteniendo toda la ubicacion en el circulo mas pequeño  
+ejemplo: 30,100
+
+atributo 100:coordinate precision  
+representacion decimal(reales) de las coordenadas dadas por decimallatitude y decimallongitude  
+ejemplo:1.0,0.00001
+
+atributo 101:point radius spatial fit  
+relacion entre el area de un circulo georreferenciado y el area de la representacion espacial original y verdadera,siendo 1 el valor de representacion de coincidencia maxima en integer  
+ejemplo:1,5; 0
+
+atributo 102:verbatim coordinate system  
+el formato de coordenadas string de verbatim latitude y verbatim longitude o verbatim coordinates  
+ejemplo:utm, grados decimales
+
+atributo 103:verbatim srs  
+el elipsoide,dato geodesico o srs en el que se basan las coordenadas dadas  
+ejemplo:european 1950
+
+atributo 104:footprint wkt
+
+| Una representación de Texto Conocido (WKT) de la forma (huella, geometría) que define los dcterms:Location |
+| :---- |
+
+ejemplo: 
+
+| POLYGON ((10 20, 11 20, 11 21, 10 21, 10 20)) |
+| :---- |
+
+atributo 105: footprint srs  
+el elipsoide,dato geodesico o srs en el que se basan las coordenadas dadas en footprint wkt  
+ejemplo: epsg:4326
+
+atributo 106: footprint spatial fit
+
+| La proporción entre el área del dwc:footprintWKT y el área de la representación espacial real,siendo 1 el valor de coincidencia maximo en integer |
+| :---- |
+
+ejemplo:0; 1,5
+
+atributo 107:georeferenced by  
+lista concatenada o separada de nombres,grupos o organizaciones que determinaron la georeferencia  
+ejemplo: kristina yamamoto | janet fang
+
+atributo 108:georeferenced date  
+la fecha en la que fue georeferenciado  
+ejemplo: 9-8-2015
+
+atributo 109: georeference protocol  
+referencias a protocolos usados para determinar coordenadas y huella espacial  
+ejemplo:Georeferencing Quick Reference Guide (Zermoglio et al. 2020, [https://doi.org/10.35035/e09p-h128](https://doi.org/10.35035/e09p-h128))
+
+atributo 110:georeference sources  
+lista concatenada o separada de mapas y fuentes usadas para la georeferencia  
+ejemplo:geolocate
+
+atributo 111:georeference remarks  
+comentarios o notas sobre la determinacion de la descripcion espacial  
+ejemplo:Assumed distance by road (Hwy. 101\)
+
+atributo 112:geological context id  
+identificador para el set de informacion asociado con un dwc:geologicalcontext  
+ejemplo: 
+
+| [https://opencontext.org/subjects/e54377f7-4452-4315-b676-40679b10c4d9](https://opencontext.org/subjects/e54377f7-4452-4315-b676-40679b10c4d9) |
+| :---- |
+
+atributo 113: 
+
+| Earliest Eon Or Lowest Eonothem |
+| :---- |
+
+El nombre completo del eón geocronológico más antiguo posible o eonotema cronoestratigráfico más bajo  
+ejemplo: proterozoic
+
+atributo 114: Latest Eon Or Highest Eonothem
+
+| El nombre completo del último eón geocronológico posible o eonotema cronoestratigráfico más alto o el nombre informal ("Precambriano") atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity |
+| :---- |
+
+ejemplo: phanerozoic
+
+atributo 115: Earliest Era Or Lowest Erathem
+
+| El nombre completo de la era geocronológica más antigua posible o el erathem cronoestratigráfico más bajo se atribuye al horizonte estratigráfico del que se recogió la dwc:MaterialEntity |
+| :---- |
+
+ejemplo: mesozoic
+
+atributo 116:Latest Era Or Highest Erathem
+
+| El nombre completo de la última era geocronológica posible o de la mayor erame cronoestratigráfica atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity. |
+| :---- |
+
+ejemplo: cenozoic
+
+atributo 117: Earliest Period Or Lowest System
+
+| El nombre completo del periodo geocronológico más antiguo posible o del sistema cronoestratigráfico más bajo atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity. |
+| :---- |
+
+ejemplo:neogene
+
+atributo 118:Latest Period Or Highest System  
+El nombre completo del último periodo geocronológico posible o del sistema cronoestratigráfico más alto atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity.  
+ejemplo: tertiary
+
+atributo 119: earliest epoch or lowest series
+
+| El nombre completo de la época geocronológica más antigua posible o la serie cronoestratigráfica más baja atribuible al horizonte estratigráfico del que se recopiló la dwc:MaterialEntity |
+| :---- |
+
+ejemplo: holocene
+
+atributo 120: Latest Epoch Or Highest Series
+
+| El nombre completo de la última época geocronológica posible o serie cronoestratigráfica más alta atribuible al horizonte estratigráfico del que se recogió el dwc:MaterialEntity. |
+| :---- |
+
+ejemplo: pleistocene
+
+atributo 121:Earliest Age Or Lowest Stage  
+El nombre completo de la edad geocronológica más temprana posible o etapa cronoestratigráfica más baja atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity.  
+ejemplo: boreal,atlantic
+
+atributo 122: latest age or highest stage  
+El nombre completo de la última edad geocronológica posible o etapa cronoestratigráfica más alta atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity.  
+ejemplo: skullrockian,boreal
 
 ## issue - index = 187
     Descripción: Any issue found during processing and interpretation or the record.
