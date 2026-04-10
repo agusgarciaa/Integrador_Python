@@ -23,6 +23,7 @@ Las observaciones han sido validadas por la comunidad mediante consenso en la id
 ---
 
 ## Atributos del dataset
+Los siguientes atributos corresponden al archivo principal del dataset y describen las observaciones registradas.
 
 ### id
 __Descripción:__ Identificador interno del registro dentro del dataset.
@@ -30,7 +31,7 @@ __Tipo de dato:__ integer / string
 __Ejemplo de valores:__ 42369866, 12345678
 
 ### occurrenceID
-__Descripción:__ Tipo de registro de la observación.
+__Descripción:__ Identificador único de cada observación dentro del dataset.
 __Tipo de dato:__ string (link)
 __Ejemplo de valores:__ http://arctos.database.museum/guid/MSB:Mamm:233627
 
@@ -74,7 +75,7 @@ __Descripción:__ Referencias del dato.
 __Tipo de dato:__ string (link)
 __Ejemplo de valores:__ https://www.inaturalist.org/observations/254213950
 
-### ocurrenceRemarks
+### occurrenceRemarks
 __Descripción:__ Comentarios o anotaciones acerca de las ocurrencias.
 __Tipo de dato:__ string
 __Ejemplo de valores:__ Al pie de un tala, found dead on road.
@@ -90,7 +91,7 @@ __Tipo de dato:__ integer / string
 __Ejemplo de valores:__ 254213950
 
 ### identifiedBy
-__Descripción:__ Lista de personas, grupos o agrupaciones que registraron la identificación de la especie observada.
+__Descripción:__ Lista de personas, grupos u organizaciones que identificaron la especie observada.
 __Tipo de dato:__ string
 __Ejemplo de valores:__ José E. Crespo, James L. Patton
 
@@ -100,9 +101,9 @@ __Tipo de dato:__ integer / string
 __Ejemplo de valores:__ 254213950, 254456219
 
 ### captive_cultivated
-__Descripción:__ Observación del primer organismo en el momento y lugar en el que se lo esperaria encontrar. 
+__Descripción:__ Indica si el organismo observado es silvestre o se encuentra en cautiverio o cultivado.
 __Tipo de dato:__ string
-__Ejemplo de valores:__ wild
+__Ejemplo de valores:__ wild, captive
 
 ### eventDate
 __Descripción:__ Fecha en la que se registró la observación.
@@ -132,7 +133,7 @@ __Ejemplo de valores:__ -41.0983423
 ### decimalLongitude
 __Descripción:__ Longitud geográfica en grados de la observación.
 __Tipo de dato:__ float
-__Ejemplo de valores:__ -58.38, -41.0983423
+__Ejemplo de valores:__ -58.3816, -70.1234
 
 ### coordinateUncertaintyInMeters
 __Descripción:__ La distancia horizontal (en metros) desde las coordenadas dadas, que describe el círculo más pequeño que contiene toda la ubicación.
@@ -260,4 +261,5 @@ __Ejemplo de valores:__ alive
 
 ### dynamicProperties
 __Descripción:__ Una lista de mediciones, datos, características o afirmaciones adicionales sobre el registro. 
+__Tipo de dato:__ string (JSON)
 __Ejemplo de valores:__ {"iucnStatus":"vulnerable", "taxonDistribution":"Neuquén, Argentina"} {"relativeHumidity":28, "airTemperatureInCelsius":22, "sampleSizeInKilograms":10}
