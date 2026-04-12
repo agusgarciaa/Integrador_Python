@@ -423,20 +423,15 @@ El nombre completo del último periodo geocronológico posible o del sistema cro
 ejemplo: tertiary
 
 atributo 119: earliest epoch or lowest series
-
-| El nombre completo de la época geocronológica más antigua posible o la serie cronoestratigráfica más baja atribuible al horizonte estratigráfico del que se recopiló la dwc:MaterialEntity |
-| :---- |
-
+l nombre completo de la época geocronológica más antigua posible o la serie cronoestratigráfica más baja atribuible al horizonte estratigráfico del que se recopiló la dwc:MaterialEntity 
 ejemplo: holocene
 
 atributo 120: Latest Epoch Or Highest Series
-
-| El nombre completo de la última época geocronológica posible o serie cronoestratigráfica más alta atribuible al horizonte estratigráfico del que se recogió el dwc:MaterialEntity. |
-| :---- |
+ El nombre completo de la última época geocronológica posible o serie cronoestratigráfica más alta atribuible al horizonte estratigráfico del que se recogió el dwc:MaterialEntity. |
 
 ejemplo: pleistocene
 
-atributo 121:Earliest Age Or Lowest Stage  
+atributo 121: Earliest Age Or Lowest Stage  
 El nombre completo de la edad geocronológica más temprana posible o etapa cronoestratigráfica más baja atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity.  
 ejemplo: boreal,atlantic
 
@@ -444,14 +439,413 @@ atributo 122: latest age or highest stage
 El nombre completo de la última edad geocronológica posible o etapa cronoestratigráfica más alta atribuible al horizonte estratigráfico del que se recogió la dwc:MaterialEntity.  
 ejemplo: skullrockian,boreal
 
-## issue - index = 187
+
+
+
+### Atributo 123: Lowest Biostratigraphic Zone
+
+    Descripción: El nombre completo de la zona bioestratigráfica geológica más baja posible del horizonte estratigráfico del que se recolectó el dwc:MaterialEntity.
+
+    Ejemplo: Maastrichtian
+
+### Atributo 124: Highest Biostratigraphic Zone
+
+    Descripción: El nombre completo de la zona geológica estratigráfica más alta posible del horizonte estratigráfico del que se recolectó el dwc:MaterialEntity.
+
+    Ejemplo: Blancan
+
+### Atributo 125: Lithostratigraphic Terms
+
+    Descripción: La combinación de todos los nombres litoestratigráficos de la roca de la que se extrajo el dwc:MaterialEntity.
+
+    Ejemplo: Pleistocene-Weichselien
+
+### Atributo 126: Group
+    Descripción: El nombre completo del grupo litoestratigráfico del que se extrajo el dwc:MaterialEntity.
+
+    Ejemplo: Bathurst, Lower Wealden
+
+### Atributo 127: Formation
+
+    Descripción: El nombre completo de la formación litoestratigráfica de la que se extrajo el dwc:MaterialEntity.
+
+    Ejemplo: Notch Peak Formation, House Limestone, Fillmore Formation
+
+### Atributo 128: Member
+
+    Descripción: El nombre completo del miembro litoestratigráfico del que se extrajo el dwc:MaterialEntity.
+
+    Ejemplo: Lava Dam Member, Hellnmaria Member
+
+### Atributo 129: Bed
+
+    Descripción: El nombre completo del estrato litoestratigráfico del que se extrajo el dwc:MaterialEntity.
+
+    Ejemplo: Harlem coal
+
+### Atributo 130: Identification ID
+
+    Descripción: Un identificador para dwc:Identification (el conjunto de información asociado a la asignación de un nombre científico). Puede ser un identificador único global o un identificador específico del conjunto de datos.
+
+    Ejemplo: 9992
+
+### Atributo 131: Verbatim Identification
+
+    Descripción: Este término permite capturar una identificación/determinación original sin alteraciones, incluyendo calificadores de identificación, fórmulas híbridas, incertidumbres, etc. Este término debe usarse junto con dwc:scientificName (y dwc:identificationQualifier, etc.), no en lugar de él.
+
+    Ejemplo: Peromyscus sp, Ministrymon sp. nov. 1, Anser anser × Branta canadensis, Pachyporidae?, Potentilla × pantotricha Soják, Aconitum pilipes × A. variegatum, Lepomis auritus x cyanellu
+
+### Atributo 132: Identification Qualifier
+
+    Descripción: Una frase breve o un término estándar ("cf.", "aff.") para expresar las dudas del determinante sobre la dwc:Identification.
+
+    Ejemplo: aff. agrifolia var. oxyadenia (for Quercus aff. agrifolia var. oxyadenia with accompanying values Quercus in genus, agrifolia in specificEpithet, oxyadenia in infraspecificEpithet, and var. in taxonRank), cf. var. oxyadenia (for Quercus agrifolia cf. var. oxyadenia with accompanying values Quercus in genus, agrifolia in specificEpithet, oxyadenia in infraspecificEpithet, and var. in taxonRank)
+
+### Atributo 133: Type Status
+
+    Descripción: Una lista (concatenada y separada) de tipos nomenclaturales (estado del tipo, nombre científico tipificado, publicación) aplicados al tema.
+
+    Ejemplo: holotype of Ctenomys sociabilis. Pearson O. P., and M. I. Christie. 1985. Historia Natural, 5(37):388, holotype of Pinus abies | holotype of Picea abies
+
+### Atributo 134: Identified By (IRI)
+
+    Descripción: Una persona, grupo u organización que asignó el dwc:Taxon al sujeto.
+
+    Ejemplo: no hay ejemplos
+
+### Atributo 135: Identified By ID
+
+    Descripción: Una lista (concatenada y separada) del identificador único global de la persona, personas, grupos u organizaciones responsables de asignar el dwc:Taxon al sujeto.
+
+    Ejemplo: https://orcid.org/0000-0002-1825-0097 (for an individual), https://orcid.org/0000-0002-1825-0097 | https://orcid.org, 0000-0002-1825-0098 (for a list of people)
+
+### Atributo 136: Date Identified
+
+    Descripción: La fecha en la que se determinó que el sujeto representaba el dwc:Taxon.
+
+    Ejemplo: 1963-03-08T14:07-06:00 (8 Mar 1963 at or after 2:07pm and, before 2:08pm in the time zone six hours earlier than UTC), 2009-02-20T08:40Z (20 February 2009 at or after 8:40am and before 8:41 UTC), 2018-08-29T15:19 (29 August 2018 at or after 3:19pm and before 3:20pm local time), 1809-02-12 (within the day 12 February 1809), 1906-06 (in the month of June 1906), 1971 (in the year 1971), 2007-03-01T13:00:00Z/2008-05-11T15:30:00Z (some time within the interval beginning 1 March 2007 at 1pm UTC and before 11 May 2008 at 3:30pm UTC), 1900/1909 (some time within the interval between the beginning of the year 1900 and before the year 1909), 2007-11-13/15 (some time in the interval between the beginning of 13 November 2007 and before 15 November 2007)
+
+### Atributo 137: Identification References
+
+    Descripción: Una lista (concatenada y separada) de referencias (publicación, identificador único global, URI) utilizadas en dwc:Identification.
+
+    Ejemplo: Aves del Noroeste Patagonico. Christie et al. 2004, Stebbins, R. Field Guide to Western Reptiles and Amphibians. 3rd Edition. 2003. | Irschick, D.J. and Shaffer, H.B. (1997). The polytypic species revisited: Morphological differentiation among tiger salamanders (Ambystoma tigrinum) (Amphibia: Caudata). Herpetologica, 53(1), 30-49.
+
+### Atributo 138: Identification Verification Status
+
+    Descripción: Un indicador categórico del grado en que se ha verificado que la identificación taxonómica es correcta.
+
+    Ejemplo: 0 ("unverified" in HISPID/ABCD).
+
+### Atributo 139: Identification Remarks
+
+    Descripción: Comentarios o notas sobre dwc:Identification.
+
+    Ejemplo: Distinguished between Anthus correndera and Anthus hellmayri based on the comparative lengths of the uñas.
+
+### Atributo 140: Taxon ID
+
+    Descripción: Un identificador para el conjunto de información dwc:Taxon. Puede ser un identificador único global o un identificador específico del conjunto de datos.
+
+    Ejemplo: 8fa58e08-08de-4ac1-b69c-1235340b7001, 32567, https://www.gbif.org/species/212
+
+### Atributo 141: Scientific Name ID
+
+    Descripción: Un identificador para los detalles nomenclaturales (no taxonómicos) de un nombre científico.
+
+    Ejemplo: urn:lsid:ipni.org:names:37829-1:1.3
+
+### Atributo 142: Accepted Name Usage ID
+
+    Descripción: Un identificador para el uso del nombre (significado documentado del nombre según una fuente) del taxón actualmente válido (zoológico) o aceptado (botánico).
+
+    Ejemplo: tsn:41107 (ITIS), urn:lsid:ipni.org:names:320035-2 (IPNI), 2704179 (GBIF), 6W3C4 (COL)
+
+### Atributo 143: Parent Name Usage ID
+
+    Descripción: Un identificador para el uso del nombre (significado documentado del nombre según una fuente) del taxón padre de rango superior directo y más próximo (en una clasificación) del elemento más específico del dwc:scientificName.
+
+    Ejemplo: tsn:41074 (ITIS), urn:lsid:ipni.org:names:30001404-2 (IPNI), 2704173 (GBIF), 6T8N (COL)
+
+### Atributo 144: Original Name Usage ID
+
+    Descripción: Un identificador para el uso del nombre (significado documentado del nombre según una fuente) en el que el elemento terminal del dwc:scientificName se estableció originalmente bajo las reglas del dwc:nomenclaturalCode asociado.
+
+    Ejemplo: tsn:41107 (ITIS), urn:lsid:ipni.org:names:320035-2 (IPNI), 2704179 (GBIF), 6W3C4 (COL)
+
+### Atributo 145: Name According To ID
+
+    Descripción: Un identificador para la fuente en la que se define o se infiere la circunscripción del concepto taxonómico específico. Véase dwc:nameAccordingTo.
+
+    Ejemplo: https://doi.org/10.1016/S0269-915X(97)80026-2
+
+### Atributo 146: Name Published In ID
+
+    Descripción: Un identificador para la publicación en la que se estableció originalmente el dwc:scientificName según las reglas del dwc:nomenclaturalCode asociado.
+
+    Ejemplo: No hay ejemplos
+
+### Atributo 146: Name Published In ID
+
+    Descripción: Un identificador para la publicación en la que se estableció originalmente el dwc:scientificName según las reglas del dwc:nomenclaturalCode asociado.
+
+    Ejemplo: No hay ejemplos
+
+### Atributo 147: Taxon Concept ID
+
+    Descripción: Un identificador para el concepto taxonómico al que se refiere el registro, no para los detalles nomenclaturales de un dwc:Taxon.
+
+    Ejemplo: 8fa58e08-08de-4ac1-b69c-1235340b7001
+
+### Atributo 148: Scientific Name
+
+    Descripción: El nombre científico completo, con información sobre la autoría y la fecha, si se conoce. Cuando forma parte de un dwc:Identification, este debe ser el nombre del nivel taxonómico más bajo que se pueda determinar. Este término no debe contener cualificaciones de identificación, que deben proporcionarse en el término dwc:identificationQualifier.
+
+    Ejemplo: Coleoptera (order), Vespertilionidae (family), Manis (genus), Ctenomys sociabilis (genus + specificEpithet), Ambystoma tigrinum diaboli (genus + specificEpithet + infraspecificEpithet), Roptrocerus typographi (Györfi, 1952) (genus + specificEpithet + scientificNameAuthorship), Quercus agrifolia var. oxyadenia (Torr.) J.T. Howell (genus + specificEpithet + taxonRank + infraspecificEpithet + scientificNameAuthorship), Agropogon littoralis (Sm.) C. E. Hubb., Mentha ×smithiana R. A. Graham, Agrostis stolonifera L. × Polypogon monspeliensis (L.) Desf.
+
+### Atributo 149: Accepted Name Usage
+
+    Descripción: El nombre completo, con información sobre la autoría y la fecha si se conoce, del dwc:Taxon actualmente válido (zoológico) o aceptado (botánico).
+
+    Ejemplo: Tamias minimus (valid name for Eutamias minimus)
+
+### Atributo 150: Parent Name Usage
+
+    Descripción: El nombre completo, con información sobre la autoría y la fecha si se conoce, del dwc:Taxon padre de rango superior directo y más próximo (en una clasificación) del elemento más específico del dwc:scientificName.
+
+    Ejemplo: Rubiaceae, Gruiformes, Testudinae
+
+### Atributo 151: Original Name Usage
+
+    Descripción: El nombre del taxón, con información sobre la autoría y la fecha, si se conoce, tal como apareció originalmente cuando se estableció por primera vez según las reglas del dwc:nomenclaturalCode asociado. El basiónimo (botánica) o basónimo (bacteriología) del dwc:scientificName o el homónimo anterior para los nombres reemplazados.
+
+    Ejemplo: Pinus abies, Gasterosteus saltatrix Linnaeus 1768
+
+### Atributo 152: Name According To
+
+    Descripción: La referencia a la fuente donde se define o implica la circunscripción del concepto taxonómico específico se indica tradicionalmente con el latín "sensu" o "sec." (de secundum, que significa "según"). Para los taxones que resultan de identificaciones, se debe hacer referencia a las claves, monografías, expertos y otras fuentes.
+
+    Ejemplo: Franz NM, Cardona-Duque J (2013) Description of two new species and phylogenetic reassessment of Perelleschus Wibmer & O’Brien, 1986 (Coleoptera: Curculionidae), with a complete taxonomic concept history of Perelleschus sec. Franz & Cardona-Duque, 2013. Syst Biodivers. 11: 209–236. (as the full citation of the Franz & Cardona-Duque (2013) in Perelleschus splendida sec. Franz & Cardona-Duque (2013))
+
+### Atributo 153: Name Published In
+
+    Descripción: Una referencia a la publicación en la que se estableció originalmente el dwc:scientificName según las reglas del dwc:nomenclaturalCode asociado.
+
+    Ejemplo: Pearson O. P., and M. I. Christie. 1985. Historia Natural, 5(37):388, Forel, Auguste, Diagnosies provisoires de quelques espèces nouvelles de fourmis de Madagascar, récoltées par M. Grandidier., Annales de la Societe Entomologique de Belgique, Comptes-rendus des Seances 30, 1886
+
+### Atributo 154: Name Published In Year
+
+    Descripción: El año de cuatro dígitos en el que se publicó dwc:scientificName.
+
+    Ejemplo: 1915, 2008
+
+### Atributo 155: Higher Classification
+
+    Descripción: Una lista (concatenada y separada) de nombres de taxones que terminan en el rango inmediatamente superior al dwc:Taxon referenciado.
+
+    Ejemplo: Plantae | Tracheophyta | Magnoliopsida | Ranunculales | Ranunculaceae | Ranunculus, Animalia, Animalia | Chordata | Vertebrata | Mammalia | Theria | Eutheria | Rodentia | Hystricognatha | Hystricognathi | Ctenomyidae | Ctenomyini | Ctenomys
+
+### Atributo 156: Kingdom
+
+    Descripción: El nombre científico completo del reino en el que se clasifica el dwc:Taxon.
+
+    Ejemplo: Animalia, Archaea, Bacteria, Chromista, Fungi, Plantae, Protozoa, Viruses
+
+### Atributo 157: Phylum
+
+    Descripción: El nombre científico completo del filo o división en el que se clasifica el dwc:Taxon.
+
+    Ejemplo: Chordata (phylum), Bryophyta (division)
+
+### Atributo 158: Class
+
+    Descripción: El nombre científico completo de la clase en la que se clasifica el dwc:Taxon.
+
+    Ejemplo: Mammalia, Hepaticopsida
+
+### Atributo 159: Order
+
+    Descripción: El nombre científico completo del orden en el que se clasifica el dwc:Taxon.
+
+    Ejemplo: Carnivora, Monocleales
+
+### Atributo 160: Superfamily
+
+    Descripción: El nombre científico completo de la superfamilia en la que se clasifica el dwc:Taxon.
+
+    Ejemplo: Achatinoidea, Cerithioidea, Helicoidea, Hypsibioidea, Valvatoidea, Zonitoidea
+
+### Atributo 161: Family
+
+    Descripción: El nombre científico completo de la familia en la que se clasifica el dwc:Taxon.
+
+    Ejemplo: Felidae, Monocleaceae
+
+### Atributo 162: Subfamily
+
+    Descripción: El nombre científico completo de la subfamilia en la que se clasifica el dwc:Taxon.
+
+    Ejemplo: Periptyctinae, Orchidoideae, Sphindociinae
+
+### Atributo 163: Tribe
+
+    Descripción: El nombre científico completo de la tribu en la que se clasifica el dwc:Taxon.
+
+    Ejemplo: Ortaliini, Arethuseae
+
+### Atributo 164: Subtribe
+
+    Descripción: El nombre científico completo de la subtribu en la que se clasifica el dwc:Taxon.
+
+    Ejemplo: Plotinini, Typhaeini
+
+### Atributo 165: Genus
+
+    Descripción: El nombre científico completo del género en el que se clasifica el dwc:Taxon.
+
+    Ejemplo: Puma, Monoclea
+
+### Atributo 166: Generic Name
+
+    Descripción: La parte del género del dwc:scientificName sin autoría.
+
+    Ejemplo: Felis (for scientificName Felis concolor, with accompanying values of Puma concolor in acceptedNameUsage and Puma in genus)
+
+### Atributo 167: Subgenus
+
+    Descripción: El nombre científico completo del subgénero en el que se clasifica el dwc:Taxon.
+
+    Ejemplo: Abacetus (Parastygis), Dicranum subgen. Orthodicranum
+
+### Atributo 168: Infrageneric Epithet
+
+    Descripción: La parte infragenérica de un nombre binomial que se encuentra por encima de la especie pero por debajo del género.
+
+    Ejemplo: Abacetillus (for scientificName Abacetus (Abacetillus) ambiguus), Cracca (for scientificName Vicia sect. Cracca)
+
+### Atributo 169: Specific Epithet
+
+    Descripción: El nombre del primer epíteto o epíteto de especie del dwc:nombre científico.
+
+    Ejemplo: Abacetillus (for scientificName Abacetus (Abacetillus) ambiguus), Cracca (for scientificName Vicia sect. Cracca)
+
+### Atributo 170: Infraspecific Epithet
+
+    Descripción: El nombre del epíteto infraespecífico más bajo o terminal del dwc:scientificName, excluyendo cualquier ran
+
+    Ejemplo: concolor (for scientificName Puma concolor concolor (Linnaeus, 1771)), oxyadenia (for scientificName Quercus agrifolia var. oxyadenia (Torr.) J.T. Howell), laxa (for scientificName Cheilanthes hirta f. laxa (Kunze) W.Jacobsen & N.Jacobsen),scaberrima (for scientificName Indigofera charlieriana var. scaberrima (Schinz) J.B.Gillett)
+
+### Atributo 171: Cultivar Epithet
+
+    Descripción: Parte del nombre de un cultivar, grupo de cultivares o grex que sigue a dwc:scientificName.
+
+    Ejemplo: King Edward (for scientificName Solanum tuberosum 'King Edward' and taxonRank cultivar), Mishmiense (for scientificName Rhododendron boothii Mishmiense Group and taxonRank cultivar group), Atlantis (for scientificName Paphiopedilum Atlantis grex and taxonRank grex)
+
+### Atributo 172: Taxon Rank
+
+    Descripción: El rango taxonómico del nombre más específico en dwc:scientific Name.
+
+    Ejemplo: subspecies, varietas, forma, species, genus, nothogenus, nothospecies, nothosubspecies
+
+### Atributo 173: Verbatim Taxon Rank
+
+    Descripción: El rango taxonómico del nombre más específico en dwc:scientificName tal como aparece en el registro original.
+
+    Ejemplo: Agamospecies, sub-lesus, prole, apomict, nothogrex, sp, subsp, var.
+
+### Atributo 174: Vernacular Name
+
+    Descripción: Un nombre común o vernáculo.
+
+    Ejemplo: Andean Condor, Condor Andino, American Eagle, Gänsegeier
+
+### Atributo 175: Nomenclatural Code
+
+    Descripción: El código nomenclatural (o códigos en el caso de un nombre ambiguo) bajo el cual se construye el dwc:scientificName.
+
+    Ejemplo: ICN, ICZN, BC, ICNCP, BioCode
+
+### Atributo 176: Taxonomic Status
+
+    Descripción: El estado del uso de dwc:scientificName como etiqueta para un taxón. Requiere una opinión taxonómica para definir el alcance de un dwc:Taxon. Posteriormente, se utilizan reglas de prioridad para definir el estatus taxonómico de la nomenclatura contenida en dicho alcance, en combinación con la opinión de los expertos. Debe estar vinculado a una referencia taxonómica específica que defina el concepto.
+
+    Ejemplo: invalid, misapplied, homotypic synonym, accepted
+
+### Atributo 177: Nomenclatural Status
+
+    Descripción: The status related to the original publication of the name and its conformance to the relevant rules of nomenclature. It is based essentially on an algorithm according to the business rules of the code. It requires no taxonomic opinion.
+
+    Ejemplo: nom. ambig, nom. illeg, nom. subnud.
+
+### Atributo 178: Taxon Remarks
+
+    Descripción: Comentarios o notas sobre el taxón o el nombre.
+
+    Ejemplo: this name is a misspelling in common use
+
+### Atributo 179: Dataset Key
+
+    Descripción: La clave UUID del conjunto de datos registrado en GBIF.
+
+    Ejemplo: No hay ejemplos. 
+
+### Atributo 180: Publishing Country
+
+    Descripción: El código ISO 3166 de 2 letras del país de la organización que publica el conjunto de datos al que pertenece el evento.
+
+    Ejemplo: No hay ejemplos. 
+
+### Atributo 181: Last Interpreted
+
+    Descripción: Marca de tiempo de la última vez que GBIF (re)interpretó el registro.
+
+    Ejemplo: No hay ejemplos. 
+
+### Atributo 182: Elevation
+
+    Descripción: Elevación en metros sobre el nivel del mar (altitud).
+
+    Ejemplo: No hay ejemplos. 
+
+### Atributo 183: Elevation Accuracy
+
+    Descripción: La precisión de la elevación es la incertidumbre de la elevación en metros.
+
+    Ejemplo: No hay ejemplos. 
+
+### Atributo 184: Depth
+
+    Descripción: Profundidad en metros bajo la superficie.
+
+    Ejemplo: No hay ejemplos. 
+
+
+### Atributo 185: Depth Accuracy
+
+    Descripción: La precisión de la profundidad es la incertidumbre de la profundidad en metros.
+
+    Ejemplo: No hay ejemplos. 
+
+### Atributo 186: Distance From Centroid In Meters
+
+    Descripción: La distancia en metros desde un centroide conocido, por ejemplo, el centroide de un país.
+
+    Ejemplo: No hay ejemplos.
+
+
+
+
+
+
+
+### issue - index = 187
     Descripción: Any issue found during processing and interpretation or the record.
 
     Ejemplo de valores: AGE_OR_STAGE_INVALID_RANGE
     AMBIGUOUS_INSTITUTION
     AMBIGUOUS_COLLECTION
 
-## taxonomicIssue - index = 188
+### taxonomicIssue - index = 188
     Descripción: Issue found during processing and interpretation or the record related to a specific checklist.
 
     Ejemplo de valores:
@@ -459,27 +853,27 @@ ejemplo: skullrockian,boreal
     AMBIGUOUS_INSTITUTION
     AMBIGUOUS_COLLECTION
 
-## nonTaxonomicIssue - index = 189
+### nonTaxonomicIssue - index = 189
     Descripción: Issue found during processing and interpretation or the record that are non-taxonomic.
 
     Ejemplo de valores: No se encontraron datos.
 
-## mediaType - index = 190
+### mediaType - index = 190
     Descripción: The media type given as Dublin Core type values, in particular StillImage, MovingImage or Sound.
 
     Ejemplo de valores: No se encontraron datos.
 
-## hasCoordinate - index = 191
+### hasCoordinate - index = 191
     Descripción: Boolean indicating that a valid latitude and longitude exists. Even if existing it might still have issues, see hasGeospatialIssues and issue.
 
     Ejemplo de valores: True/False
 
-## hasGeospatialIssues - index = 192
+### hasGeospatialIssues - index = 192
     Descripción:Boolean indicating that some spatial validation rule has not passed. Primarily used to indicate that the record should not be displayed on a map.
 
     Ejemplo de valores: True/False
 
-## taxonKey - index = 193
+### taxonKey - index = 193
     Descripción: The GBIF backbone key.
     The best matching, accepted GBIF backbone name usage representing this occurrence. In case the verbatim scientific name and its classification can only be matched to a higher rank this will represent the lowest matching rank. In the worst case this could just be for example Animalia.
     In contrast dwc:taxonID is only used for the source ids similar to occurrenceID
@@ -489,7 +883,7 @@ ejemplo: skullrockian,boreal
     2474715
     2481065
 
-## acceptedTaxonKey - index = 194
+### acceptedTaxonKey - index = 194
     Descripción: The GBIF backbone key of the accepted taxon key.
 
     Ejemplo de valores:
@@ -497,25 +891,25 @@ ejemplo: skullrockian,boreal
     2474715
     2481065
 
-## kingdomKey - index = 195
+### kingdomKey - index = 195
     Descripción: The key to the accepted kingdom in the taxonomy.
 
     Ejemplo de valores: 
     1
 
-## phylumKey - index = 196
+### phylumKey - index = 196
     Descripción: The key to the accepted phylum in the taxonomy.
 
     Ejemplo de valores:
     44
 
-## classKey - index = 197
+### classKey - index = 197
     Descripción: The key to the accepted class in the taxonomy.
 
     Ejemplo de valores: 
     212
 
-## orderKey - index = 198
+### orderKey - index = 198
     Descripción: The key to the accepted order in the taxonomy.
 
     Ejemplo de valores:
@@ -523,12 +917,12 @@ ejemplo: skullrockian,boreal
     1493
     7191407
 
-## superfamilyKey - index = 199
+### superfamilyKey - index = 199
     Descripción: The key to the accepted superfamily in the taxonomy.
 
     Ejemplo de valores: No se encontraron datos.
 
-## familyKey - index = 200
+### familyKey - index = 200
     Descripción: The key to the accepted family in the taxonomy.
 
     Ejemplo de valores: 
@@ -536,22 +930,22 @@ ejemplo: skullrockian,boreal
     9342
     5240
 
-## subfamilyKey - index = 201
+### subfamilyKey - index = 201
     Descripción: The key to the accepted subfamily in the taxonomy.
 
     Ejemplo de valores: No se encontraron datos.
 
-## tribeKey - index = 202
+### tribeKey - index = 202
     Descripción: The key to the accepted tribe in the taxonomy.
 
     Ejemplo de valores: No se encontraron datos.
 
-## subtribeKey - index = 203
+### subtribeKey - index = 203
     Descripción: The key to the accepted subtribe in the taxonomy.
 
     Ejemplo de valores: No se encontraron datos.
 
-## genusKey - index = 204
+### genusKey - index = 204
     Descripción: The key to the accepted genus in the taxonomy.
 
     Ejemplo de valores:
@@ -559,12 +953,12 @@ ejemplo: skullrockian,boreal
     2474706
     2481064
 
-## subgenusKey - index = 205
+### subgenusKey - index = 205
     Descripción: The key to the accepted subgenus in the taxonomy.
 
     Ejemplo de valores: No se encontraron datos.
 
-## speciesKey - index = 206
+### speciesKey - index = 206
     Descripción: The backbone key to the accepted species. In case the taxonKey is of a higher rank than species (e.g. genus) speciesKey is null. In case taxonKey represents an infraspecific taxon the speciesKey points to the species the infraspecies is classified as. In case of taxonKey being a species the speciesKey is the same.
 
     Ejemplo de valores:
@@ -572,7 +966,7 @@ ejemplo: skullrockian,boreal
     2474715
     2481065
 
-## species - index = 207
+### species - index = 207
     Descripción: The canonical name without authorship of the accepted species.
 
     Ejemplo de valores: 
@@ -580,7 +974,7 @@ ejemplo: skullrockian,boreal
     Pardirallus sanguinolentus
     Milvago chimango
 
-## acceptedScientificName - index = 208
+### acceptedScientificName - index = 208
     Descripción: The scientific name the type associated acceptedNubKey.
 
     Ejemplo de valores:
@@ -588,7 +982,7 @@ ejemplo: skullrockian,boreal
     Pardirallus sanguinolentus (Swainson, 1838)
     Milvago chimango (Vieillot, 1816)
 
-## verbatimScientificName - index = 209
+### verbatimScientificName - index = 209
     Descripción: Scientific name as provided by the source.
 
     Ejemplo de valores:
@@ -596,12 +990,12 @@ ejemplo: skullrockian,boreal
     Pardirallus sanguinolentus
     Milvago chimango
 
-## typifiedName - index = 210
+### typifiedName - index = 210
     Descripción: The scientific name the type status of this specimen applies to. Term proposed in Darwin Core, but not yet ratified.
 
     Ejemplo de valores: No se encontraron datos.
 
-## protocol - index = 211
+### protocol - index = 211
     Descripción: The kind of protocol used when the record was last crawled by GBIF.
 
     Ejemplo de valores:
@@ -609,96 +1003,96 @@ ejemplo: skullrockian,boreal
     BIOCASE
     BIOCASE_XML_ARCHIVE
 
-## lastParsed - index = 212
+### lastParsed - index = 212
     Descripción: The date this record was last parsed from raw xml/json into a verbatim GBIF record.
 
     Ejemplo de valores:
     25/11/2025 04:12
 
-## lastCrawled - index = 213
+### lastCrawled - index = 213
     Descripción: The date this record was last crawled/harvested by GBIF from the endpoint.
 
     Ejemplo de valores:
     24/11/2025 03:34
 
-## isInvasive - index = 214
+### isInvasive - index = 214
     Descripción: Boolean que determina si es invasivo.
 
     Ejemplo de valores: No se encontraron datos.
 
-## repatriated - index = 215
+### repatriated - index = 215
     Descripción: Boolean indicating if the publishing country is different to the location country.
 
     Ejemplo de valores: True/False
 
-## relativeOrganismQuantity - index = 216
+### relativeOrganismQuantity - index = 216
     Descripción: Calculated relative organism quantity, based on organism and sample measure types.
 
     Ejemplo de valores: No se encontraron datos.
 
-## projectId - index = 217
+### projectId - index = 217
     Descripción: An identifier for a project to which a record belongs.
 
     Ejemplo de valores: No se encontraron datos.
 
-## isSequenced - index = 218
+### isSequenced - index = 218
     Descripción: Flag occurrence when associatedSequences/extension exists.
 
     Ejemplo de valores: True/False
 
-## gbifRegion - index = 219
+### gbifRegion - index = 219
     Descripción: GBIF region based on country code.
 
     Ejemplo de valores:
     LATIN_AMERICA
 
-## publishedByGbifRegion - index = 220
+### publishedByGbifRegion - index = 220
     Descripción: GBIF region based on publishing country code.
 
     Ejemplo de valores:
     LATIN_AMERICA
 
-## level0Gid - index = 221
+### level0Gid - index = 221
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level0Name - index = 222
+### level0Name - index = 222
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level1Gid - index = 223
+### level1Gid - index = 223
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level1Name - index = 224
+### level1Name - index = 224
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level2Gid - index = 225
+### level2Gid - index = 225
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level2Name - index = 226
+### level2Name - index = 226
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level3Gid - index = 227
+### level3Gid - index = 227
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## level3Name - index = 228
+### level3Name - index = 228
     Descripción: Error 404 (La página no existe o el link está mal)
 
     Ejemplo de valores: No se encontraron datos.
 
-## iucnRedListCategory - index = 229
+### iucnRedListCategory - index = 229
     Descripción: Encuentra la página de IUCN pero tampoco encuentra la página.
 
     Ejemplo de valores:
