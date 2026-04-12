@@ -1,2 +1,5 @@
-trabajo-integrador-python/*
-!trabajo-integrador-python/.gitkeep
+raw_datasets/*
+!raw_datasets/.gitkeep
+
+processed_datasets/*
+!processed_datasets/.gitkeep
