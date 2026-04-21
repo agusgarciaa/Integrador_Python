@@ -3,3 +3,5 @@ raw_datasets/*
 
 processed_datasets/*
 !processed_datasets/.gitkeep
+
+__pycache__/
