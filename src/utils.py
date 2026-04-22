@@ -10,45 +10,21 @@ def abrir_dataset(ruta_archivo, separador, codificacion):
     print("hello world") 
 
 
-<<<<<<< HEAD
-def total_records (route, sep=",", encoding="utf-8"):
+# Ejercicio 2.D - Agustin Garcia
+def total_registros (ruta, separador=",", encoding="utf-8"):
     """
-    Abre un dataset en formato CSV y cuenta la cantidad de registros, retornando el total. Ejercicio 2.D.
+    Abre un dataset en formato CSV y cuenta la cantidad de registros, retornando el total. 
     """
     total = 0
 
-    with open(route, newline='', encoding=encoding) as dataset_file:
-        reader = csv.reader(dataset_file, delimiter=sep)
-
-        for _ in reader:
+    with open(ruta, newline='', encoding=encoding) as archivo_dataset:
+        lector = csv.reader(archivo_dataset, delimiter=separador)
+        next(lector)
+        
+        for _ in lector:
             total += 1
 
     return total
-
-
-def count_distinct_values(column_name, route, sep=",", encoding="utf-8"):
-    values = []
-
-    with open(route, newline='', encoding=encoding) as dataset_file:
-        reader = csv.reader(dataset_file, delimiter=sep)
-        header = [column.strip() for column in next(reader)]   # Lee la primer fila
-
-        if column_name not in header:
-            print("No se encontró la columna específicada. ")
-            return None
-        else:
-            i = header.index(column_name)   # Indice para tomar la columna de manera directa
-        
-            for record in reader:
-                if record[i] not in values:   # Si el valor no fue usado por otro registro se agrega a la lista
-                    values.append(record[i])
-        
-    return len(values)   # Retorna el total de valores distintos
-=======
-
-
-
-
 
 
 # Ejercicio 2.E - Fe Cordoba 
@@ -96,6 +72,25 @@ def porcentaje_nulos(ruta, separador=","):
     return porcentajes
 
 
+# Ejercicio 2.G - Agustin Garcia
+def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf-8"):
+    valores = []
+
+    with open(ruta, newline='', encoding=encoding) as archivo_dataset:
+        lector = csv.reader(archivo_dataset, delimiter=separador)
+        header = [columna.strip() for columna in next(lector)]   # Lee la primer fila
+
+        if nombre_columna not in header:
+            print("No se encontró la columna específicada. ")
+            return None
+        else:
+            i = header.index(nombre_columna)   # Indice para tomar la columna de manera directa
+        
+            for registro in lector:
+                if registro[i] not in valores:   # Si el valor no fue usado por otro registro se agrega a la lista
+                    valores.append(registro[i])
+        
+    return len(valores)   # Retorna el total de valores distintos
 
 
 
@@ -241,4 +236,3 @@ def validar_country_code(ruta, separador=","):
 
 
 
->>>>>>> upstream/main
