@@ -1,58 +1,51 @@
 import csv
 import sys
 import os
-from src.file_manager import get_columns_names
+from src.file_manager import abrir_dataset; 
 
-sys.path.append(os.path.abspath(os.path.join('..')))
+from pathlib import Path
 
 
-def abrir_dataset(ruta_archivo, separador, codificacion = 'utf-8'):
+# Funciones para encontrar las rutas de los archivos --- Ana Freitas
+def _obtener_raiz_proyecto():
     """
-    Función para el Ejercicio 2.A - SOFI
-    Abre el archivo principal utilizando la biblioteca estándar csv.
-
+    Encuentra la carpeta principal del proyecto.
+    Usa la ubicación de este archivo como referencia para subir niveles 
+    hasta la raíz, garantizando que funcione en cualquier computadora.
     """
-<<<<<<< HEAD
-    file = open(ruta_archivo, mode='r', encoding=codificacion)
-    reader = csv.reader(file, delimiter=separador)
-    header = next(reader)
+    return Path(__file__).parent.parent.absolute()
 
-    return file, reader, header
-
-def procesar_columnas(fs: str):
-    return get_columns_names(fs)
-
-
-def identificar_columnas_nulas():
-    file, reader, header = abrir_dataset("../raw_datasets/Occurrence.txt", ",") 
-
-    index_null = set(range(len(header))) #creando un conjunto con los índices
-
-
-    for line in reader:
-        for index in list(index_null):
-            if line[index].strip():
-                index_null.remove(index)
-
-        if not index_null:
-            break
-
-    file.close()
+def obtener_ruta_de_datos(filename):
+    """
+    Construye la ruta final hacia un archivo específico en 'raw_datasets'.
+    Recibe el nombre del archivo y devuelve la dirección completa como texto.
+    """
+    # Primero localizamos dónde empieza nuestro proyecto
+    root = _obtener_raiz_proyecto()
     
-    columns_null = [header[index] for index in index_null]
-    return columns_null 
-
-
-def buscar_ruta(archivo):
-    directorio = os.path.abspath(os.path.join('..', 'raw_datasets', archivo))
-    return directorio
-=======
-    print("hello world") 
+    # Unimos la raíz con la carpeta de datos y el nombre del archivo
+    ruta_completa = root / 'raw_datasets' / filename
+    
+    # Lo convertimos a string para que sea fácil de usar en pandas o funciones de os
+    return str(ruta_completa)
 
 
 
+# Ejercicio 2.D - Agustin Garcia
+def total_registros (ruta, separador=",", encoding="utf-8"):
+    """
+    Abre un dataset en formato CSV y cuenta la cantidad de registros, retornando el total. 
+    """
+    total = 0
 
+    with open(ruta, newline='', encoding=encoding) as archivo_dataset:
+        lector = csv.reader(archivo_dataset, delimiter=separador)
+        next(lector)
+        
+        for _ in lector:
+            total += 1
 
+    return total
 
 
 
@@ -71,6 +64,7 @@ def columnas_con_nulos(ruta, separador=","):
                     columnas_con_null.add(header[i])
 
     return list(columnas_con_null)
+
 
 
 # Ejercicio 2.F - Fe Cordoba 
@@ -102,8 +96,47 @@ def porcentaje_nulos(ruta, separador=","):
 
 
 
+# Ejercicio 2.G - Agustin Garcia
+def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf-8"):
+    valores = []
+
+    with open(ruta, newline='', encoding=encoding) as archivo_dataset:
+        lector = csv.reader(archivo_dataset, delimiter=separador)
+        header = [columna.strip() for columna in next(lector)]   # Lee la primer fila
+
+        if nombre_columna not in header:
+            print("No se encontró la columna específicada. ")
+            return None
+        else:
+            i = header.index(nombre_columna)   # Indice para tomar la columna de manera directa
+        
+            for registro in lector:
+                if registro[i] not in valores:   # Si el valor no fue usado por otro registro se agrega a la lista
+                    valores.append(registro[i])
+        
+    return len(valores)   # Retorna el total de valores distintos
 
 
+
+# Ejercicio 2.J - Ana Freitas
+def identificar_columnas_nulas():
+    file, reader, header = abrir_dataset("../raw_datasets/Occurrence.txt", ",") 
+
+    index_null = set(range(len(header))) #creando un conjunto con los índices
+
+
+    for line in reader:
+        for index in list(index_null):
+            if line[index].strip():
+                index_null.remove(index)
+
+        if not index_null:
+            break
+
+    file.close()
+    
+    columns_null = [header[index] for index in index_null]
+    return columns_null 
 
 
 
@@ -246,4 +279,3 @@ def validar_country_code(ruta, separador=","):
 
 
 
->>>>>>> a4914e8eb82471d67ce1a207f0d62bb51263d584

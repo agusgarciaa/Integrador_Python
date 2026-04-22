@@ -1,5 +1,4 @@
-def get_columns_names(fs: str):
-    return ["col1", "col2"]
+import csv;
 
 
 def abrir_dataset(ruta_archivo, separador, codificacion = 'utf-8'):
@@ -14,7 +13,3 @@ def abrir_dataset(ruta_archivo, separador, codificacion = 'utf-8'):
 
     return file, reader, header
 
-def ruta():
-    directorio = os.path.abspath(os.path.join('..', 'raw_datasets', 'prueba.csv'))
-    print(directorio)
-    #datos = ut.abrir_dataset(directorio, "Occurrence_iadiza.txt", ";")
