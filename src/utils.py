@@ -11,11 +11,11 @@ def _obtener_raiz_proyecto():
     """
     Encuentra la carpeta principal del proyecto.
     Usa la ubicación de este archivo como referencia para subir niveles 
-    hasta la raíz, garantizando que funcione en cualquier computadora.
+    hasta la raíz y funciona en cualquier computadora.
     """
     return Path(__file__).parent.parent.absolute()
 
-def obtener_ruta_de_datos(filename):
+def obtener_ruta_de_datos(archivo):
     """
     Construye la ruta final hacia un archivo específico en 'raw_datasets'.
     Recibe el nombre del archivo y devuelve la dirección completa como texto.
@@ -24,9 +24,9 @@ def obtener_ruta_de_datos(filename):
     root = _obtener_raiz_proyecto()
     
     # Unimos la raíz con la carpeta de datos y el nombre del archivo
-    ruta_completa = root / 'raw_datasets' / filename
+    ruta_completa = root / 'raw_datasets' / archivo
     
-    # Lo convertimos a string para que sea fácil de usar en pandas o funciones de os
+    # Lo convertimos a string para que sea fácil de usar
     return str(ruta_completa)
 
 
