@@ -111,9 +111,9 @@ __Tipo de dato:__ fecha (datetime)
 __Ejemplo de valores:__ 2009-02-20T08:40Z, 1809-02-12  
 
 ### eventTime
-__Descripción:__ Horario en la que se registró la observación.  
-__Tipo de dato:__ fecha (datetime)  
-__Ejemplo de valores:__ 08:40:21Z   
+__Descripción:__ Horario en la que se registró la observación.
+__Tipo de dato:__ hora (datetime)
+__Ejemplo de valores:__ 08:40:21Z 
 
 ### verbatimEventDate
 __Descripción:__ Representacion de la fecha y/o hora de la observación.  
