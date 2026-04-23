@@ -1,6 +1,7 @@
 import csv
 
-from datetime import datetime 
+from datetime import datetime
+from collections import Counter
 
 import src.file_manager as fm
 import src.helpers as hp
@@ -77,7 +78,25 @@ def imprimir_encabezados(ruta1,ruta2,ruta3):
     print(next(modo3))
     archivo3.close()
 
+# Ejercicio 2.C - Lucia Cipolla
+def column_index (path,c_delimiter=',',c_encoding='utf-8'):
+    """
+        Recibe el path de un archivo en formato csv y lo lee.
+        Devuelve un diccionario que tiene como clave el nombre de la columna y como valor el indice(desde 0).
+        Parametros:
+            path: un path (mejor si es un r-string)
+            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
 
+        se usan las librerias: csv
+    """
+    dict_index = {}
+    with open(path, mode='r', encoding=c_encoding) as file:
+        lector = csv.reader(file, delimiter=c_delimiter)
+        header = next(lector)
+        for index, column in enumerate(header):
+            dict_index[column] = index
+    return dict_index
 
 # Ejercicio 2.D - Agustin Garcia
 def total_registros (ruta, separador=",", encoding="utf-8"):
@@ -164,7 +183,39 @@ def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf
         
     return len(valores)   # Retorna el total de valores distintos
 
+# Ejercicio 2.H - Lucia Cipolla
+def value_frequency (path,name,c_delimiter=',',c_encoding='utf-8'):
+    """
+        Recibe el path de un archivo en formato csv y lo lee.
+        Devuelve un diccionario que tiene como clave el nombre del VALOR de la columna y como valor la cantidad de veces que aparece repetido.
+        Parametros:
+            path: un path (mejor si es un r-string)
+            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
 
+        se usan las librerias: csv, collections(Counter)
+    """
+    freq = Counter()
+    name = str(name)
+    with open(path, mode='r', encoding=c_encoding) as file:
+        lector = csv.reader(file, delimiter=c_delimiter)
+        header = next(lector)
+        match name.isdigit():
+            case True:
+                #name es el numero de la columna
+                name = int(name)
+                for element in lector:
+                    freq[element[name]]+= 1
+            case False:
+                #name es el nombre de la columna
+                if name in header:
+                    pos = header.index(name)
+                    for element in lector:
+                        freq[element[pos]]+= 1
+                else:
+                    print('No se encontró la columna.')
+    freq=dict(freq)
+    return freq
 
 # Ejerciico 2.I - Ana Freitas
 def verificar_tipo(ruta, separador, columna, tipo_dato):
