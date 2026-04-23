@@ -1,15 +1,15 @@
-import csv;
+import csv
 
+from pathlib import Path
 
-def abrir_dataset(ruta_archivo, separador, codificacion = 'utf-8'):
+# ----------------------------------------- Gestión de archivos - funciones para lectura, apertura y rutas de datos. -----------------------------------------
+
+# Funcion para encontrar la ruta raiz del proyecto - Ana Freitas
+def obtener_raiz_proyecto():
     """
-    Función para el Ejercicio 2.A - SOFI
-    Abre el archivo principal utilizando la biblioteca estándar csv.
-
+    Encuentra la carpeta principal del proyecto.
+    Usa la ubicación de este archivo como referencia para subir niveles 
+    hasta la raíz y funciona en cualquier computadora.
     """
-    file = open(ruta_archivo, mode='r', encoding=codificacion)
-    reader = csv.reader(file, delimiter=separador)
-    header = next(reader)
-
-    return file, reader, header
+    return Path(__file__).parent.parent.absolute()
 
