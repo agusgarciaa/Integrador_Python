@@ -1,12 +1,34 @@
 import csv
+import sys
+import os
+from src.file_manager import abrir_dataset; 
+
+from pathlib import Path
 
 
-def abrir_dataset(ruta_archivo, separador, codificacion):
+# Funciones para encontrar las rutas de los archivos --- Ana Freitas
+def _obtener_raiz_proyecto():
     """
-    Función para el Ejercicio 2.A - SOFI
-    Abre el archivo principal utilizando la biblioteca estándar csv.
-
+    Encuentra la carpeta principal del proyecto.
+    Usa la ubicación de este archivo como referencia para subir niveles 
+    hasta la raíz y funciona en cualquier computadora.
     """
+    return Path(__file__).parent.parent.absolute()
+
+def obtener_ruta_de_datos(archivo):
+    """
+    Construye la ruta final hacia un archivo específico en 'raw_datasets'.
+    Recibe el nombre del archivo y devuelve la dirección completa como texto.
+    """
+    # Primero localizamos dónde empieza nuestro proyecto
+    root = _obtener_raiz_proyecto()
+    
+    # Unimos la raíz con la carpeta de datos y el nombre del archivo
+    ruta_completa = root / 'raw_datasets' / archivo
+    
+    # Lo convertimos a string para que sea fácil de usar
+    return str(ruta_completa)
+
     print("hello world") 
     #funcion 2a sofia martins
 def recorrer_diez_filas(ruta1,ruta2,ruta3):
@@ -43,6 +65,7 @@ def recorrer_diez_filas(ruta1,ruta2,ruta3):
     archivo1.close()
     archivo2.close()
     archivo3.close()
+
 #funcion 2b sofia martins
 def imprimir_encabezados(ruta1,ruta2,ruta3):
      #abrimos el archivo en modo lectura y con delimitador utf-8
@@ -63,6 +86,8 @@ def imprimir_encabezados(ruta1,ruta2,ruta3):
     print(next(modo3))
     archivo3.close()
 
+
+
 # Ejercicio 2.D - Agustin Garcia
 def total_registros (ruta, separador=",", encoding="utf-8"):
     """
@@ -80,6 +105,7 @@ def total_registros (ruta, separador=",", encoding="utf-8"):
     return total
 
 
+
 # Ejercicio 2.E - Fe Cordoba 
 def columnas_con_nulos(ruta, separador=","):
     columnas_con_null = set() 
@@ -95,6 +121,7 @@ def columnas_con_nulos(ruta, separador=","):
                     columnas_con_null.add(header[i])
 
     return list(columnas_con_null)
+
 
 
 # Ejercicio 2.F - Fe Cordoba 
@@ -125,6 +152,7 @@ def porcentaje_nulos(ruta, separador=","):
     return porcentajes
 
 
+
 # Ejercicio 2.G - Agustin Garcia
 def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf-8"):
     valores = []
@@ -144,6 +172,30 @@ def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf
                     valores.append(registro[i])
         
     return len(valores)   # Retorna el total de valores distintos
+
+
+
+# Ejercicio 2.J - Ana Freitas
+def identificar_columnas_nulas():
+    file, reader, header = abrir_dataset("../raw_datasets/Occurrence.txt", ",") 
+
+    index_null = set(range(len(header))) #creando un conjunto con los índices
+
+
+    for line in reader:
+        for index in list(index_null):
+            if line[index].strip():
+                index_null.remove(index)
+
+        if not index_null:
+            break
+
+    file.close()
+    
+    columns_null = [header[index] for index in index_null]
+    return columns_null 
+
+
 
 #funcion 3a sofia martins
 def numero(dato):
@@ -325,6 +377,8 @@ def validar_country_code(ruta, separador=","):
 
     return cods_invalidos
 
+
+
 #funcion 4f sofia martins
 import os
 
@@ -361,6 +415,8 @@ def funcion4f(ruta_archivo):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {destino}")
+
+
 
 #funcion4g sofia martins
 def funcion4g(ruta_archivo):  
