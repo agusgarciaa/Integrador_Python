@@ -1,35 +1,26 @@
 import csv
-import sys
-import os
-from src.file_manager import abrir_dataset; 
 
-from pathlib import Path
+from datetime import datetime 
+
+import src.file_manager as fm
+import src.helpers as hp
 
 
-# Funciones para encontrar las rutas de los archivos --- Ana Freitas
-def _obtener_raiz_proyecto():
-    """
-    Encuentra la carpeta principal del proyecto.
-    Usa la ubicación de este archivo como referencia para subir niveles 
-    hasta la raíz y funciona en cualquier computadora.
-    """
-    return Path(__file__).parent.parent.absolute()
-
-def obtener_ruta_de_datos(archivo):
+# Funcion para encontrar la ruta de los datasets - Ana Freitas 
+def obtener_ruta_de_datos(carpeta, archivo):
     """
     Construye la ruta final hacia un archivo específico en 'raw_datasets'.
     Recibe el nombre del archivo y devuelve la dirección completa como texto.
     """
-    # Primero localizamos dónde empieza nuestro proyecto
-    root = _obtener_raiz_proyecto()
+
+    ruta = fm.obtener_raiz_proyecto()
+    ruta_completa = ruta / 'raw_datasets' / carpeta / archivo
     
-    # Unimos la raíz con la carpeta de datos y el nombre del archivo
-    ruta_completa = root / 'raw_datasets' / archivo
-    
-    # Lo convertimos a string para que sea fácil de usar
     return str(ruta_completa)
 
-    print("hello world") 
+
+# --------------------------------------------------------------- Ejercicios 2 - Lectura del dataset --------------------------------------------------------------
+   
     #funcion 2a sofia martins
 def recorrer_diez_filas(ruta1,ruta2,ruta3):
     #abrimos el archivo con open, en modo de lectura,formato utf-8
@@ -175,28 +166,52 @@ def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf
 
 
 
-# Ejercicio 2.J - Ana Freitas
-def identificar_columnas_nulas():
-    file, reader, header = abrir_dataset("../raw_datasets/Occurrence.txt", ",") 
+# Ejerciico 2.I - Ana Freitas
+def verificar_tipo(ruta, separador, columna, tipo_dato):
 
-    index_null = set(range(len(header))) #creando un conjunto con los índices
+    with open(ruta, encoding="utf-8") as archivo:
+        lector = csv.reader(archivo, delimiter=separador)
+        header = next(lector)
 
+        lista_columna = []
+        
+        indice = hp.obtener_indice(header, columna)
 
-    for line in reader:
-        for index in list(index_null):
-            if line[index].strip():
-                index_null.remove(index)
+        lista_columna = [line[indice] for line in lector if len(line) > indice] # Guarda solo los datos de la columna deseada y salta las filas que vienen vacías o incompletas.
 
-        if not index_null:
-            break
-
-    file.close()
+    if tipo_dato == 'numeric':
+        return hp.calcular_numericos(lista_columna)
+    elif tipo_dato == 'text':
+        return hp.calcular_text(lista_columna)
+    elif tipo_dato == "coordinate":
+        return hp.calcular_coordenada(lista_columna)
     
-    columns_null = [header[index] for index in index_null]
-    return columns_null 
+    
+# Ejercicio 2.J - Ana Freitas
+def identificar_columnas_nulas(ruta, separador):
+
+    with open(ruta, encoding="utf-8") as archivo:
+        lector = csv.reader(archivo, delimiter=separador)
+        header = next(lector)
+
+        indices_vacios = set(range(len(header)))
+
+        for line in lector:
+            for index in list(indices_vacios):
+                if index < len(line) and line[index].strip():
+                    indices_vacios.remove(index)
+
+            if not indices_vacios:
+                break
+    
+    columnas_vacias = [header[index] for index in indices_vacios]
+    return 'Columnas que solo tienen nulos: ', columnas_vacias
+    
 
 
+    
 
+# --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 def numero(dato):
     aux=dato.strip().replace('-','',1).replace('.','',1)
@@ -248,20 +263,7 @@ def funcion3b(archivo):
     return invalidos
 
 
-
-
-
-
-
-
-
-
-
-
-
 # Ejercicio 3.C - Fe Cordoba
-from datetime import datetime  #  Es una clase que sirve para trabajar con fechas y horas
-
     #  Funcion auxiliar 
 
 def chequear_fecha(valor):
@@ -328,15 +330,16 @@ def validar_fechas(ruta, separador=","):
 
 
 
+# Ejercicio 3.D - Ana Freitas
+def detectar_registros_duplicados(ruta, separador, columna):
+    with open(ruta, encoding="utf-8") as archivo:
+        lector = csv.reader(archivo, delimiter=separador)
+        header = next(lector)
 
+        indice = hp.obtener_indice(header, columna)
+        lista = [line[indice] for line in lector if len(line) > indice] 
 
-
-
-
-
-
-
-
+    return hp.detectar_duplicados(lista)
 
 
 
@@ -378,6 +381,19 @@ def validar_country_code(ruta, separador=","):
     return cods_invalidos
 
 
+
+# Ejercicio 3.I - Ana Freitas
+def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_longitud):
+   with open(ruta, encoding="utf-8") as archivo:
+        lector = csv.reader(archivo, delimiter=separador)
+        header = next(lector)
+        
+        indice_latitud = hp.obtener_indice(header, columna_latitud)
+        indice_longitud = hp.obtener_indice(header, columna_longitud)
+
+        # Usar la funcion 3.A 
+
+# --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
 #funcion 4f sofia martins
 import os
