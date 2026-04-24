@@ -133,7 +133,6 @@ def columnas_con_nulos(ruta, separador=","):
     return list(columnas_con_null)
 
 
-
 # Ejercicio 2.F - Fe Cordoba 
 def porcentaje_nulos(ruta, separador=","):
     with open(ruta, encoding="utf-8") as archivo:
@@ -161,8 +160,6 @@ def porcentaje_nulos(ruta, separador=","):
 
     return porcentajes
 
-
-
 # Ejercicio 2.G - Agustin Garcia
 def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf-8"):
     valores = []
@@ -182,6 +179,7 @@ def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf
                     valores.append(registro[i])
         
     return len(valores)   # Retorna el total de valores distintos
+
 
 # Ejercicio 2.H - Lucia Cipolla
 def value_frequency (path,name,c_delimiter=',',c_encoding='utf-8'):
@@ -216,6 +214,7 @@ def value_frequency (path,name,c_delimiter=',',c_encoding='utf-8'):
                     print('No se encontró la columna.')
     freq=dict(freq)
     return freq
+
 
 # Ejerciico 2.I - Ana Freitas
 def verificar_tipo(ruta, separador, columna, tipo_dato):
@@ -259,14 +258,12 @@ def identificar_columnas_nulas(ruta, separador):
     return 'Columnas que solo tienen nulos: ', columnas_vacias
     
 
-
-    
-
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 def numero(dato):
     aux=dato.strip().replace('-','',1).replace('.','',1)
     return aux.isdigit()and dato.strip() !=""
+
 
 def funcion3a(archivo):
     leer=csv.dictreader(archivo)
@@ -292,6 +289,7 @@ def funcion3a(archivo):
                
     return nocumplen,len(nocumplen)
 
+
 #funcion 3b sofia martins
 def funcion3b(archivo):
     leer=csv.DictReader(archivo)
@@ -315,26 +313,6 @@ def funcion3b(archivo):
 
 
 # Ejercicio 3.C - Fe Cordoba
-    #  Funcion auxiliar 
-
-def chequear_fecha(valor):
-    # intenta convertir el string a fecha usando varios formatos
-
-    formatos = ["%d-%m-%Y","%Y-%m-%d", "%m-%Y", "%Y", "%Y-%m-%dT%H:%M:%S"]
-
-    for formato in formatos:
-        try:
-            # si el formato coincide, devuelve la fecha
-            return datetime.strptime(valor, formato)  #  aca convierte el str a fecha (si puede)
-        except:
-            # si falla, prueba con el siguiente formato
-            pass
-
-    # si ninguno funciona, no es una fecha válida
-    return None
-
-    #  Funcion principal 
-
 def validar_fechas(ruta, separador=","):
     fechas_invalidas = {}  # {fila: [(columna, valor, motivo)]}
 
@@ -352,33 +330,28 @@ def validar_fechas(ruta, separador=","):
         print("Columnas detectadas como fecha:")
         print([header[i] for i in indices_fecha])
 
-        # recorre cada fila del dataset
         for num_fila, fila in enumerate(lector, start=1):
             for i in indices_fecha:
 
                 # evita error si la fila tiene menos columnas
                 valor = fila[i].strip() if i < len(fila) else ""
 
-                # ignora valores nulos
                 if valor == "" or valor.lower() == "n/a":
                     continue
 
-                fecha = chequear_fecha(valor)
+                fecha = hp.chequear_fecha(valor)
 
-                # guarda error si no se puede convertir
                 if fecha is None:
                     fechas_invalidas.setdefault(num_fila, []).append(
                         (header[i], valor, "formato inválido")
                     )
 
-                # guarda error si la fecha es futura
                 elif fecha > datetime.now():
                     fechas_invalidas.setdefault(num_fila, []).append(
                         (header[i], valor, "fecha futura")
                     )
 
     return fechas_invalidas
-
 
 
 # Ejercicio 3.D - Ana Freitas
@@ -393,7 +366,6 @@ def detectar_registros_duplicados(ruta, separador, columna):
     return hp.detectar_duplicados(lista)
 
 
-
 # Ejercicio 3.E - Fe Cordoba
 def validar_country_code(ruta, separador=","):
     cods_invalidos = {}  # {fila: [(columna, valor, motivo)]}
@@ -403,34 +375,26 @@ def validar_country_code(ruta, separador=","):
         lector = csv.reader(archivo, delimiter=separador)
         header = next(lector)
 
-        # verifica si la columna existe para evitar errores
         if "countryCode" not in header:
-            return {"error": "No existe la columna countryCode"}
+            raise ValueError("No existe la columna 'countryCode' en el dataset")
 
-        # obtiene la posición de la columna en el header
         indice = header.index("countryCode")
 
-        # recorre cada fila
         for num_fila, fila in enumerate(lector, start=1):
 
-            # evita error si faltan columnas
             valor = fila[indice].strip() if indice < len(fila) else ""
 
-            # detecta valores nulos
             if valor == "" or valor.lower() == "n/a":
                 cods_invalidos.setdefault(num_fila, []).append(
                     ("countryCode", valor, "nulo")
                 )
 
-            # detecta códigos distintos de codigos validos
-            
-            elif valor not in  codigos_validos:
+            elif valor not in codigos_validos:
                 cods_invalidos.setdefault(num_fila, []).append(
                     ("countryCode", valor, "código inválido")
                 )
 
     return cods_invalidos
-
 
 
 # Ejercicio 3.I - Ana Freitas
@@ -484,7 +448,6 @@ def funcion4f(ruta_archivo):
     print(f"Archivo guardado en: {destino}")
 
 
-
 #funcion4g sofia martins
 def funcion4g(ruta_archivo):  
     nuevo = {}
@@ -526,8 +489,5 @@ def funcion4g(ruta_archivo):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {destino}")
-
-
-
 
 
