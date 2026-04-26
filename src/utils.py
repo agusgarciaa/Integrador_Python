@@ -377,7 +377,7 @@ def calidad_dataset (ruta, separador=","):
     #     _, coordenadas_invalidas = funcion3a(dataset)
     # fechas_invalidas = validar_fechas(ruta, separador)
     # cant_fechas_invalidas = len(validar_fechas)
-    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
+    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "gbifID")
     taxonomia_incompleta = hp.contar_taxonomia_incompleta(ruta, separador)
 
     resumen = {
