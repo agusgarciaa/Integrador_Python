@@ -433,6 +433,107 @@ def validar_country_code(ruta, separador=","):
 
 
 
+# Ejercicio 3.F - Lucia Cipolla
+def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
+    """
+        Recibe el path de un archivo en formato csv y lo lee.
+        Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
+        Parametros:
+            path: un path (mejor si es un r-string)
+            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+            high_val: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
+
+        se usan las librerias: csv, utils
+    """
+    res = []
+    field='coordinateUncertaintyInMeters'
+    with open(path, mode='r', encoding=c_encoding) as file:
+        lector = csv.reader(file,delimiter=c_delimiter)
+        header = next(lector)
+        index_dict = column_index(path,c_delimiter,c_encoding)
+        try:
+            x = index_dict[field]
+            for i,element in enumerate(lector):
+                try:
+                    e = element[x]
+                    if float(e)<0 or float(e)>high_val:
+                        res.append(True)
+                    else:
+                        res.append(False)
+                except ValueError:
+                    res.append(True)
+        except KeyError:
+            print('El dataset no contiene el campo "coordinateUncertaintyInMeters".')
+            
+    return res
+
+
+
+# Ejercicio 3.F - Lucia Cipolla
+def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
+    """
+        Recibe el path de un archivo en formato csv y lo lee.
+        Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
+        Parametros:
+            path: un path (mejor si es un r-string)
+            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+
+        se usan las librrerías: csv, utils
+    """
+    ret = []
+    MAX_LAT = 13.0
+    MIN_LAT = -56.0
+    MAX_LONG = -34.0
+    MIN_LONG = -82.0
+    with open(path,mode='r',encoding=c_encoding) as file:
+        lector = csv.reader(file,delimiter=c_delimiter)  #lector es de tipo <class '_csv.reader'>
+        header = next(lector)
+        aux = column_index(path,c_delimiter)
+        try:
+            lat = aux['decimalLatitude']
+        except KeyError:
+            print('decimalLatitude no se encontró. ')
+            lat = None
+        try:
+            long = aux['decimalLongitude']
+        except KeyError:
+            print('decimalLongitude no se encontró. ')
+            long = None
+
+        if (lat is not None) and (long is not None):
+            for i,element in enumerate(lector):
+                dat_lat = element[lat]
+                dat_long = element[long]
+                
+                try:
+                    dat_lat = float(dat_lat.strip())
+                    
+                    if dat_lat<MIN_LAT or dat_lat>MAX_LAT:
+                        res_lat = False
+                    else:
+                        res_lat = True
+
+                except ValueError:
+                    res_lat = False
+
+                try:
+                    dat_long = float(dat_long.strip())
+                    
+                    if dat_long<MIN_LONG or dat_long>MAX_LONG:
+                        res_long = False
+                    else:
+                        res_long = True
+                except ValueError:
+                    res_long = False
+                
+                ret.append((res_lat,res_long))
+            
+    return ret
+
+
+
 # Ejercicio 3.I - Ana Freitas
 def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_longitud):
    with open(ruta, encoding="utf-8") as archivo:
