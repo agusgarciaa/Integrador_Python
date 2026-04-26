@@ -45,6 +45,7 @@ def detectar_duplicados(lista):
     
     return 'registros duplicados: ', duplicados, 'identificador se repite: ', repetidos
 
+
 # Funcion de apoyo para el ejercicio 3.G - Agustin Garcia
 def contar_taxonomia_incompleta(ruta, separador=","):
     incompletos = 0

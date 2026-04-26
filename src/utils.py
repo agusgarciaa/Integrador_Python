@@ -23,33 +23,61 @@ def obtener_ruta_de_datos(carpeta, archivo):
 # --------------------------------------------------------------- Ejercicios 2 - Lectura del dataset --------------------------------------------------------------
    
     #funcion 2a sofia martins
-def recorrer_diez_filas(ruta,delimiterr):
+def recorrer_diez_filas(ruta1,ruta2,ruta3):
     #abrimos el archivo con open, en modo de lectura,formato utf-8
-    with open(ruta, mode='r', encoding='utf-8') as archivo1:
+    with open(ruta1, mode='r', encoding='utf-8') as archivo1:
          #nos salteamos la primera linea que es el encabezado
         next(archivo1)
          #le indicaremos al lector que los campos estan separados con ese delimitador
-        modo = csv.reader(archivo1, delimiter=delimiterr)
+        modo1 = csv.reader(archivo1, delimiter='\t')
          #imprimimos las primeras 10 filas, i sirve para contar por cual fila vamos
-        for i, fila in enumerate(modo):
+        for i, fila in enumerate(modo1):
             if i < 10:
                 print(fila)
             else:
                 break
 
+    with open(ruta2, mode='r', encoding='utf-8') as archivo2:
+        next(archivo2)
+        modo2 = csv.reader(archivo2, delimiter=',')
+        for i, fila in enumerate(modo2):
+            if i < 10:
+                print(fila)
+            else:
+                break
+
+    with open(ruta3, mode='r', encoding='utf-8') as archivo3:
+        next(archivo3)
+        modo3 = csv.reader(archivo3, delimiter=',')
+        for i, fila in enumerate(modo3):
+            if i < 10:
+                print(fila)
+            else:
+                break
+    archivo1.close()
+    archivo2.close()
+    archivo3.close()
 
 
 #funcion 2b sofia martins
-def imprimir_encabezados(ruta, delimiter):
+def imprimir_encabezados(ruta1,ruta2,ruta3):
      #abrimos el archivo en modo lectura y con delimitador utf-8
-    archivo = open(ruta, 'r', encoding='utf-8')
+    archivo1 = open(ruta1, 'r', encoding='utf-8')
      #le indicamos al reader que tipo de delimitador tienen los campos
-    modo = csv.reader(archivo, delimiter=delimiter)
+    modo1 = csv.reader(archivo1, delimiter='\t')
      #imprimimos la primera linea,osea los encanbezados
-    header=next(modo)
-    archivo.close()
-    return header
-    
+    print(next(modo1))
+    archivo1.close()
+
+    archivo2 = open(ruta2, 'r', encoding='utf-8')
+    modo2 = csv.reader(archivo2, delimiter=',')
+    print(next(modo2))
+    archivo2.close()
+
+    archivo3 = open(ruta3, 'r', encoding='utf-8')
+    modo3 = csv.reader(archivo3, delimiter=',')
+    print(next(modo3))
+    archivo3.close()
 
 
 # Ejercicio 2.C - Lucia Cipolla
@@ -240,46 +268,49 @@ def numero(dato):
     return aux.isdigit()and dato.strip() !=""
 
 
-def Verificar_coordenada(rarchivo):
+def funcion3a(archivo):
+    leer=csv.dictreader(archivo)
     nocumplen=[]
-    with open(rarchivo, mode='r', encoding='utf-8') as archivo:
-        leer = csv.DictReader(archivo)
 
-        for fila in leer:
-            latitud=fila['decimalLatitude']
-            longitud=fila['decimalLongitude']
-            aux=False
+    for fila in leer:
+        latitud=fila['decimalLatitude']
+        longitud=fila['decimalLongitude']
         
-            if not numero(latitud)or not numero(longitud):
-                 aux=True
-            else:
-                  aux1=float(latitud)
-                  aux2=float(longitud)
-                  if not -90<=aux1<=90 or not -180<=aux2<=180:
-                     aux=True
-
-            if aux:
-                nocumplen.append(fila)
+        if not numero(latitud):
+            nocumplen.append(fila)
+        else:
+            aux1=float(latitud)
+            if not -90<=aux1<=90:
+               nocumplen.append(fila)
+        
+        if not numero(longitud):
+            nocumplen.append(fila)
+        else:
+            aux2=float(longitud)
+            if not -180<=aux2<=180:
+               nocumplen.append(fila)
                
     return nocumplen,len(nocumplen)
 
 
 #funcion 3b sofia martins
-def Cordenadas_faltantes(rarchivo,delimiterr):
+def funcion3b(archivo):
+    leer=csv.DictReader(archivo)
+    header=leer.fieldnames
+    haylongitud='decimalLongitude' in header
+    haylatitud='decimalLatitude' in header
     invalidos=[]
-    with open(rarchivo, mode='r', encoding='utf-8') as archivo:
-        leer=csv.DictReader(archivo, delimiter=delimiterr)
-        header=leer.fieldnames
-   
+    
+    if haylongitud and haylatitud:
         for fila in leer:
-            aux1=fila.get('decimalLatitude') or fila.get('latitudeDecimal') or ""
-            aux2=fila.get('decimalLongitude') or fila.get('longitudeDecimal') or ""
-            id=fila.get('id') or fila.get('gbifID')
-      
-            if (aux1=="" and aux2!="") or (aux1!="" and aux2==""):
-                lista=[]
-                lista=[id,aux1,aux2]
-                invalidos.append(lista)
+            aux1=fila['decimalLongitude']
+            aux2=fila['decimalLatitude']
+            id=fila['id']or fila['gbifID']
+     
+        lista=[]  
+        if aux1=="" and aux2=="" or aux1=="" or aux2=="":
+           lista=[id,aux1,aux2]
+           invalidos.append(lista)
     
     return invalidos
 
@@ -374,10 +405,10 @@ def validar_country_code(ruta, separador=","):
 def calidad_dataset (ruta, separador=","):
     total = total_registros(ruta, separador)
     # with open(ruta, encoding="utf-8") as dataset:
-    #     _, coordenadas_invalidas = funcion3a(dataset)
-    # fechas_invalidas = validar_fechas(ruta, separador)
+    #     _, coordenadas_invalidas = funcion3a(dataset)   ---> Sacar comentario cuando se solucione.
+    # fechas_invalidas = validar_fechas(ruta, separador)  ---> Sacar comentario cuando se solucione.
     # cant_fechas_invalidas = len(validar_fechas)
-    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "gbifID")
+    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
     taxonomia_incompleta = hp.contar_taxonomia_incompleta(ruta, separador)
 
     resumen = {
