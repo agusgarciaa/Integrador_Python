@@ -40,6 +40,7 @@ def recorrer_diez_filas(ruta,delimiterr):
                 break
 
 
+
 #funcion 2b sofia martins
 def imprimir_encabezados(ruta, delimiter):
      #abrimos el archivo en modo lectura y con delimitador utf-8
@@ -51,6 +52,7 @@ def imprimir_encabezados(ruta, delimiter):
     archivo.close()
     return encabezado
     
+
 
 # Ejercicio 2.C - Lucia Cipolla
 def column_index (path,c_delimiter=',',c_encoding='utf-8'):
