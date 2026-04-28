@@ -10,14 +10,14 @@ import src.helpers as hp
 
 
 # Funcion para encontrar la ruta de los datasets - Ana Freitas 
-def obtener_ruta_de_datos(carpeta, archivo):
+def obtener_ruta_de_datos(carpeta, dataset, archivo):
     """
-    Construye la ruta final hacia un archivo específico en 'raw_datasets'.
+    Construye la ruta final hacia un archivo específico en una carpeta
     Recibe el nombre del archivo y devuelve la dirección completa como texto.
     """
 
     ruta = fm.obtener_raiz_proyecto()
-    ruta_completa = ruta / 'raw_datasets' / carpeta / archivo
+    ruta_completa = ruta / carpeta / dataset / archivo
     
     return str(ruta_completa)
 
@@ -27,11 +27,11 @@ def obtener_ruta_de_datos(carpeta, archivo):
 #funcion 2a sofia martins
 def recorrer_diez_filas(ruta,delimiterr):
     #abrimos el archivo con open, en modo de lectura,formato utf-8
-    with open(ruta, mode='r', encoding='utf-8') as archivo1:
+    with open(ruta, mode='r', encoding='utf-8') as archivo:
          #nos salteamos la primera linea que es el encabezado
-        next(archivo1)
+        next(archivo)
          #le indicaremos al lector que los campos estan separados con ese delimitador
-        modo = csv.reader(archivo1, delimiter=delimiterr)
+        modo = csv.reader(archivo, delimiter=delimiterr)
          #imprimimos las primeras 10 filas, i sirve para contar por cual fila vamos
         for i, fila in enumerate(modo):
             if i < 10:
@@ -236,7 +236,7 @@ def identificar_columnas_nulas(ruta, separador):
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 
-def Verificar_coordenada(rarchivo):
+def verificar_coordenada(rarchivo):
     nocumplen=[]
     with open(rarchivo, mode='r', encoding='utf-8') as archivo:
         leer = csv.DictReader(archivo)
@@ -261,7 +261,7 @@ def Verificar_coordenada(rarchivo):
 
 
 #funcion 3b sofia martins
-def Cordenadas_faltantes(rarchivo,delimiterr):
+def cordenadas_faltantes(rarchivo,delimiterr):
     invalidos=[]
     with open(rarchivo, mode='r', encoding='utf-8') as archivo:
         leer=csv.DictReader(archivo, delimiter=delimiterr)
@@ -406,7 +406,7 @@ def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_
         indice_latitud = hp.obtener_indice(header, columna_latitud)
         indice_longitud = hp.obtener_indice(header, columna_longitud)
 
-        # Usar la funcion 3.A 
+         
 
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
@@ -488,4 +488,53 @@ def funcion4g(ruta_archivo):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {destino}")
+
+
+
+
+
+# --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
+
+# Ejercicio 5.B - Ana Freitas
+def actualizar_campo(ruta_raw, ruta_processed, separador, identificador, columna, nuevo_valor):
+    registros_actualizados = []
+    
+    with open(ruta_raw, encoding='utf-8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+        columnas = lector.fieldnames
+        
+        for fila in lector:
+            if fila.get("occurrenceID") == identificador:
+                fila[columna] = nuevo_valor
+            
+            registros_actualizados.append(fila)
+
+    with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo:
+        escritor = csv.DictWriter(archivo, delimiter=separador, fieldnames=columnas)
+        escritor.writeheader()
+        escritor.writerows(registros_actualizados)
+
+
+# Ejercicio 5.C - Ana Freitas
+def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificador, dic_cambios):
+    registros_para_guardar = []
+    
+    # Leer el archivo desde la ruta de origen (raw)
+    with open(ruta_raw, encoding='utf-8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+        columnas = lector.fieldnames
+        
+        for fila in lector:
+            # Si encontramos el ID, actualizamos el diccionario en memoria RAM
+            if fila.get("occurrenceID") == identificador:
+                fila.update(dic_cambios)
+            
+            # Guardamos la fila modificada o no en nuestra lista 
+            registros_para_guardar.append(fila)
+
+    # Escribir el resultado en la ruta de destino la carpeta processed
+    with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo:
+        escritor = csv.DictWriter(archivo, fieldnames=columnas, delimiter=separador)
+        escritor.writeheader()
+        escritor.writerows(registros_para_guardar)
 
