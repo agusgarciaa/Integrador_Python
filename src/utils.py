@@ -1,83 +1,57 @@
 import csv
+import os
 
 from datetime import datetime
 from collections import Counter
+from pathlib import Path
 
 import src.file_manager as fm
 import src.helpers as hp
 
 
 # Funcion para encontrar la ruta de los datasets - Ana Freitas 
-def obtener_ruta_de_datos(carpeta, archivo):
+def obtener_ruta_de_datos(carpeta, dataset, archivo):
     """
-    Construye la ruta final hacia un archivo específico en 'raw_datasets'.
+    Construye la ruta final hacia un archivo específico en una carpeta
     Recibe el nombre del archivo y devuelve la dirección completa como texto.
     """
 
     ruta = fm.obtener_raiz_proyecto()
-    ruta_completa = ruta / 'raw_datasets' / carpeta / archivo
+    ruta_completa = ruta / carpeta / dataset / archivo
     
     return str(ruta_completa)
 
 
 # --------------------------------------------------------------- Ejercicios 2 - Lectura del dataset --------------------------------------------------------------
    
-    #funcion 2a sofia martins
-def recorrer_diez_filas(ruta1,ruta2,ruta3):
+#funcion 2a sofia martins
+def recorrer_diez_filas(ruta,delimiterr):
     #abrimos el archivo con open, en modo de lectura,formato utf-8
-    with open(ruta1, mode='r', encoding='utf-8') as archivo1:
+    with open(ruta, mode='r', encoding='utf-8') as archivo:
          #nos salteamos la primera linea que es el encabezado
-        next(archivo1)
+        next(archivo)
          #le indicaremos al lector que los campos estan separados con ese delimitador
-        modo1 = csv.reader(archivo1, delimiter='\t')
+        modo = csv.reader(archivo, delimiter=delimiterr)
          #imprimimos las primeras 10 filas, i sirve para contar por cual fila vamos
-        for i, fila in enumerate(modo1):
+        for i, fila in enumerate(modo):
             if i < 10:
                 print(fila)
             else:
                 break
 
-    with open(ruta2, mode='r', encoding='utf-8') as archivo2:
-        next(archivo2)
-        modo2 = csv.reader(archivo2, delimiter=',')
-        for i, fila in enumerate(modo2):
-            if i < 10:
-                print(fila)
-            else:
-                break
-
-    with open(ruta3, mode='r', encoding='utf-8') as archivo3:
-        next(archivo3)
-        modo3 = csv.reader(archivo3, delimiter=',')
-        for i, fila in enumerate(modo3):
-            if i < 10:
-                print(fila)
-            else:
-                break
-    archivo1.close()
-    archivo2.close()
-    archivo3.close()
 
 
 #funcion 2b sofia martins
-def imprimir_encabezados(ruta1,ruta2,ruta3):
+def imprimir_encabezados(ruta, delimiter):
      #abrimos el archivo en modo lectura y con delimitador utf-8
-    archivo1 = open(ruta1, 'r', encoding='utf-8')
+    archivo = open(ruta, 'r', encoding='utf-8')
      #le indicamos al reader que tipo de delimitador tienen los campos
-    modo1 = csv.reader(archivo1, delimiter='\t')
+    modo = csv.reader(archivo, delimiter=delimiter)
      #imprimimos la primera linea,osea los encanbezados
-    print(next(modo1))
-    archivo1.close()
+    header=next(modo)
+    archivo.close()
+    return header
 
-    archivo2 = open(ruta2, 'r', encoding='utf-8')
-    modo2 = csv.reader(archivo2, delimiter=',')
-    print(next(modo2))
-    archivo2.close()
-
-    archivo3 = open(ruta3, 'r', encoding='utf-8')
-    modo3 = csv.reader(archivo3, delimiter=',')
-    print(next(modo3))
-    archivo3.close()
 
 
 # Ejercicio 2.C - Lucia Cipolla
@@ -263,54 +237,47 @@ def identificar_columnas_nulas(ruta, separador):
 
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
-def numero(dato):
-    aux=dato.strip().replace('-','',1).replace('.','',1)
-    return aux.isdigit()and dato.strip() !=""
 
-
-def funcion3a(archivo):
-    leer=csv.dictreader(archivo)
+def verificar_coordenada(rarchivo):
     nocumplen=[]
+    with open(rarchivo, mode='r', encoding='utf-8') as archivo:
+        leer = csv.DictReader(archivo)
 
-    for fila in leer:
-        latitud=fila['decimalLatitude']
-        longitud=fila['decimalLongitude']
+        for fila in leer:
+            latitud=fila.get('decimalLatitude')
+            longitud=fila.get('decimalLongitude')
+            aux=False
         
-        if not numero(latitud):
-            nocumplen.append(fila)
-        else:
-            aux1=float(latitud)
-            if not -90<=aux1<=90:
-               nocumplen.append(fila)
-        
-        if not numero(longitud):
-            nocumplen.append(fila)
-        else:
-            aux2=float(longitud)
-            if not -180<=aux2<=180:
-               nocumplen.append(fila)
+            if not hp.numero(latitud)or not hp.numero(longitud):
+                 aux=True
+            else:
+                  aux1=float(latitud)
+                  aux2=float(longitud)
+                  if not -90<=aux1<=90 or not -180<=aux2<=180:
+                     aux=True
+
+            if aux:
+                nocumplen.append(fila)
                
     return nocumplen,len(nocumplen)
 
 
 #funcion 3b sofia martins
-def funcion3b(archivo):
-    leer=csv.DictReader(archivo)
-    header=leer.fieldnames
-    haylongitud='decimalLongitude' in header
-    haylatitud='decimalLatitude' in header
+def cordenadas_faltantes(rarchivo,delimiterr):
     invalidos=[]
-    
-    if haylongitud and haylatitud:
+    with open(rarchivo, mode='r', encoding='utf-8') as archivo:
+        leer=csv.DictReader(archivo, delimiter=delimiterr)
+        header=leer.fieldnames
+   
         for fila in leer:
-            aux1=fila['decimalLongitude']
-            aux2=fila['decimalLatitude']
-            id=fila['id']or fila['gbifID']
-     
-        lista=[]  
-        if aux1=="" and aux2=="" or aux1=="" or aux2=="":
-           lista=[id,aux1,aux2]
-           invalidos.append(lista)
+            aux1=fila.get('decimalLatitude') 
+            aux2=fila.get('decimalLongitude') 
+            id=fila.get('id') or fila.get('gbifID')
+      
+            if (aux1=="" and aux2!="") or (aux1!="" and aux2==""):
+                lista=[]
+                lista=[id,aux1,aux2]
+                invalidos.append(lista)
     
     return invalidos
 
@@ -400,6 +367,38 @@ def validar_country_code(ruta, separador=","):
     return cods_invalidos
 
 
+
+# Ejercicio 3.G - Agustin Garcia
+def calidad_dataset (ruta, separador=","):
+    total = total_registros(ruta, separador)
+    # with open(ruta, encoding="utf-8") as dataset:
+    #     _, coordenadas_invalidas = funcion3a(dataset)   ---> Sacar comentario cuando se solucione.
+    # fechas_invalidas = validar_fechas(ruta, separador)  ---> Sacar comentario cuando se solucione.
+    # cant_fechas_invalidas = len(validar_fechas)
+    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
+    taxonomia_incompleta = hp.contar_taxonomia_incompleta(ruta, separador)
+
+    resumen = {
+        "total_registros": total,
+        # "coordenadas_invalidas": coordenadas_invalidas,
+        # "fechas_invalidas": cant_fechas_invalidas,
+        "duplicados": duplicados,
+        "taxonomia_incompleta": taxonomia_incompleta
+    }
+
+    reporte = f"""
+    RESUMEN DE CALIDAD DEL DATASET
+    -------------------
+    Total: {total}
+    Coordenadas inválidas: {0}
+    Fechas inválidas: {0}
+    Duplicados: {duplicados}
+    Taxonomía incompleta: {taxonomia_incompleta}
+    """
+
+    return resumen, reporte
+
+
 # Ejercicio 3.I - Ana Freitas
 def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_longitud):
    with open(ruta, encoding="utf-8") as archivo:
@@ -409,12 +408,11 @@ def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_
         indice_latitud = hp.obtener_indice(header, columna_latitud)
         indice_longitud = hp.obtener_indice(header, columna_longitud)
 
-        # Usar la funcion 3.A 
+         
 
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
 #funcion 4f sofia martins
-import os
 
 def funcion4f(ruta_archivo):  
     nuevo = {}
@@ -493,4 +491,52 @@ def funcion4g(ruta_archivo):
     
     print(f"Archivo guardado en: {destino}")
 
+
+
+
+
+# --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
+
+# Ejercicio 5.B - Ana Freitas
+def actualizar_campo(ruta_raw, ruta_processed, separador, identificador, columna, nuevo_valor):
+    registros_actualizados = []
+    
+    with open(ruta_raw, encoding='utf-8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+        columnas = lector.fieldnames
+        
+        for fila in lector:
+            if fila.get("occurrenceID") == identificador:
+                fila[columna] = nuevo_valor
+            
+            registros_actualizados.append(fila)
+
+    with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo:
+        escritor = csv.DictWriter(archivo, delimiter=separador, fieldnames=columnas)
+        escritor.writeheader()
+        escritor.writerows(registros_actualizados)
+
+
+# Ejercicio 5.C - Ana Freitas
+def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificador, dic_cambios):
+    registros_para_guardar = []
+    
+    # Leer el archivo desde la ruta de origen (raw)
+    with open(ruta_raw, encoding='utf-8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+        columnas = lector.fieldnames
+        
+        for fila in lector:
+            # Si encontramos el ID, actualizamos el diccionario en memoria RAM
+            if fila.get("occurrenceID") == identificador:
+                fila.update(dic_cambios)
+            
+            # Guardamos la fila modificada o no en nuestra lista 
+            registros_para_guardar.append(fila)
+
+    # Escribir el resultado en la ruta de destino la carpeta processed
+    with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo:
+        escritor = csv.DictWriter(archivo, fieldnames=columnas, delimiter=separador)
+        escritor.writeheader()
+        escritor.writerows(registros_para_guardar)
 
