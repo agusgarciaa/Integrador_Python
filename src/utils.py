@@ -25,11 +25,11 @@ def obtener_ruta_de_datos(carpeta, archivo):
     #funcion 2a sofia martins
 def recorrer_diez_filas(ruta,delimiterr):
     #abrimos el archivo con open, en modo de lectura,formato utf-8
-    with open(ruta, mode='r', encoding='utf-8') as archivo1:
+    with open(ruta, mode='r', encoding='utf-8') as archivo:
          #nos salteamos la primera linea que es el encabezado
-        next(archivo1)
+        next(archivo)
          #le indicaremos al lector que los campos estan separados con ese delimitador
-        modo = csv.reader(archivo1, delimiter=delimiterr)
+        modo = csv.reader(archivo, delimiter=delimiterr)
          #imprimimos las primeras 10 filas, i sirve para contar por cual fila vamos
         for i, fila in enumerate(modo):
             if i < 10:
@@ -45,9 +45,9 @@ def imprimir_encabezados(ruta, delimiter):
      #le indicamos al reader que tipo de delimitador tienen los campos
     modo = csv.reader(archivo, delimiter=delimiter)
      #imprimimos la primera linea,osea los encanbezados
-    header=next(modo)
+    encabezado=next(modo)
     archivo.close()
-    return header
+    return encabezado
     
 
 # Ejercicio 2.C - Lucia Cipolla
@@ -243,19 +243,19 @@ def Verificar_coordenada(rarchivo):
         leer = csv.DictReader(archivo)
 
         for fila in leer:
-            latitud=fila['decimalLatitude']
-            longitud=fila['decimalLongitude']
-            aux=False
+            latitud=fila.get('decimalLatitude')
+            longitud=fila.get('decimalLongitude')
+            incorrecto=False
         
             if not numero(latitud)or not numero(longitud):
-                 aux=True
+                 incorrecto=True
             else:
                   aux1=float(latitud)
                   aux2=float(longitud)
                   if not -90<=aux1<=90 or not -180<=aux2<=180:
-                     aux=True
+                     incorrecto=True
 
-            if aux:
+            if incorrecto:
                 nocumplen.append(fila)
                
     return nocumplen,len(nocumplen)
@@ -266,12 +266,12 @@ def Cordenadas_faltantes(rarchivo,delimiterr):
     invalidos=[]
     with open(rarchivo, mode='r', encoding='utf-8') as archivo:
         leer=csv.DictReader(archivo, delimiter=delimiterr)
-        header=leer.fieldnames
+        encabezado=leer.fieldnames
    
         for fila in leer:
-            aux1=fila.get('decimalLatitude') or fila.get('latitudeDecimal') or ""
-            aux2=fila.get('decimalLongitude') or fila.get('longitudeDecimal') or ""
-            id=fila.get('id') or fila.get('gbifID')
+            aux1=fila.get('decimalLatitude') 
+            aux2=fila.get('decimalLongitude') 
+            id=fila.get('id') or fila.get('gbifID') or fila.get('occurrenceID') 
       
             if (aux1=="" and aux2!="") or (aux1!="" and aux2==""):
                 lista=[]
@@ -382,25 +382,19 @@ def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_
 #funcion 4f sofia martins
 import os
 
-def funcion4f(ruta_archivo):  
+def agregar_registro(ruta_raw, ruta_processed):
     nuevo = {}
     datos = []
-    #creamos la carpeta destino si no esta creada
-    if not os.path.exists("processed_datasets"):
-        os.makedirs("processed_datasets")
-     #obtenemos nombre y creamos la ruta de destino donde se guardara el archivo creado
-    nombre = os.path.basename(ruta_archivo)
-    destino = os.path.join("processed_datasets", nombre)
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-    with open(ruta_archivo, 'r', newline='', encoding='utf-8') as f:
-        aux = f.read(512)
-        aux2 = csv.Sniffer().sniff(aux)
-        terminator = aux2.lineterminator
+    with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
+        muestra = f.read(512)
+        codificacion = csv.Sniffer().sniff(muestra)
+        terminator = codificacion.lineterminator
         f.seek(0)
         #guardamos el archivo en una estructura para agregarle el registro nuevo
-        leer = csv.DictReader(f, dialect=aux2)
-        header = leer.fieldnames
-        for fila in leer:
+        lector = csv.DictReader(f, dialect=codificacion)
+        header = lector.fieldnames
+        for fila in lector:
             if fila and any(fila.values()):
                 datos.append(fila)
     #creamos el registro a agregar,lo agregamos al final
@@ -409,34 +403,28 @@ def funcion4f(ruta_archivo):
         nuevo[columna] = valor        
     datos.append(nuevo)
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
-    with open(destino, 'w', newline='', encoding='utf-8') as archivo2:
+    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         escribir.writeheader()
         escribir.writerows(datos)
     
-    print(f"Archivo guardado en: {destino}")
+    print(f"Archivo guardado en: {ruta_processed}")
 
 
 #funcion4g sofia martins
-def funcion4g(ruta_archivo):  
+def agregar_varios_registros(ruta_raw,ruta_processed):  
     nuevo = {}
     datos = []
-    #creamos la carpeta destino si no esta creada
-    if not os.path.exists("processed_datasets"):
-        os.makedirs("processed_datasets")
-     #obtenemos nombre y creamos la ruta de destino donde se guardara el archivo creado
-    nombre = os.path.basename(ruta_archivo)
-    destino = os.path.join("processed_datasets", nombre)
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-    with open(ruta_archivo, 'r', newline='', encoding='utf-8') as f:
-        aux = f.read(512)
-        aux2 = csv.Sniffer().sniff(aux)
-        terminator = aux2.lineterminator
+    with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
+        muestra = f.read(512)
+        codificacion = csv.Sniffer().sniff(muestra)
+        terminator = codificacion.lineterminator
         f.seek(0)
         #guardamos el archivo en una estructura para agregarle el registro nuevo
-        leer = csv.DictReader(f, dialect=aux2)
-        header = leer.fieldnames
-        for fila in leer:
+        lector = csv.DictReader(f, dialect=codificacion)
+        header = lector.fieldnames
+        for fila in lector:
             if fila and any(fila.values()):
                 datos.append(fila)
     #creamos el registro a agregar,lo agregamos al final
@@ -452,11 +440,52 @@ def funcion4g(ruta_archivo):
             nuevo[columna] = valor        
           datos.append(nuevo)
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
-    with open(destino, 'w', newline='', encoding='utf-8') as archivo2:
+    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         escribir.writeheader()
         escribir.writerows(datos)
     
-    print(f"Archivo guardado en: {destino}")
+    print(f"Archivo guardado en: {ruta_processed}")
+    
+    
+    
+    
+    # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
+    
+    
+    def eliminar_por_identificador(ruta_raw,ruta_processed):
+      datos=[]
+      se_encontro=False
+      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
+      with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
+         aux = archivo.read(512)
+         aux2 = csv.Sniffer().sniff(aux)
+         terminator = aux2.lineterminator
+         archivo.seek(0)
+         #guardamos el archivo en una estructura para eliminarle el registro
+         lector = csv.DictReader(archivo, dialect=aux2)
+         header = lector.fieldnames
+         for fila in lector:
+             if fila and any(fila.values()):
+                 datos.append(fila)
+         identificador=input("ingrese el identificador del registro a eliminar: ")
+         for fila in datos:
+             if fila.get('gbifID')==identificador or fila.get('id')==identificador or fila.get('occurrenceID') ==identificador:
+                 datos.remove(fila)
+                 se_encontro=True
+                 print("se elimino el registro")
+                 break
+         if not se_encontro:
+             print("ese identificador no estaba en el registro")
+            
+
+    #guardamos en pc el archivo nuevo con el registro eliminado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+      if se_encontro:
+         with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+              escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
+              escribir.writeheader()
+              escribir.writerows(datos)
+    
+         print(f"Archivo guardado en: {ruta_processed}")
 
 
