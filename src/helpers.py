@@ -1,5 +1,9 @@
 from collections import Counter
+<<<<<<< HEAD
+from datetime import datetime
+=======
 import csv
+>>>>>>> fe14eecaf89d2f07582b469630461d00cb2388ce
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -13,7 +17,7 @@ def obtener_indice(header, columna):
     except ValueError:
         print(f" Error: No se encontró la columna: {columna}")
         return None
-
+    
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
 def calcular_numericos(lista):
@@ -36,6 +40,12 @@ def calcular_coordenada(lista):
     return max(coordenada), min(coordenada)
 
 
+# Funcion de apoyo para el ejercicio 3.A - Sofia Martins
+def numero(dato):
+    aux=dato.strip().replace('-','',1).replace('.','',1)
+    return aux.isdigit()and dato.strip() !=""
+
+
 # Funcion de apoyo para el ejercicio 3.D - Ana Freitas
 def detectar_duplicados(lista):
     conteo_ids = Counter(lista) 
@@ -45,6 +55,30 @@ def detectar_duplicados(lista):
     
     return 'registros duplicados: ', duplicados, 'identificador se repite: ', repetidos
 
+<<<<<<< HEAD
+# Funcion para el ejercicio 3.C - Fe Cordoba
+def chequear_fecha(valor):
+    """
+    Intenta convertir un string a fecha usando distintos formatos.
+    Retorna un objeto datetime si es válido, o None si no lo es.
+    """
+
+    formatos = [
+        "%d-%m-%Y",
+        "%Y-%m-%d",
+        "%m-%Y",
+        "%Y",
+        "%Y-%m-%dT%H:%M:%S"
+    ]
+
+    for formato in formatos:
+        try:
+            return datetime.strptime(valor, formato)
+        except ValueError:
+            continue
+
+    return None
+=======
 
 # Funcion de apoyo para el ejercicio 3.G - Agustin Garcia
 def contar_taxonomia_incompleta(ruta, separador=","):
@@ -75,3 +109,4 @@ def contar_taxonomia_incompleta(ruta, separador=","):
                 incompletos = incompletos + 1
 
     return incompletos
+>>>>>>> fe14eecaf89d2f07582b469630461d00cb2388ce
