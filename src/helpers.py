@@ -13,7 +13,7 @@ def obtener_indice(header, columna):
     except ValueError:
         print(f" Error: No se encontró la columna: {columna}")
         return None
-
+    
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
 def calcular_numericos(lista):
@@ -34,6 +34,12 @@ def calcular_coordenada(lista):
     coordenada = [float(num) for num in lista]
 
     return max(coordenada), min(coordenada)
+
+
+# Funcion de apoyo para el ejercicio 3.A - Sofia Martins
+def numero(dato):
+    aux=dato.strip().replace('-','',1).replace('.','',1)
+    return aux.isdigit()and dato.strip() !=""
 
 
 # Funcion de apoyo para el ejercicio 3.D - Ana Freitas
