@@ -1,4 +1,5 @@
 from collections import Counter
+from datetime import datetime
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -41,3 +42,26 @@ def detectar_duplicados(lista):
     duplicados = sum(cantidad - 1 for cantidad in conteo_ids.values() if cantidad > 1)
     
     return 'registros duplicados: ', duplicados, 'identificador se repite: ', repetidos
+
+# Funcion para el ejercicio 3.C - Fe Cordoba
+def chequear_fecha(valor):
+    """
+    Intenta convertir un string a fecha usando distintos formatos.
+    Retorna un objeto datetime si es válido, o None si no lo es.
+    """
+
+    formatos = [
+        "%d-%m-%Y",
+        "%Y-%m-%d",
+        "%m-%Y",
+        "%Y",
+        "%Y-%m-%dT%H:%M:%S"
+    ]
+
+    for formato in formatos:
+        try:
+            return datetime.strptime(valor, formato)
+        except ValueError:
+            continue
+
+    return None

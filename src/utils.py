@@ -58,6 +58,7 @@ def recorrer_diez_filas(ruta1,ruta2,ruta3):
     archivo2.close()
     archivo3.close()
 
+
 #funcion 2b sofia martins
 def imprimir_encabezados(ruta1,ruta2,ruta3):
      #abrimos el archivo en modo lectura y con delimitador utf-8
@@ -77,6 +78,7 @@ def imprimir_encabezados(ruta1,ruta2,ruta3):
     modo3 = csv.reader(archivo3, delimiter=',')
     print(next(modo3))
     archivo3.close()
+
 
 # Ejercicio 2.C - Lucia Cipolla
 def column_index (path,c_delimiter=',',c_encoding='utf-8'):
@@ -98,6 +100,7 @@ def column_index (path,c_delimiter=',',c_encoding='utf-8'):
             dict_index[column] = index
     return dict_index
 
+
 # Ejercicio 2.D - Agustin Garcia
 def total_registros (ruta, separador=",", encoding="utf-8"):
     """
@@ -113,7 +116,6 @@ def total_registros (ruta, separador=",", encoding="utf-8"):
             total += 1
 
     return total
-
 
 
 # Ejercicio 2.E - Fe Cordoba 
@@ -159,6 +161,7 @@ def porcentaje_nulos(ruta, separador=","):
             porcentajes[header[i]] = 0
 
     return porcentajes
+
 
 # Ejercicio 2.G - Agustin Garcia
 def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf-8"):
