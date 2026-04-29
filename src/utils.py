@@ -396,6 +396,105 @@ def calidad_dataset (ruta, separador=","):
     return resumen, reporte
 
 
+# Ejercicio 3.F - Lucia Cipolla
+def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
+    """
+        Recibe el path de un archivo en formato csv y lo lee.
+        Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
+        Parametros:
+            path: un path (mejor si es un r-string)
+            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+            high_val: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
+
+        se usan las librerias: csv, utils
+    """
+    res = []
+    field='coordinateUncertaintyInMeters'
+    with open(path, mode='r', encoding=c_encoding) as file:
+        lector = csv.reader(file,delimiter=c_delimiter)
+        header = next(lector)
+        index_dict = column_index(path,c_delimiter,c_encoding)
+        try:
+            x = index_dict[field]
+            for i,element in enumerate(lector):
+                try:
+                    e = element[x]
+                    if float(e)<0 or float(e)>high_val:
+                        res.append(True)
+                    else:
+                        res.append(False)
+                except ValueError:
+                    res.append(True)
+        except KeyError:
+            print('El dataset no contiene el campo "coordinateUncertaintyInMeters".')
+            
+    return res
+
+
+# Ejercicio 3.F - Lucia Cipolla
+def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
+    """
+        Recibe el path de un archivo en formato csv y lo lee.
+        Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
+        Parametros:
+            path: un path (mejor si es un r-string)
+            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+
+        se usan las librrerías: csv, utils
+    """
+    ret = []
+    MAX_LAT = 13.0
+    MIN_LAT = -56.0
+    MAX_LONG = -34.0
+    MIN_LONG = -82.0
+    with open(path,mode='r',encoding=c_encoding) as file:
+        lector = csv.reader(file,delimiter=c_delimiter)  #lector es de tipo <class '_csv.reader'>
+        header = next(lector)
+        aux = column_index(path,c_delimiter)
+        try:
+            lat = aux['decimalLatitude']
+        except KeyError:
+            print('decimalLatitude no se encontró. ')
+            lat = None
+        try:
+            long = aux['decimalLongitude']
+        except KeyError:
+            print('decimalLongitude no se encontró. ')
+            long = None
+
+        if (lat is not None) and (long is not None):
+            for i,element in enumerate(lector):
+                dat_lat = element[lat]
+                dat_long = element[long]
+                
+                try:
+                    dat_lat = float(dat_lat.strip())
+                    
+                    if dat_lat<MIN_LAT or dat_lat>MAX_LAT:
+                        res_lat = False
+                    else:
+                        res_lat = True
+
+                except ValueError:
+                    res_lat = False
+
+                try:
+                    dat_long = float(dat_long.strip())
+                    
+                    if dat_long<MIN_LONG or dat_long>MAX_LONG:
+                        res_long = False
+                    else:
+                        res_long = True
+                except ValueError:
+                    res_long = False
+                
+                ret.append((res_lat,res_long))
+            
+    return ret
+
+
 # Ejercicio 3.I - Ana Freitas
 def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_longitud):
    with open(ruta, encoding="utf-8") as archivo:
@@ -408,7 +507,7 @@ def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_
          
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
-#  Ejercicio 4.A - Fe Cordoba
+#  Ejercicio 4.A/B - Fe Cordoba
 def crear_registro_vacio(columnas):
     columnas_id = ["id", "occurrenceid", "gbifid"]
     
@@ -421,9 +520,10 @@ def crear_registro_vacio(columnas):
 
 
 #funcion 4f sofia martins
-def agregar_registro(ruta_raw, ruta_processed):
+def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     nuevo = {}
     datos = []
+    agregados=0
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
     with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
@@ -441,6 +541,7 @@ def agregar_registro(ruta_raw, ruta_processed):
         valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
         nuevo[columna] = valor        
     datos.append(nuevo)
+    agregados +=1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
     with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -448,12 +549,16 @@ def agregar_registro(ruta_raw, ruta_processed):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {ruta_processed}")
+    nombredataset=Path(ruta_raw).name
+    operacion="INSERT"
+    registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
 
 
 #funcion4g sofia martins
-def agregar_varios_registros(ruta_raw,ruta_processed):  
+def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):  
     nuevo = {}
     datos = []
+    agregados=0
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
     with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
@@ -478,6 +583,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
             valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
             nuevo[columna] = valor        
           datos.append(nuevo)
+          agregados += 1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
     with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -485,45 +591,10 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {ruta_processed}")
+    nombredataset=Path(ruta_raw).name
+    operacion="INSERT"
+    registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
     
-    
-    # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
-    
-    def eliminar_por_identificador(ruta_raw,ruta_processed):
-      datos=[]
-      se_encontro=False
-      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-      with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
-         aux = archivo.read(512)
-         aux2 = csv.Sniffer().sniff(aux)
-         terminator = aux2.lineterminator
-         archivo.seek(0)
-         #guardamos el archivo en una estructura para eliminarle el registro
-         lector = csv.DictReader(archivo, dialect=aux2)
-         header = lector.fieldnames
-         for fila in lector:
-             if fila and any(fila.values()):
-                 datos.append(fila)
-         identificador=input("ingrese el identificador del registro a eliminar: ")
-         for fila in datos:
-             if fila.get('gbifID')==identificador or fila.get('id')==identificador or fila.get('occurrenceID') ==identificador:
-                 datos.remove(fila)
-                 se_encontro=True
-                 print("se elimino el registro")
-                 break
-         if not se_encontro:
-             print("ese identificador no estaba en el registro")
-            
-
-    #guardamos en pc el archivo nuevo con el registro eliminado,usamos el delimitador para que todo quede delimitado como estaba originalmente
-      if se_encontro:
-         with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
-              escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
-              escribir.writeheader()
-              escribir.writerows(datos)
-    
-         print(f"Archivo guardado en: {ruta_processed}")
-
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
 
@@ -571,14 +642,126 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
         escritor.writerows(registros_para_guardar)
 
 
+ # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
+    
+def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
+    datos = []
+    se_encontro = False
+    eliminados = 0
+    operacion = "DELETE"
+
+    # abrimos el archivo para leerlo, con sniffer obtenemos el delimitador
+    with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
+        aux = archivo.read(512)
+        aux2 = csv.Sniffer().sniff(aux)
+        terminator = aux2.lineterminator
+        archivo.seek(0)
+
+        # guardamos el archivo en una estructura para eliminarle el registro
+        lector = csv.DictReader(archivo, dialect=aux2)
+        header = lector.fieldnames
+
+        for fila in lector:
+            if fila and any(fila.values()):
+                datos.append(fila)
+
+        identificador = input("ingrese el identificador del registro a eliminar: ")
+
+        for fila in datos:
+            if (
+                fila.get('gbifID') == identificador
+                or fila.get('id') == identificador
+                or fila.get('occurrenceID') == identificador
+            ):
+                datos.remove(fila)
+                se_encontro = True
+                eliminados += 1
+                print("se elimino el registro")
+                break
+
+        if not se_encontro:
+            print("ese identificador no estaba en el registro")
+
+    # guardamos en pc el archivo nuevo con el registro eliminado
+    if se_encontro:
+        with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+            escribir = csv.DictWriter(
+                archivo2,
+                fieldnames=header,
+                lineterminator=terminator,
+                extrasaction='ignore'
+            )
+            escribir.writeheader()
+            escribir.writerows(datos)
+
+        print(f"Archivo guardado en: {ruta_processed}")
+        serealizo = 'SI'
+    else:
+        serealizo = "ERROR"
+
+    print(f"archivos eliminados: {eliminados}")
+    nombredataset = Path(ruta_raw).name
+    registro_cambio_operations(
+        ruta_operations,
+        nombredataset,
+        operacion,
+        eliminados,
+        serealizo
+    )
+
+
+# Ejercicio 6.C - Fe Cordoba
+def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
+    
+    carpeta = "processed_datasets"
+    if not os.path.exists(carpeta):
+        raise FileNotFoundError("La carpeta 'processed_datasets' no existe")
+
+    condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
+    if condicion not in condiciones_validas:
+        raise ValueError("Condición no válida")
+
+    if valor == "" or valor == "N/A":
+        raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
+
+    nombre_base = os.path.basename(archivo)
+    nombre_salida = f"eliminados_por_condicion_{nombre_base}"
+    ruta_salida = os.path.join(carpeta, nombre_salida)
+
+    with open(archivo, newline="", encoding="utf-8") as f_in:
+        reader = csv.DictReader(f_in, delimiter=delimiter)
+
+        columnas = reader.fieldnames
+
+        if columna not in columnas:
+            raise ValueError(f"La columna '{columna}' no existe")
+
+        with open(ruta_salida, "w", newline="", encoding="utf-8") as nuevo:
+            writer = csv.DictWriter(nuevo, fieldnames=columnas, delimiter=delimiter)
+            writer.writeheader()
+
+            for fila in reader:
+                dato = fila[columna]
+
+                if not hp.cumple_condicion(dato, condicion, valor):
+                    writer.writerow(fila)
+
 
 # --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
 
 # Ejercicio 7.A - Fe Cordoba
-from datetime import datetime
-
 def obtener_fecha_hora_actual():
     ahora = datetime.now()
     fecha_formateada = ahora.strftime("%Y-%m-%d %H:%M:%S")
     return fecha_formateada
 
+
+# Ejercicio 7b - sofia martins
+def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados,serealizo):
+    fecha=obtener_fecha_hora_actual()
+    if serealizo=='SI':
+        cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
+    if serealizo=="ERROR":
+        cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros |ERROR\n"
+    with open(ruta_operations,'a',encoding='utf-8',newline='') as archivo:
+        archivo.write(cadena)
