@@ -9,3 +9,8 @@ src/__pycache__/
 *.pyc
 
 src/teste.py
+
+notebooks/.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+.venv
