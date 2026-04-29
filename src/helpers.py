@@ -1,9 +1,9 @@
 from collections import Counter
-<<<<<<< HEAD
+
 from datetime import datetime
-=======
+
 import csv
->>>>>>> fe14eecaf89d2f07582b469630461d00cb2388ce
+
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -55,7 +55,7 @@ def detectar_duplicados(lista):
     
     return 'registros duplicados: ', duplicados, 'identificador se repite: ', repetidos
 
-<<<<<<< HEAD
+
 # Funcion para el ejercicio 3.C - Fe Cordoba
 def chequear_fecha(valor):
     """
@@ -78,7 +78,7 @@ def chequear_fecha(valor):
             continue
 
     return None
-=======
+
 
 # Funcion de apoyo para el ejercicio 3.G - Agustin Garcia
 def contar_taxonomia_incompleta(ruta, separador=","):
@@ -109,4 +109,4 @@ def contar_taxonomia_incompleta(ruta, separador=","):
                 incompletos = incompletos + 1
 
     return incompletos
->>>>>>> fe14eecaf89d2f07582b469630461d00cb2388ce
+
