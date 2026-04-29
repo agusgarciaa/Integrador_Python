@@ -570,3 +570,15 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
         escritor.writeheader()
         escritor.writerows(registros_para_guardar)
 
+
+
+# --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
+
+# Ejercicio 7.A - Fe Cordoba
+from datetime import datetime
+
+def obtener_fecha_hora_actual():
+    ahora = datetime.now()
+    fecha_formateada = ahora.strftime("%Y-%m-%d %H:%M:%S")
+    return fecha_formateada
+
