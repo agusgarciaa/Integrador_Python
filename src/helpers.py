@@ -110,3 +110,51 @@ def contar_taxonomia_incompleta(ruta, separador=","):
 
     return incompletos
 
+
+# Helper para la funcion cumple condicion - Fe Cordoba
+def es_numero(valor):
+    """Determina si un valor es numérico (incluye negativos y decimales)."""
+
+    if valor == "" or valor == "N/A":
+        return False
+
+    valor_str = str(valor)
+
+    if valor_str.startswith("-"):
+        valor_str = valor_str[1:]
+
+    valor_str = valor_str.replace(".", "", 1)
+
+    return valor_str.isdigit()
+
+
+# Helper para la funcion del 6.C - Fe Cordoba
+def cumple_condicion(dato, condicion, valor):
+    """Evalúa si un dato cumple una condición."""
+
+    if dato == "" or dato == "N/A":
+        return False
+
+    if es_numero(dato) and es_numero(valor):
+        dato = float(dato)
+        valor = float(valor)
+    else:
+        dato = str(dato)
+        valor = str(valor)
+
+    match condicion:
+        case "==":
+            return dato == valor
+        case "!=":
+            return dato != valor
+        case ">":
+            return dato > valor
+        case ">=":
+            return dato >= valor
+        case "<":
+            return dato < valor
+        case "<=":
+            return dato <= valor
+        case _:
+            # esto no debería ocurrir si validamos antes
+            raise ValueError("Condición no válida")
