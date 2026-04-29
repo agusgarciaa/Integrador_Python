@@ -432,7 +432,6 @@ def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
     return res
 
 
-
 # Ejercicio 3.F - Lucia Cipolla
 def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
     """
@@ -496,7 +495,6 @@ def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
     return ret
 
 
-
 # Ejercicio 3.I - Ana Freitas
 def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_longitud):
    with open(ruta, encoding="utf-8") as archivo:
@@ -509,7 +507,7 @@ def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_
          
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
-#  Ejercicio 4.A - Fe Cordoba
+#  Ejercicio 4.A/B - Fe Cordoba
 def crear_registro_vacio(columnas):
     columnas_id = ["id", "occurrenceid", "gbifid"]
     
@@ -597,52 +595,6 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
     operacion="INSERT"
     registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
     
-    
-    # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
-    
-    def eliminar_por_identificador(ruta_raw,ruta_processed,ruta_operations):
-      datos=[]
-      se_encontro=False
-      eliminados=0
-      operacion="DELETE"
-      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-      with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
-         aux = archivo.read(512)
-         aux2 = csv.Sniffer().sniff(aux)
-         terminator = aux2.lineterminator
-         archivo.seek(0)
-         #guardamos el archivo en una estructura para eliminarle el registro
-         lector = csv.DictReader(archivo, dialect=aux2)
-         header = lector.fieldnames
-         for fila in lector:
-             if fila and any(fila.values()):
-                 datos.append(fila)
-         identificador=input("ingrese el identificador del registro a eliminar: ")
-         for fila in datos:
-             if fila.get('gbifID')==identificador or fila.get('id')==identificador or fila.get('occurrenceID') ==identificador:
-                 datos.remove(fila)
-                 se_encontro=True
-                 eliminados += 1
-                 print("se elimino el registro")
-                 break
-         if not se_encontro:
-             print("ese identificador no estaba en el registro")
-
-    #guardamos en pc el archivo nuevo con el registro eliminado,usamos el delimitador para que todo quede delimitado como estaba originalmente
-      if se_encontro:
-         with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
-              escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
-              escribir.writeheader()
-              escribir.writerows(datos)
-         print(f"Archivo guardado en: {ruta_processed}")
-         serealizo='SI'
-      else:
-         serealizo="ERROR"
-    
-      print(f"archivos eliminados: {eliminados}")
-      nombredataset=Path(ruta_raw).name
-      registro_cambio_operations(ruta_operations,nombredataset,operacion,eliminados,serealizo)
-
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
 
@@ -690,16 +642,119 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
         escritor.writerows(registros_para_guardar)
 
 
+ # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
+    
+def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
+    datos = []
+    se_encontro = False
+    eliminados = 0
+    operacion = "DELETE"
+
+    # abrimos el archivo para leerlo, con sniffer obtenemos el delimitador
+    with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
+        aux = archivo.read(512)
+        aux2 = csv.Sniffer().sniff(aux)
+        terminator = aux2.lineterminator
+        archivo.seek(0)
+
+        # guardamos el archivo en una estructura para eliminarle el registro
+        lector = csv.DictReader(archivo, dialect=aux2)
+        header = lector.fieldnames
+
+        for fila in lector:
+            if fila and any(fila.values()):
+                datos.append(fila)
+
+        identificador = input("ingrese el identificador del registro a eliminar: ")
+
+        for fila in datos:
+            if (
+                fila.get('gbifID') == identificador
+                or fila.get('id') == identificador
+                or fila.get('occurrenceID') == identificador
+            ):
+                datos.remove(fila)
+                se_encontro = True
+                eliminados += 1
+                print("se elimino el registro")
+                break
+
+        if not se_encontro:
+            print("ese identificador no estaba en el registro")
+
+    # guardamos en pc el archivo nuevo con el registro eliminado
+    if se_encontro:
+        with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+            escribir = csv.DictWriter(
+                archivo2,
+                fieldnames=header,
+                lineterminator=terminator,
+                extrasaction='ignore'
+            )
+            escribir.writeheader()
+            escribir.writerows(datos)
+
+        print(f"Archivo guardado en: {ruta_processed}")
+        serealizo = 'SI'
+    else:
+        serealizo = "ERROR"
+
+    print(f"archivos eliminados: {eliminados}")
+    nombredataset = Path(ruta_raw).name
+    registro_cambio_operations(
+        ruta_operations,
+        nombredataset,
+        operacion,
+        eliminados,
+        serealizo
+    )
+
+
+# Ejercicio 6.C - Fe Cordoba
+def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
+    
+    carpeta = "processed_datasets"
+    if not os.path.exists(carpeta):
+        raise FileNotFoundError("La carpeta 'processed_datasets' no existe")
+
+    condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
+    if condicion not in condiciones_validas:
+        raise ValueError("Condición no válida")
+
+    if valor == "" or valor == "N/A":
+        raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
+
+    nombre_base = os.path.basename(archivo)
+    nombre_salida = f"eliminados_por_condicion_{nombre_base}"
+    ruta_salida = os.path.join(carpeta, nombre_salida)
+
+    with open(archivo, newline="", encoding="utf-8") as f_in:
+        reader = csv.DictReader(f_in, delimiter=delimiter)
+
+        columnas = reader.fieldnames
+
+        if columna not in columnas:
+            raise ValueError(f"La columna '{columna}' no existe")
+
+        with open(ruta_salida, "w", newline="", encoding="utf-8") as nuevo:
+            writer = csv.DictWriter(nuevo, fieldnames=columnas, delimiter=delimiter)
+            writer.writeheader()
+
+            for fila in reader:
+                dato = fila[columna]
+
+                if not hp.cumple_condicion(dato, condicion, valor):
+                    writer.writerow(fila)
+
 
 # --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
 
 # Ejercicio 7.A - Fe Cordoba
-from datetime import datetime
-
 def obtener_fecha_hora_actual():
     ahora = datetime.now()
     fecha_formateada = ahora.strftime("%Y-%m-%d %H:%M:%S")
     return fecha_formateada
+
 
 # Ejercicio 7b - sofia martins
 def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados,serealizo):
