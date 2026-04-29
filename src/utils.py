@@ -569,3 +569,16 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
         escritor.writeheader()
         escritor.writerows(registros_para_guardar)
 
+
+# --------------------------------------------------------------- Ejercicios 7 - registro de operaciones --------------------------------------------------------------
+
+
+
+
+
+
+def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados):
+    fecha=
+    cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados}\n"
+    with open(ruta_operations,'a',encoding='utf-8',newline='') as archivo:
+        archivo.write(cadena)
