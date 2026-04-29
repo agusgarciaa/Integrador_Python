@@ -421,9 +421,10 @@ def crear_registro_vacio(columnas):
 
 
 #funcion 4f sofia martins
-def agregar_registro(ruta_raw, ruta_processed):
+def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     nuevo = {}
     datos = []
+    agregados=0
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
     with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
@@ -441,6 +442,7 @@ def agregar_registro(ruta_raw, ruta_processed):
         valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
         nuevo[columna] = valor        
     datos.append(nuevo)
+    agregados +=1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
     with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -448,12 +450,16 @@ def agregar_registro(ruta_raw, ruta_processed):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {ruta_processed}")
+    nombredataset=Path(ruta_raw).name
+    operacion="INSERT"
+    registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
 
 
 #funcion4g sofia martins
-def agregar_varios_registros(ruta_raw,ruta_processed):  
+def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):  
     nuevo = {}
     datos = []
+    agregados=0
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
     with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
@@ -478,6 +484,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
             valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
             nuevo[columna] = valor        
           datos.append(nuevo)
+          agregados += 1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
     with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -485,13 +492,18 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {ruta_processed}")
+    nombredataset=Path(ruta_raw).name
+    operacion="INSERT"
+    registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
     
     
     # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
     
-    def eliminar_por_identificador(ruta_raw,ruta_processed):
+    def eliminar_por_identificador(ruta_raw,ruta_processed,ruta_operations):
       datos=[]
       se_encontro=False
+      eliminados=0
+      operacion="DELETE"
       #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
       with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
          aux = archivo.read(512)
@@ -509,11 +521,11 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
              if fila.get('gbifID')==identificador or fila.get('id')==identificador or fila.get('occurrenceID') ==identificador:
                  datos.remove(fila)
                  se_encontro=True
+                 eliminados += 1
                  print("se elimino el registro")
                  break
          if not se_encontro:
              print("ese identificador no estaba en el registro")
-            
 
     #guardamos en pc el archivo nuevo con el registro eliminado,usamos el delimitador para que todo quede delimitado como estaba originalmente
       if se_encontro:
@@ -521,8 +533,14 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
               escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
               escribir.writeheader()
               escribir.writerows(datos)
-    
          print(f"Archivo guardado en: {ruta_processed}")
+         serealizo='SI'
+      else:
+         serealizo="ERROR"
+    
+      print(f"archivos eliminados: {eliminados}")
+      nombredataset=Path(ruta_raw).name
+      registro_cambio_operations(ruta_operations,nombredataset,operacion,eliminados,serealizo)
 
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
@@ -582,8 +600,12 @@ def obtener_fecha_hora_actual():
     fecha_formateada = ahora.strftime("%Y-%m-%d %H:%M:%S")
     return fecha_formateada
 
-def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados):
+# Ejercicio 7b - sofia martins
+def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados,serealizo):
     fecha=obtener_fecha_hora_actual()
-    cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
+    if serealizo=='SI':
+        cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
+    if serealizo=="ERROR":
+        cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros |ERROR\n"
     with open(ruta_operations,'a',encoding='utf-8',newline='') as archivo:
         archivo.write(cadena)
