@@ -582,3 +582,8 @@ def obtener_fecha_hora_actual():
     fecha_formateada = ahora.strftime("%Y-%m-%d %H:%M:%S")
     return fecha_formateada
 
+def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados):
+    fecha=obtener_fecha_hora_actual()
+    cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
+    with open(ruta_operations,'a',encoding='utf-8',newline='') as archivo:
+        archivo.write(cadena)
