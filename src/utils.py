@@ -40,9 +40,8 @@ def recorrer_diez_filas(ruta,delimiterr):
                 break
 
 
-
 #funcion 2b sofia martins
-def imprimir_encabezados(ruta, delimiter):
+def imprimir_encabezados(ruta, delimiter=','):
      #abrimos el archivo en modo lectura y con delimitador utf-8
     archivo = open(ruta, 'r', encoding='utf-8')
      #le indicamos al reader que tipo de delimitador tienen los campos
@@ -52,7 +51,6 @@ def imprimir_encabezados(ruta, delimiter):
     archivo.close()
     return encabezado
     
-
 
 # Ejercicio 2.C - Lucia Cipolla
 def column_index (path,c_delimiter=',',c_encoding='utf-8'):
@@ -367,7 +365,6 @@ def validar_country_code(ruta, separador=","):
     return cods_invalidos
 
 
-
 # Ejercicio 3.G - Agustin Garcia
 def calidad_dataset (ruta, separador=","):
     total = total_registros(ruta, separador)
@@ -409,11 +406,21 @@ def ejecutar_validaciones_coordenadas(ruta, separador, columna_latitud, columna_
         indice_longitud = hp.obtener_indice(header, columna_longitud)
 
          
-
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
-#funcion 4f sofia martins
+#  Ejercicio 4.A - Fe Cordoba
+def crear_registro_vacio(columnas):
+    columnas_id = ["id", "occurrenceid", "gbifid"]
+    
+    registro = {}
+    for col in columnas:
+        if col.strip().lower() not in columnas_id:  
+            registro[col] = None
 
+    return registro
+
+
+#funcion 4f sofia martins
 def agregar_registro(ruta_raw, ruta_processed):
     nuevo = {}
     datos = []
@@ -480,10 +487,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
     print(f"Archivo guardado en: {ruta_processed}")
     
     
-    
-    
     # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
-    
     
     def eliminar_por_identificador(ruta_raw,ruta_processed):
       datos=[]
@@ -519,9 +523,6 @@ def agregar_varios_registros(ruta_raw,ruta_processed):
               escribir.writerows(datos)
     
          print(f"Archivo guardado en: {ruta_processed}")
-
-
-
 
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
@@ -570,15 +571,19 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
         escritor.writerows(registros_para_guardar)
 
 
-# --------------------------------------------------------------- Ejercicios 7 - registro de operaciones --------------------------------------------------------------
 
+# --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
 
+# Ejercicio 7.A - Fe Cordoba
+from datetime import datetime
 
-
-
+def obtener_fecha_hora_actual():
+    ahora = datetime.now()
+    fecha_formateada = ahora.strftime("%Y-%m-%d %H:%M:%S")
+    return fecha_formateada
 
 def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados):
-    fecha=
-    cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados}\n"
+    fecha=obtener_fecha_hora_actual()
+    cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
     with open(ruta_operations,'a',encoding='utf-8',newline='') as archivo:
         archivo.write(cadena)
