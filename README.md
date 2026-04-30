@@ -49,6 +49,6 @@ Dado que la interfaz gráfica está desarrollada con Streamlit, el proyecto se i
 ## Grupo 4:
 - Agustin Garcia
 - Ana Freitas
-- Lucia Cipolla
 - Fe Sofia Cordoba
+- Lucia Cipolla
 - Sofia Martins
