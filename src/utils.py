@@ -76,11 +76,11 @@ def column_index (path,c_delimiter=',',c_encoding='utf-8'):
         se usan las librerias: csv
     """
     dict_index = {}
-    with open(path, mode='r', encoding=c_encoding) as file:
-        lector = csv.reader(file, delimiter=c_delimiter)
+    with open(path, mode='r', encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo, delimiter=c_delimiter)
         header = next(lector)
-        for index, column in enumerate(header):
-            dict_index[column] = index
+        for i, columna in enumerate(header):
+            dict_index[columna] = i
     return dict_index
 
 
@@ -168,34 +168,35 @@ def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf
 
 
 # Ejercicio 2.H - Lucia Cipolla
-def value_frequency (path,name,c_delimiter=',',c_encoding='utf-8'):
+def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
     """
         Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve un diccionario que tiene como clave el nombre del VALOR de la columna y como valor la cantidad de veces que aparece repetido.
+        Recibe en nombre el nombre o posición de una columna.
+        Devuelve un diccionario que tiene como clave el nombre del valor de la columna y como valor la
+        cantidad de veces que aparece repetido.
         Parametros:
             path: un path (mejor si es un r-string)
             c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
             c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+            nombre: nombre o índice de la columna a analizar.
 
         se usan las librerias: csv, collections(Counter)
     """
     freq = Counter()
-    name = str(name)
-    with open(path, mode='r', encoding=c_encoding) as file:
-        lector = csv.reader(file, delimiter=c_delimiter)
+    nombre = str(nombre)
+    with open(path, mode='r', encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo, delimiter=c_delimiter)
         header = next(lector)
-        match name.isdigit():
+        match nombre.isdigit():
             case True:
-                #name es el numero de la columna
-                name = int(name)
-                for element in lector:
-                    freq[element[name]]+= 1
+                nombre = int(nombre)
+                for elemento in lector:
+                    freq[elemento[nombre]]+= 1
             case False:
-                #name es el nombre de la columna
-                if name in header:
-                    pos = header.index(name)
-                    for element in lector:
-                        freq[element[pos]]+= 1
+                if nombre in header:
+                    pos = header.index(nombre)
+                    for elemento in lector:
+                        freq[elemento[pos]]+= 1
                 else:
                     print('No se encontró la columna.')
     freq=dict(freq)
@@ -247,7 +248,7 @@ def identificar_columnas_nulas(ruta, separador):
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 
-def verificar_coordenada(ruta, separador=","):
+def verificar_coordenada(ruta, separador):
     nocumplen=[]
     with open(ruta, mode='r', encoding='utf-8', delimiter=separador) as archivo:
         leer = csv.DictReader(archivo)
@@ -255,40 +256,26 @@ def verificar_coordenada(ruta, separador=","):
         for fila in leer:
             latitud=fila.get('decimalLatitude')
             longitud=fila.get('decimalLongitude')
-            aux=False
         
-            if not hp.numero(latitud)or not hp.numero(longitud):
-                 aux=True
-            else:
-                  aux1=float(latitud)
-                  aux2=float(longitud)
-                  if not -90<=aux1<=90 or not -180<=aux2<=180:
-                     aux=True
+            aux1=hp.verificar_latitud(latitud)
+            aux2=hp.verificar_longitud(longitud)
 
-            if aux:
+            if not aux1 or not aux2:
                 nocumplen.append(fila)
                
     return nocumplen,len(nocumplen)
 
 
 #funcion 3b sofia martins
-def cordenadas_faltantes(ruta,delimiterr):
-    invalidos=[]
-    with open(ruta, mode='r', encoding='utf-8') as archivo:
-        leer=csv.DictReader(archivo, delimiter=delimiterr)
-        encabezado=leer.fieldnames
-   
-        for fila in leer:
-            aux1=fila.get('decimalLatitude') 
-            aux2=fila.get('decimalLongitude') 
-            id=fila.get('id') or fila.get('gbifID') or fila.get('occurrenceID') 
+def cordenadas_faltantes(fila):
+    cumple=True
+    aux1=fila.get('decimalLatitude') 
+    aux2=fila.get('decimalLongitude') 
       
-            if (aux1=="" and aux2!="") or (aux1!="" and aux2==""):
-                lista=[]
-                lista=[id,aux1,aux2]
-                invalidos.append(lista)
+    if ((aux1==""or aux1==None) and aux2!="") or (aux1!="" and (aux2==""or aux2==None)):
+         cumple=False
     
-    return invalidos
+    return cumple
 
 
 # Ejercicio 3.C - Fe Cordoba
@@ -377,7 +364,7 @@ def validar_country_code(ruta, separador=","):
 
 
 # Ejercicio 3.F - Lucia Cipolla
-def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
+def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100):
     """
         Recibe el path de un archivo en formato csv y lo lee.
         Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
@@ -385,22 +372,22 @@ def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
             path: un path (mejor si es un r-string)
             c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
             c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
-            high_val: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
+            valor_alto: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
 
         se usan las librerias: csv, utils
     """
     res = []
-    field='coordinateUncertaintyInMeters'
-    with open(path, mode='r', encoding=c_encoding) as file:
-        lector = csv.reader(file,delimiter=c_delimiter)
+    campo='coordinateUncertaintyInMeters'
+    with open(path, mode='r', encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo,delimiter=c_delimiter)
         header = next(lector)
-        index_dict = column_index(path,c_delimiter,c_encoding)
+        indice_dict = column_index(path,c_delimiter,c_encoding)
         try:
-            x = index_dict[field]
-            for i,element in enumerate(lector):
+            x = indice_dict[campo]
+            for i,elemento in enumerate(lector):
                 try:
-                    e = element[x]
-                    if float(e)<0 or float(e)>high_val:
+                    e = elemento[x]
+                    if float(e)<0 or float(e)>valor_alto:
                         res.append(True)
                     else:
                         res.append(False)
@@ -415,7 +402,7 @@ def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
 # Ejercicio 3.G - Agustin Garcia
 def calidad_dataset (ruta, separador=","):
     total = total_registros(ruta, separador)
-    _, coordenadas_invalidas = verificar_coordenada(ruta) 
+    # _, coordenadas_invalidas = verificar_coordenada(ruta) 
     fechas_invalidas = validar_fechas(ruta, separador)
     cant_fechas_invalidas = len(fechas_invalidas)
     _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
@@ -423,7 +410,7 @@ def calidad_dataset (ruta, separador=","):
 
     resumen = {
         "total_registros": total,
-        "coordenadas_invalidas": coordenadas_invalidas,
+        # "coordenadas_invalidas": coordenadas_invalidas,
         "fechas_invalidas": cant_fechas_invalidas,
         "duplicados": duplicados,
         "taxonomia_incompleta": taxonomia_incompleta
@@ -433,7 +420,7 @@ def calidad_dataset (ruta, separador=","):
     RESUMEN DE CALIDAD DEL DATASET
     -------------------
     Total: {total}
-    Coordenadas inválidas: {coordenadas_invalidas}
+    Coordenadas inválidas: {0}
     Fechas inválidas: {cant_fechas_invalidas}
     Duplicados: {duplicados}
     Taxonomía incompleta: {taxonomia_incompleta}
@@ -442,8 +429,8 @@ def calidad_dataset (ruta, separador=","):
     return resumen, reporte
 
 
-# Ejercicio 3.H- Lucia Cipolla
-def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
+# Ejercicio 3.H - Lucia Cipolla
+def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
     """
         Recibe el path de un archivo en formato csv y lo lee.
         Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
@@ -459,46 +446,35 @@ def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
     MIN_LAT = -56.0
     MAX_LONG = -34.0
     MIN_LONG = -82.0
-    with open(path,mode='r',encoding=c_encoding) as file:
-        lector = csv.reader(file,delimiter=c_delimiter)  #lector es de tipo <class '_csv.reader'>
+    with open(path,mode='r',encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo,delimiter=c_delimiter)
         header = next(lector)
         aux = column_index(path,c_delimiter)
         try:
             lat = aux['decimalLatitude']
         except KeyError:
-            print('decimalLatitude no se encontró. ')
-            lat = None
+            try:
+                lat = aux['latitudeDecimal']
+            except KeyError:
+                print('No se encontró una latitud. ')
+                lat = None
         try:
             long = aux['decimalLongitude']
         except KeyError:
-            print('decimalLongitude no se encontró. ')
-            long = None
+            try:
+                long = aux['longitudeDecimal']
+            except KeyError:
+                print('No se encontró una longitud. ')
+                long = None
 
         if (lat is not None) and (long is not None):
-            for i,element in enumerate(lector):
-                dat_lat = element[lat]
-                dat_long = element[long]
+            for i,elemento in enumerate(lector):
+                dat_lat = elemento[lat]
+                dat_long = elemento[long]
                 
-                try:
-                    dat_lat = float(dat_lat.strip())
-                    
-                    if dat_lat<MIN_LAT or dat_lat>MAX_LAT:
-                        res_lat = False
-                    else:
-                        res_lat = True
+                res_lat = hp.check_coordenadas(dat_lat,MAX_LAT,MIN_LAT)
 
-                except ValueError:
-                    res_lat = False
-
-                try:
-                    dat_long = float(dat_long.strip())
-                    
-                    if dat_long<MIN_LONG or dat_long>MAX_LONG:
-                        res_long = False
-                    else:
-                        res_long = True
-                except ValueError:
-                    res_long = False
+                res_long = hp.check_coordenadas(dat_long,MAX_LONG,MIN_LONG)
                 
                 ret.append((res_lat,res_long))
             
@@ -888,9 +864,9 @@ def obtener_fecha_hora_actual():
 
 
 # Ejercicio 7b - sofia martins
-def registro_cambio_operations(ruta_operations,ruta_raw ,operacion,afectados,serealizo):
+def registro_cambio_operations(ruta_operations,ruta_raw,operacion,afectados,serealizo):
     fecha=obtener_fecha_hora_actual()
-    nombredataset = Path(ruta_raw).parent.name
+    nombredataset=Path(ruta_raw).parent.name
     if serealizo=='SI':
         cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
     if serealizo=="ERROR":
