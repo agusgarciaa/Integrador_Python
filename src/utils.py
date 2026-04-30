@@ -237,6 +237,18 @@ def identificar_columnas_nulas(ruta, separador):
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 
+def verificar_latitud(latitud):
+    cumple=True
+    if not hp.numero(latitud) or not(-90<=float(latitud)<=90):
+        cumple=False
+    return cumple
+
+def verificar_longitud(longitud):
+    cumple=True
+    if not hp.numero(longitud) or not(-180<=float(longitud)<=180):
+        cumple=False
+    return cumple
+
 def verificar_coordenada(rarchivo):
     nocumplen=[]
     with open(rarchivo, mode='r', encoding='utf-8') as archivo:
@@ -245,40 +257,26 @@ def verificar_coordenada(rarchivo):
         for fila in leer:
             latitud=fila.get('decimalLatitude')
             longitud=fila.get('decimalLongitude')
-            aux=False
         
-            if not hp.numero(latitud)or not hp.numero(longitud):
-                 aux=True
-            else:
-                  aux1=float(latitud)
-                  aux2=float(longitud)
-                  if not -90<=aux1<=90 or not -180<=aux2<=180:
-                     aux=True
+            aux1=verificar_latitud(latitud)
+            aux2=verificar_longitud(longitud)
 
-            if aux:
+            if not aux1 or not aux2:
                 nocumplen.append(fila)
                
     return nocumplen,len(nocumplen)
 
 
 #funcion 3b sofia martins
-def cordenadas_faltantes(rarchivo,delimiterr):
-    invalidos=[]
-    with open(rarchivo, mode='r', encoding='utf-8') as archivo:
-        leer=csv.DictReader(archivo, delimiter=delimiterr)
-        encabezado=leer.fieldnames
-   
-        for fila in leer:
-            aux1=fila.get('decimalLatitude') 
-            aux2=fila.get('decimalLongitude') 
-            id=fila.get('id') or fila.get('gbifID') or fila.get('occurrenceID') 
+def cordenadas_faltantes(fila):
+    cumple=True
+    aux1=fila.get('decimalLatitude') 
+    aux2=fila.get('decimalLongitude') 
       
-            if (aux1=="" and aux2!="") or (aux1!="" and aux2==""):
-                lista=[]
-                lista=[id,aux1,aux2]
-                invalidos.append(lista)
+    if ((aux1==""or aux1==None) and aux2!="") or (aux1!="" and (aux2==""or aux2==None)):
+         cumple=False
     
-    return invalidos
+    return cumple
 
 
 # Ejercicio 3.C - Fe Cordoba
@@ -855,8 +853,9 @@ def obtener_fecha_hora_actual():
 
 
 # Ejercicio 7b - sofia martins
-def registro_cambio_operations(ruta_operations,nombredataset,operacion,afectados,serealizo):
+def registro_cambio_operations(ruta_operations,ruta_raw,operacion,afectados,serealizo):
     fecha=obtener_fecha_hora_actual()
+    nombredataset=Path(ruta_raw).parent.name
     if serealizo=='SI':
         cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
     if serealizo=="ERROR":
