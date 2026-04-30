@@ -1,9 +1,6 @@
 from collections import Counter
-
 from datetime import datetime
-
 import csv
-
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -109,6 +106,31 @@ def contar_taxonomia_incompleta(ruta, separador=","):
                 incompletos = incompletos + 1
 
     return incompletos
+
+
+# Función para obtener el último id de un dataset. 
+def obtener_ultimo_id(ruta, separador, columna_id, es_xeno=False):
+    ultimo_id = 0
+
+    with open(ruta, encoding="utf-8") as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+
+        for fila in lector:
+            valor = fila.get(columna_id)
+
+            if not valor:
+                continue
+
+            if es_xeno:
+                if "@XC" in valor:
+                    valor = valor.split("@")[0]
+                else:
+                    continue
+
+            if valor.isdigit():
+                ultimo_id = max(ultimo_id, int(valor))
+
+    return ultimo_id
 
 
 # Helper para la funcion cumple condicion - Fe Cordoba
