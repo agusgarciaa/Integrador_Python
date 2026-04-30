@@ -538,3 +538,55 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
         escritor.writeheader()
         escritor.writerows(registros_para_guardar)
 
+
+
+# --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
+
+# Ejercicio 6.A - Sofia Martins 
+def eliminar_por_identificador(ruta_raw,ruta_processed):
+    datos=[]
+    se_encontro=False
+    #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
+    with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
+        aux = archivo.read(512)
+        aux2 = csv.Sniffer().sniff(aux)
+        terminator = aux2.lineterminator
+        archivo.seek(0)
+        #guardamos el archivo en una estructura para eliminarle el registro
+        lector = csv.DictReader(archivo, dialect=aux2)
+        header = lector.fieldnames
+        for fila in lector:
+            if fila and any(fila.values()):
+                datos.append(fila)
+        identificador=input("ingrese el identificador del registro a eliminar: ")
+        for fila in datos:
+            if fila.get('gbifID')==identificador or fila.get('id')==identificador or fila.get('occurrenceID') ==identificador:
+                datos.remove(fila)
+                se_encontro=True
+                print("se elimino el registro")
+                break
+        if not se_encontro:
+            print("ese identificador no estaba en el registro")
+        
+
+#guardamos en pc el archivo nuevo con el registro eliminado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+    if se_encontro:
+        with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+            escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
+            escribir.writeheader()
+            escribir.writerows(datos)
+
+        print(f"Archivo guardado en: {ruta_processed}")
+
+
+
+
+# Función 6.E - Ana Freitas
+def sanitizar_dataset_completo(ruta_raw, ruta_processed, separador):
+    registros_limpios = []
+    
+    ids_vistos = set() # Usamos un set para los duplicados (3.D)
+    
+    with open(ruta_raw, mode='r', encoding='utf-8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+        columnas = lector.fieldnames
