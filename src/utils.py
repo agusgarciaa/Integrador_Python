@@ -368,17 +368,16 @@ def validar_country_code(ruta, separador=","):
 # Ejercicio 3.G - Agustin Garcia
 def calidad_dataset (ruta, separador=","):
     total = total_registros(ruta, separador)
-    # with open(ruta, encoding="utf-8") as dataset:
-    #     _, coordenadas_invalidas = funcion3a(dataset)   ---> Sacar comentario cuando se solucione.
-    # fechas_invalidas = validar_fechas(ruta, separador)  ---> Sacar comentario cuando se solucione.
-    # cant_fechas_invalidas = len(validar_fechas)
+    # _, coordenadas_invalidas = verificar_coordenada(ruta) 
+    fechas_invalidas = validar_fechas(ruta, separador)
+    cant_fechas_invalidas = len(fechas_invalidas)
     _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
     taxonomia_incompleta = hp.contar_taxonomia_incompleta(ruta, separador)
 
     resumen = {
         "total_registros": total,
         # "coordenadas_invalidas": coordenadas_invalidas,
-        # "fechas_invalidas": cant_fechas_invalidas,
+        "fechas_invalidas": cant_fechas_invalidas,
         "duplicados": duplicados,
         "taxonomia_incompleta": taxonomia_incompleta
     }
@@ -388,7 +387,7 @@ def calidad_dataset (ruta, separador=","):
     -------------------
     Total: {total}
     Coordenadas inválidas: {0}
-    Fechas inválidas: {0}
+    Fechas inválidas: {cant_fechas_invalidas}
     Duplicados: {duplicados}
     Taxonomía incompleta: {taxonomia_incompleta}
     """
@@ -517,6 +516,81 @@ def crear_registro_vacio(columnas):
             registro[col] = None
 
     return registro
+
+
+# Ejercicio 4.C - Agustin Garcia
+def validar_registro(registro, separador=','):
+    errores = []
+    es_valido = True
+    codigos_validos = ['AR','BO','BR','PY','UY','CH']
+    campos_tax = ["kingdom", "phylum", "class", "order", "family", "genus", "specificEpithet", "scientificName"]
+
+    # Validación de coordenadas
+    lat = registro.get("decimalLatitude")
+    lon = registro.get("decimalLongitude")
+
+    if not hp.numero(lat) or not hp.numero(lon):
+        errores.append("Coordenadas inválidas")
+    else:
+        lat = float(lat)
+        lon = float(lon)
+        if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+            errores.append("Coordenadas fuera de rango")
+
+    # Validación de fecha
+    fecha = registro.get("eventDate")
+    if fecha:
+        fecha_a_verificar = hp.chequear_fecha(fecha)
+        if fecha_a_verificar is None:
+            errores.append("Fecha inválida")
+
+    # Validación de CountryCode
+    country = registro.get("countryCode")
+    if country and country not in codigos_validos:
+        errores.append("CountryCode inválido")
+
+    # Validación de taxonomía
+    for campo in campos_tax:
+        if campo in registro and registro[campo] == "":
+            errores.append(f"Falta {campo}")
+
+    if len(errores) != 0:
+        es_valido = False
+    return errores, es_valido
+    
+
+def preparar_registro(registro, dataset, ruta, separador=","):
+    """
+    Recibe un registro sin ID y devuelve uno listo para insertar,
+    agregando el ID correspondiente.
+    """
+    
+    registro_final = registro.copy()
+
+    if dataset == "iadiza":
+        col_id = "gbifID"
+        ultimo_id = hp.obtener_ultimo_id(ruta, separador, col_id)
+
+    elif dataset == "xenocanto":
+        col_id = "id"
+        ultimo_id = hp.obtener_ultimo_id(ruta, separador, col_id, es_xeno=True)
+
+    elif dataset == "inaturalist":
+        col_id = "id"
+        ultimo_id = hp.obtener_ultimo_id(ruta, separador, col_id)
+
+    else:
+        raise ValueError("Dataset desconocido")
+
+    # generar ID
+    if dataset == "xenocanto":
+        nuevo_id = f"{ultimo_id + 1}@XC"
+    else:
+        nuevo_id = str(ultimo_id + 1)
+
+    registro_final[col_id] = nuevo_id
+
+    return registro_final
 
 
 #funcion 4f sofia martins
@@ -709,6 +783,40 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         serealizo
     )
 
+
+def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_eliminar, separador =","):
+    """Función que elimina registros cuyo valor en una columna pertenezca a una lista
+        de valores suministrada por el usuario.
+    """
+    valores_a_eliminar = [v.strip() for v in valores_a_eliminar]
+
+    with open(ruta_raw, encoding="utf-8") as archivo:
+        cant_eliminados = 0
+        lector = csv.reader(archivo, delimiter=separador)
+        header = next(lector)
+
+        indice = hp.obtener_indice(header, columna)
+
+        if indice is None:
+            return
+        
+        with open(ruta_processed, "w", newline='', encoding="utf-8") as salida:
+            escritor = csv.writer(salida, delimiter=separador)
+
+            escritor.writerow(header)
+
+            for fila in lector:
+                if len(fila) <= indice:
+                    escritor.writerow(fila)
+                    continue
+
+                if fila[indice] in valores_a_eliminar:
+                    cant_eliminados += 1
+                else:
+                    escritor.writerow(fila)
+
+    print(f"Se eliminaron {cant_eliminados} registros. ")
+    return cant_eliminados
 
 # Ejercicio 6.C - Fe Cordoba
 def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
