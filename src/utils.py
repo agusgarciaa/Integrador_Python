@@ -396,7 +396,7 @@ def calidad_dataset (ruta, separador=","):
 
 
 # Ejercicio 3.F - Lucia Cipolla
-def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
+def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100):
     """
         Recibe el path de un archivo en formato csv y lo lee.
         Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
@@ -404,22 +404,22 @@ def detect_uncertainty (path,c_delimiter=',',c_encoding='utf-8',high_val=100):
             path: un path (mejor si es un r-string)
             c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
             c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
-            high_val: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
+            valor_alto: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
 
         se usan las librerias: csv, utils
     """
     res = []
-    field='coordinateUncertaintyInMeters'
-    with open(path, mode='r', encoding=c_encoding) as file:
-        lector = csv.reader(file,delimiter=c_delimiter)
+    campo='coordinateUncertaintyInMeters'
+    with open(path, mode='r', encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo,delimiter=c_delimiter)
         header = next(lector)
-        index_dict = column_index(path,c_delimiter,c_encoding)
+        indice_dict = column_index(path,c_delimiter,c_encoding)
         try:
-            x = index_dict[field]
-            for i,element in enumerate(lector):
+            x = indice_dict[campo]
+            for i,elemento in enumerate(lector):
                 try:
-                    e = element[x]
-                    if float(e)<0 or float(e)>high_val:
+                    e = elemento[x]
+                    if float(e)<0 or float(e)>valor_alto:
                         res.append(True)
                     else:
                         res.append(False)
