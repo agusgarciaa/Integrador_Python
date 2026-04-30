@@ -65,11 +65,11 @@ def column_index (path,c_delimiter=',',c_encoding='utf-8'):
         se usan las librerias: csv
     """
     dict_index = {}
-    with open(path, mode='r', encoding=c_encoding) as file:
-        lector = csv.reader(file, delimiter=c_delimiter)
+    with open(path, mode='r', encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo, delimiter=c_delimiter)
         header = next(lector)
-        for index, column in enumerate(header):
-            dict_index[column] = index
+        for i, columna in enumerate(header):
+            dict_index[columna] = i
     return dict_index
 
 
@@ -157,34 +157,35 @@ def contar_valores_distintos (nombre_columna, ruta, separador=",", encoding="utf
 
 
 # Ejercicio 2.H - Lucia Cipolla
-def value_frequency (path,name,c_delimiter=',',c_encoding='utf-8'):
+def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
     """
         Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve un diccionario que tiene como clave el nombre del VALOR de la columna y como valor la cantidad de veces que aparece repetido.
+        Recibe en nombre el nombre o posición de una columna.
+        Devuelve un diccionario que tiene como clave el nombre del valor de la columna y como valor la
+        cantidad de veces que aparece repetido.
         Parametros:
             path: un path (mejor si es un r-string)
             c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
             c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+            nombre: nombre o índice de la columna a analizar.
 
         se usan las librerias: csv, collections(Counter)
     """
     freq = Counter()
-    name = str(name)
-    with open(path, mode='r', encoding=c_encoding) as file:
-        lector = csv.reader(file, delimiter=c_delimiter)
+    nombre = str(nombre)
+    with open(path, mode='r', encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo, delimiter=c_delimiter)
         header = next(lector)
-        match name.isdigit():
+        match nombre.isdigit():
             case True:
-                #name es el numero de la columna
-                name = int(name)
-                for element in lector:
-                    freq[element[name]]+= 1
+                nombre = int(nombre)
+                for elemento in lector:
+                    freq[elemento[nombre]]+= 1
             case False:
-                #name es el nombre de la columna
-                if name in header:
-                    pos = header.index(name)
-                    for element in lector:
-                        freq[element[pos]]+= 1
+                if nombre in header:
+                    pos = header.index(nombre)
+                    for elemento in lector:
+                        freq[elemento[pos]]+= 1
                 else:
                     print('No se encontró la columna.')
     freq=dict(freq)
