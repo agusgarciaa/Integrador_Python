@@ -365,36 +365,6 @@ def validar_country_code(ruta, separador=","):
     return cods_invalidos
 
 
-# Ejercicio 3.G - Agustin Garcia
-def calidad_dataset (ruta, separador=","):
-    total = total_registros(ruta, separador)
-    # _, coordenadas_invalidas = verificar_coordenada(ruta) 
-    fechas_invalidas = validar_fechas(ruta, separador)
-    cant_fechas_invalidas = len(fechas_invalidas)
-    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
-    taxonomia_incompleta = hp.contar_taxonomia_incompleta(ruta, separador)
-
-    resumen = {
-        "total_registros": total,
-        # "coordenadas_invalidas": coordenadas_invalidas,
-        "fechas_invalidas": cant_fechas_invalidas,
-        "duplicados": duplicados,
-        "taxonomia_incompleta": taxonomia_incompleta
-    }
-
-    reporte = f"""
-    RESUMEN DE CALIDAD DEL DATASET
-    -------------------
-    Total: {total}
-    Coordenadas inválidas: {0}
-    Fechas inválidas: {cant_fechas_invalidas}
-    Duplicados: {duplicados}
-    Taxonomía incompleta: {taxonomia_incompleta}
-    """
-
-    return resumen, reporte
-
-
 # Ejercicio 3.F - Lucia Cipolla
 def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100):
     """
@@ -431,8 +401,38 @@ def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100
     return res
 
 
-# Ejercicio 3.F - Lucia Cipolla
-def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
+# Ejercicio 3.G - Agustin Garcia
+def calidad_dataset (ruta, separador=","):
+    total = total_registros(ruta, separador)
+    # _, coordenadas_invalidas = verificar_coordenada(ruta) 
+    fechas_invalidas = validar_fechas(ruta, separador)
+    cant_fechas_invalidas = len(fechas_invalidas)
+    _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, "occurrenceID")
+    taxonomia_incompleta = hp.contar_taxonomia_incompleta(ruta, separador)
+
+    resumen = {
+        "total_registros": total,
+        # "coordenadas_invalidas": coordenadas_invalidas,
+        "fechas_invalidas": cant_fechas_invalidas,
+        "duplicados": duplicados,
+        "taxonomia_incompleta": taxonomia_incompleta
+    }
+
+    reporte = f"""
+    RESUMEN DE CALIDAD DEL DATASET
+    -------------------
+    Total: {total}
+    Coordenadas inválidas: {0}
+    Fechas inválidas: {cant_fechas_invalidas}
+    Duplicados: {duplicados}
+    Taxonomía incompleta: {taxonomia_incompleta}
+    """
+
+    return resumen, reporte
+
+
+# Ejercicio 3.H - Lucia Cipolla
+def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
     """
         Recibe el path de un archivo en formato csv y lo lee.
         Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
@@ -448,25 +448,31 @@ def latam_coordinate_delimiter (path,c_delimiter=',',c_encoding='utf-8'):
     MIN_LAT = -56.0
     MAX_LONG = -34.0
     MIN_LONG = -82.0
-    with open(path,mode='r',encoding=c_encoding) as file:
-        lector = csv.reader(file,delimiter=c_delimiter)  #lector es de tipo <class '_csv.reader'>
+    with open(path,mode='r',encoding=c_encoding) as archivo:
+        lector = csv.reader(archivo,delimiter=c_delimiter)
         header = next(lector)
         aux = column_index(path,c_delimiter)
         try:
             lat = aux['decimalLatitude']
         except KeyError:
-            print('decimalLatitude no se encontró. ')
-            lat = None
+            try:
+                lat = aux['latitudeDecimal']
+            except KeyError:
+                print('No se encontró una latitud. ')
+                lat = None
         try:
             long = aux['decimalLongitude']
         except KeyError:
-            print('decimalLongitude no se encontró. ')
-            long = None
+            try:
+                long = aux['longitudeDecimal']
+            except KeyError:
+                print('No se encontró una longitud. ')
+                long = None
 
         if (lat is not None) and (long is not None):
-            for i,element in enumerate(lector):
-                dat_lat = element[lat]
-                dat_long = element[long]
+            for i,elemento in enumerate(lector):
+                dat_lat = elemento[lat]
+                dat_long = elemento[long]
                 
                 try:
                     dat_lat = float(dat_lat.strip())
