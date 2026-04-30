@@ -474,26 +474,9 @@ def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
                 dat_lat = elemento[lat]
                 dat_long = elemento[long]
                 
-                try:
-                    dat_lat = float(dat_lat.strip())
-                    
-                    if dat_lat<MIN_LAT or dat_lat>MAX_LAT:
-                        res_lat = False
-                    else:
-                        res_lat = True
+                res_lat = hp.check_coordenadas(dat_lat,MAX_LAT,MIN_LAT)
 
-                except ValueError:
-                    res_lat = False
-
-                try:
-                    dat_long = float(dat_long.strip())
-                    
-                    if dat_long<MIN_LONG or dat_long>MAX_LONG:
-                        res_long = False
-                    else:
-                        res_long = True
-                except ValueError:
-                    res_long = False
+                res_long = hp.check_coordenadas(dat_long,MAX_LONG,MIN_LONG)
                 
                 ret.append((res_lat,res_long))
             
