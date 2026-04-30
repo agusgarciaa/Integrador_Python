@@ -1,9 +1,6 @@
 from collections import Counter
-
 from datetime import datetime
-
 import csv
-
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -110,3 +107,90 @@ def contar_taxonomia_incompleta(ruta, separador=","):
 
     return incompletos
 
+
+# Función para obtener el último id de un dataset. 
+def obtener_ultimo_id(ruta, separador, columna_id, es_xeno=False):
+    ultimo_id = 0
+
+    with open(ruta, encoding="utf-8") as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+
+        for fila in lector:
+            valor = fila.get(columna_id)
+
+            if not valor:
+                continue
+
+            if es_xeno:
+                if "@XC" in valor:
+                    valor = valor.split("@")[0]
+                else:
+                    continue
+
+            if valor.isdigit():
+                ultimo_id = max(ultimo_id, int(valor))
+
+    return ultimo_id
+
+
+# Helper para la funcion cumple condicion - Fe Cordoba
+def es_numero(valor):
+    """Determina si un valor es numérico (incluye negativos y decimales)."""
+
+    if valor == "" or valor == "N/A":
+        return False
+
+    valor_str = str(valor)
+
+    if valor_str.startswith("-"):
+        valor_str = valor_str[1:]
+
+    valor_str = valor_str.replace(".", "", 1)
+
+    return valor_str.isdigit()
+
+
+# Helper para la funcion del 6.C - Fe Cordoba
+def cumple_condicion(dato, condicion, valor):
+    """Evalúa si un dato cumple una condición."""
+
+    if dato == "" or dato == "N/A":
+        return False
+
+    if es_numero(dato) and es_numero(valor):
+        dato = float(dato)
+        valor = float(valor)
+    else:
+        dato = str(dato)
+        valor = str(valor)
+
+    match condicion:
+        case "==":
+            return dato == valor
+        case "!=":
+            return dato != valor
+        case ">":
+            return dato > valor
+        case ">=":
+            return dato >= valor
+        case "<":
+            return dato < valor
+        case "<=":
+            return dato <= valor
+        case _:
+            # esto no debería ocurrir si validamos antes
+            raise ValueError("Condición no válida")
+
+
+#Función de apoyo para la función 3.H - Lucía Cipolla
+def check_coordenadas (dato, MAX, MIN):
+    try:
+        dato = float(dato)
+        if dato<MIN or dato>MAX:
+            res=False
+        else:
+            res=True
+    except ValueError:
+        res=False
+
+    return res
