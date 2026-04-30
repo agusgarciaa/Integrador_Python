@@ -21,6 +21,17 @@ def obtener_ruta_de_datos(carpeta, dataset, archivo):
     
     return str(ruta_completa)
 
+# Funcion para encontrar la ruta de los datasets - Ana Freitas 
+def obtener_ruta_log(carpeta, archivo):
+    """
+    Construye la ruta final hacia un archivo específico en una carpeta
+    Recibe el nombre del archivo y devuelve la dirección completa como texto.
+    """
+
+    ruta = fm.obtener_raiz_proyecto()
+    ruta_completa = ruta / carpeta / archivo
+    
+    return str(ruta_completa)
 
 # --------------------------------------------------------------- Ejercicios 2 - Lectura del dataset --------------------------------------------------------------
    
@@ -237,29 +248,17 @@ def identificar_columnas_nulas(ruta, separador):
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 
-def verificar_latitud(latitud):
-    cumple=True
-    if not hp.numero(latitud) or not(-90<=float(latitud)<=90):
-        cumple=False
-    return cumple
-
-def verificar_longitud(longitud):
-    cumple=True
-    if not hp.numero(longitud) or not(-180<=float(longitud)<=180):
-        cumple=False
-    return cumple
-
-def verificar_coordenada(rarchivo):
+def verificar_coordenada(ruta, separador):
     nocumplen=[]
-    with open(rarchivo, mode='r', encoding='utf-8') as archivo:
+    with open(ruta, mode='r', encoding='utf-8', delimiter=separador) as archivo:
         leer = csv.DictReader(archivo)
 
         for fila in leer:
             latitud=fila.get('decimalLatitude')
             longitud=fila.get('decimalLongitude')
         
-            aux1=verificar_latitud(latitud)
-            aux2=verificar_longitud(longitud)
+            aux1=hp.verificar_latitud(latitud)
+            aux2=hp.verificar_longitud(longitud)
 
             if not aux1 or not aux2:
                 nocumplen.append(fila)
@@ -705,7 +704,8 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificad
 
 
  # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
-    
+
+# Función 6.A - Sofia Martins
 def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
     datos = []
     se_encontro = False
@@ -762,16 +762,16 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         serealizo = "ERROR"
 
     print(f"archivos eliminados: {eliminados}")
-    nombredataset = Path(ruta_raw).name
     registro_cambio_operations(
         ruta_operations,
-        nombredataset,
+        ruta_raw,
         operacion,
         eliminados,
         serealizo
     )
 
 
+# Ejercicio 6.B - Agustin Garcia 
 def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_eliminar, separador =","):
     """Función que elimina registros cuyo valor en una columna pertenezca a una lista
         de valores suministrada por el usuario.
@@ -805,6 +805,7 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_e
 
     print(f"Se eliminaron {cant_eliminados} registros. ")
     return cant_eliminados
+
 
 # Ejercicio 6.C - Fe Cordoba
 def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
@@ -842,6 +843,16 @@ def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
                 if not hp.cumple_condicion(dato, condicion, valor):
                     writer.writerow(fila)
 
+
+# Función 6.E - Ana Freitas
+def sanitizar_dataset_completo(ruta_raw, ruta_processed, separador):
+    registros_limpios = []
+    
+    ids_vistos = set() # Usamos un set para los duplicados (3.D)
+    
+    with open(ruta_raw, mode='r', encoding='utf-8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=separador)
+        columnas = lector.fieldnames
 
 # --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
 
