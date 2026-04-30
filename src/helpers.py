@@ -180,3 +180,17 @@ def cumple_condicion(dato, condicion, valor):
         case _:
             # esto no debería ocurrir si validamos antes
             raise ValueError("Condición no válida")
+
+
+#Función de apoyo para la función 3.H - Lucía Cipolla
+def check_coordenadas (dato, MAX, MIN):
+    try:
+        dato = float(dato)
+        if dato<MIN or dato>MAX:
+            res=False
+        else:
+            res=True
+    except ValueError:
+        res=False
+
+    return res
