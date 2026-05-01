@@ -825,6 +825,8 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_e
 # Ejercicio 6.C - Fe Cordoba
 def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
 
+    """Modifica el dataset procesado eliminando ciertos registros."""
+
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
         raise ValueError("Condición no válida")
@@ -835,7 +837,6 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
     operacion = "DELETE"
     eliminados = 0
 
-    # decidir desde dónde leer
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else archivo
 
     with open(ruta_entrada, newline="", encoding="utf-8") as f_in:
@@ -847,7 +848,6 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
 
         filas = list(reader)
 
-        # 👇 uso del helper
         hp.asegurar_directorio(ruta_processed)
 
         with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out:
