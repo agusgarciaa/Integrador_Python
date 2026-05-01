@@ -1,6 +1,7 @@
 from collections import Counter
 from datetime import datetime
 import csv
+import os
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -207,3 +208,9 @@ def verificar_longitud(longitud):
     if not numero(longitud) or not(-180<=float(longitud)<=180):
         cumple=False
     return cumple
+
+
+# funcion de apoyo para las que crean/modifican processed datasets
+def asegurar_directorio(ruta_archivo):
+    carpeta = os.path.dirname(ruta_archivo)
+    os.makedirs(carpeta, exist_ok=True)

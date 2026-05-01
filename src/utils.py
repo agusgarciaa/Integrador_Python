@@ -823,11 +823,7 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_e
 
 
 # Ejercicio 6.C - Fe Cordoba
-def eliminar_por_condicion(archivo,ruta_procesado,ruta_operations,columna, condicion, valor, delimiter=","):
-    
-    #carpeta = "processed_datasets"
-    #if not os.path.exists(carpeta):
-     #   raise FileNotFoundError("La carpeta 'processed_datasets' no existe")
+def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
@@ -836,25 +832,24 @@ def eliminar_por_condicion(archivo,ruta_procesado,ruta_operations,columna, condi
     if valor == "" or valor == "N/A":
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
-    #nombre_base = os.path.basename(archivo)
-    #nombre_salida = f"eliminados_por_condicion_{nombre_base}"
-    #ruta_salida = os.path.join(carpeta, nombre_salida)
-
     operacion = "DELETE"
     eliminados = 0
 
-    with open(archivo, newline="", encoding="utf-8") as f_in:
-        reader = csv.DictReader(f_in, delimiter=delimiter)
+    # decidir desde dónde leer
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else archivo
 
+    with open(ruta_entrada, newline="", encoding="utf-8") as f_in:
+        reader = csv.DictReader(f_in, delimiter=delimiter)
         columnas = reader.fieldnames
 
         if columna not in columnas:
             raise ValueError(f"La columna '{columna}' no existe")
 
-        os.makedirs(os.path.dirname(ruta_procesado), exist_ok=True)
+        # 👇 uso del helper
+        hp.asegurar_directorio(ruta_processed)
 
-        with open(ruta_procesado, "w", newline="", encoding="utf-8") as nuevo:
-            writer = csv.DictWriter(nuevo, fieldnames=columnas, delimiter=delimiter)
+        with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out:
+            writer = csv.DictWriter(f_out, fieldnames=columnas, delimiter=delimiter)
             writer.writeheader()
 
             for fila in reader:
@@ -865,7 +860,7 @@ def eliminar_por_condicion(archivo,ruta_procesado,ruta_operations,columna, condi
                 else:
                     eliminados += 1
 
-    registro_cambio_operations(ruta_operations,archivo,operacion,eliminados,'SI')
+    registro_cambio_operations(ruta_operations, ruta_entrada, operacion, eliminados, 'SI')
 
 
 # Función 6.E - Ana Freitas
