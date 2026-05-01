@@ -845,6 +845,8 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
         if columna not in columnas:
             raise ValueError(f"La columna '{columna}' no existe")
 
+        filas = list(reader)
+
         # 👇 uso del helper
         hp.asegurar_directorio(ruta_processed)
 
@@ -852,7 +854,7 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
             writer = csv.DictWriter(f_out, fieldnames=columnas, delimiter=delimiter)
             writer.writeheader()
 
-            for fila in reader:
+            for fila in filas:
                 dato = fila[columna]
 
                 if not hp.cumple_condicion(dato, condicion, valor):
