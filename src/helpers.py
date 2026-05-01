@@ -1,6 +1,7 @@
 from collections import Counter
 from datetime import datetime
 import csv
+import os
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -194,3 +195,24 @@ def check_coordenadas (dato, MAX, MIN):
         res=False
 
     return res
+
+
+#Función de apoyo para la función 3.A - Sofia Martins
+def verificar_latitud(latitud):
+    cumple=True
+    if not numero(latitud) or not(-90<=float(latitud)<=90):
+        cumple=False
+    return cumple
+
+
+def verificar_longitud(longitud):
+    cumple=True
+    if not numero(longitud) or not(-180<=float(longitud)<=180):
+        cumple=False
+    return cumple
+
+
+# funcion de apoyo para las que crean/modifican processed datasets
+def asegurar_directorio(ruta_archivo):
+    carpeta = os.path.dirname(ruta_archivo)
+    os.makedirs(carpeta, exist_ok=True)
