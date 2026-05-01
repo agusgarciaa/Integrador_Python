@@ -583,11 +583,15 @@ def preparar_registro(registro, dataset, ruta, separador=","):
 
 #funcion 4f sofia martins
 def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
-    nuevo = {}
     datos = []
     agregados=0
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-    with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
+    if os.path.isfile(ruta_processed):
+        ruta=ruta_processed
+    else:
+        ruta=ruta_raw
+        
+    with open(ruta, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
@@ -599,30 +603,41 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
             if fila and any(fila.values()):
                 datos.append(fila)
     #creamos el registro a agregar,lo agregamos al final
-    for columna in header:
+    nuevo=crear_registro_vacio(header)
+    for columna in nuevo.keys():
         valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
-        nuevo[columna] = valor        
-    datos.append(nuevo)
+        nuevo[columna] = valor
+    final={}
+    for columna in header:
+        if columna in nuevo:
+            final[columna]=nuevo[columna]
+        else:
+            final[columna]=input("ingrese un id: ")     
+    datos.append(final)
     agregados +=1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
-    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+    with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
-        escribir.writeheader()
+        if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
+           escribir.writeheader()
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {ruta_processed}")
-    nombredataset=Path(ruta_raw).name
     operacion="INSERT"
-    registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
+    serealizo="SI"
+    registro_cambio_operations(ruta_operations,ruta_raw,operacion,agregados,serealizo)
 
 
 #funcion4g sofia martins
 def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):  
-    nuevo = {}
     datos = []
     agregados=0
+    if os.path.isfile(ruta_processed):
+        ruta=ruta_processed
+    else:
+        ruta=ruta_raw
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-    with open(ruta_raw, 'r', newline='', encoding='utf-8') as f:
+    with open(ruta, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
@@ -636,26 +651,33 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
     #creamos el registro a agregar,lo agregamos al final
     opcion=1
     while(opcion!=0):
-        nuevo={}
         opcion=int(input('quieres agregar un registro?1=si,0=no: '))
         if(opcion==0):
             break
         else:
-          for columna in header:
+          nuevo=crear_registro_vacio(header)
+          for columna in nuevo.keys():
             valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
-            nuevo[columna] = valor        
-          datos.append(nuevo)
+            nuevo[columna] = valor 
+          final={} 
+          for columna in header:
+              if columna in nuevo:
+                  final[columna]=nuevo[columna] 
+              else:
+                  final[columna]=input("ingrese un id: ")  
+          datos.append(final)
           agregados += 1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
-    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+    with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
-        escribir.writeheader()
+        if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
+           escribir.writeheader()
         escribir.writerows(datos)
     
     print(f"Archivo guardado en: {ruta_processed}")
-    nombredataset=Path(ruta_raw).name
     operacion="INSERT"
-    registro_cambio_operations(ruta_operations,nombredataset,operacion,agregados)
+    serealizo="SI"
+    registro_cambio_operations(ruta_operations,ruta_raw,operacion,agregados,serealizo)
     
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
@@ -713,7 +735,11 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
     operacion = "DELETE"
 
     # abrimos el archivo para leerlo, con sniffer obtenemos el delimitador
-    with open(ruta_raw, 'r', newline='', encoding='utf-8') as archivo:
+    if os.path.isfile(ruta_processed):
+        ruta=ruta_processed
+    else:
+        ruta=ruta_raw
+    with open(ruta, 'r', newline='', encoding='utf-8') as archivo:
         aux = archivo.read(512)
         aux2 = csv.Sniffer().sniff(aux)
         terminator = aux2.lineterminator
@@ -746,14 +772,15 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
 
     # guardamos en pc el archivo nuevo con el registro eliminado
     if se_encontro:
-        with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
+        with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
             escribir = csv.DictWriter(
                 archivo2,
                 fieldnames=header,
                 lineterminator=terminator,
                 extrasaction='ignore'
             )
-            escribir.writeheader()
+            if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
+                escribir.writeheader()
             escribir.writerows(datos)
 
         print(f"Archivo guardado en: {ruta_processed}")
@@ -762,10 +789,9 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         serealizo = "ERROR"
 
     print(f"archivos eliminados: {eliminados}")
-    nombredataset = Path(ruta_raw).name
     registro_cambio_operations(
         ruta_operations,
-        nombredataset,
+        ruta_raw,
         operacion,
         eliminados,
         serealizo
