@@ -216,3 +216,24 @@ def verificar_longitud(longitud):
 def asegurar_directorio(ruta_archivo):
     carpeta = os.path.dirname(ruta_archivo)
     os.makedirs(carpeta, exist_ok=True)
+
+# funcion auxiliar de validacion del punto 5.D
+def validar(path,valor,c_delimiter=',',c_encoding='utf-8',**kwargs):
+    """
+        valor: el valor que se intenta insertar en la columna
+        columna: la columna a analizar
+    """
+    ret = {}
+    for columna in kwargs:
+        match columna:
+
+            case 'decimalLatitude'|'latitudeDecimal':
+                ret[columna] = verificar_latitud(valor)
+            case 'decimalLongitude'|'longitudeDecimal':
+                ret[columna] = verificar_longitud(valor)
+            case 'eventdate' | 'verbatimeventdate':
+                ret[columna] = chequear_fecha(valor)
+            #case 'countryCode':
+
+            #case 'coordinateUncertaintyInMeters':
+
