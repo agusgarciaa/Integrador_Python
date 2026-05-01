@@ -279,8 +279,10 @@ def cordenadas_faltantes(fila):
 
 
 # Ejercicio 3.C - Fe Cordoba
-def validar_fechas(ruta, separador=","):
+def validar_fechas(ruta, ruta_operations, separador=","):
     fechas_invalidas = {}  # {fila: [(columna, valor, motivo)]}
+    operacion = 'VALIDATION'
+    cant_invalidos = 0
 
     with open(ruta, encoding="utf-8") as archivo:
         lector = csv.reader(archivo, delimiter=separador)
@@ -311,11 +313,15 @@ def validar_fechas(ruta, separador=","):
                     fechas_invalidas.setdefault(num_fila, []).append(
                         (header[i], valor, "formato inválido")
                     )
+                    cant_invalidos += 1 
 
                 elif fecha > datetime.now():
                     fechas_invalidas.setdefault(num_fila, []).append(
                         (header[i], valor, "fecha futura")
                     )
+                    cant_invalidos += 1 
+
+    registro_cambio_operations(ruta_operations,ruta,operacion,cant_invalidos,'ERROR')
 
     return fechas_invalidas
 
@@ -333,17 +339,22 @@ def detectar_registros_duplicados(ruta, separador, columna):
 
 
 # Ejercicio 3.E - Fe Cordoba
-def validar_country_code(ruta, separador=","):
+def validar_country_code(ruta,ruta_operations, separador=","):
     cods_invalidos = {}  # {fila: [(columna, valor, motivo)]}
     codigos_validos = ['AR','BO','BR','PY','UY','CH']
+    operacion = 'VALIDATION'
+    cant_invalidos = 0
 
     with open(ruta, encoding="utf-8") as archivo:
         lector = csv.reader(archivo, delimiter=separador)
         header = next(lector)
 
         if "countryCode" not in header:
-            raise ValueError("No existe la columna 'countryCode' en el dataset")
-
+            print("No existe la columna 'countryCode' en el dataset")
+            print("Se mostrara en pantalla un diccionario vacio")
+            registro_cambio_operations(ruta_operations,ruta,operacion,0,'ERROR')
+            return cods_invalidos
+            
         indice = header.index("countryCode")
 
         for num_fila, fila in enumerate(lector, start=1):
@@ -354,11 +365,15 @@ def validar_country_code(ruta, separador=","):
                 cods_invalidos.setdefault(num_fila, []).append(
                     ("countryCode", valor, "nulo")
                 )
+                cant_invalidos += 1
 
             elif valor not in codigos_validos:
                 cods_invalidos.setdefault(num_fila, []).append(
                     ("countryCode", valor, "código inválido")
                 )
+                cant_invalidos += 1
+    
+    registro_cambio_operations(ruta_operations,ruta,operacion,cant_invalidos,'ERROR')
 
     return cods_invalidos
 
@@ -808,11 +823,11 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_e
 
 
 # Ejercicio 6.C - Fe Cordoba
-def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
+def eliminar_por_condicion(archivo,ruta_procesado,ruta_operations,columna, condicion, valor, delimiter=","):
     
-    carpeta = "processed_datasets"
-    if not os.path.exists(carpeta):
-        raise FileNotFoundError("La carpeta 'processed_datasets' no existe")
+    #carpeta = "processed_datasets"
+    #if not os.path.exists(carpeta):
+     #   raise FileNotFoundError("La carpeta 'processed_datasets' no existe")
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
@@ -821,9 +836,12 @@ def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
     if valor == "" or valor == "N/A":
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
-    nombre_base = os.path.basename(archivo)
-    nombre_salida = f"eliminados_por_condicion_{nombre_base}"
-    ruta_salida = os.path.join(carpeta, nombre_salida)
+    #nombre_base = os.path.basename(archivo)
+    #nombre_salida = f"eliminados_por_condicion_{nombre_base}"
+    #ruta_salida = os.path.join(carpeta, nombre_salida)
+
+    operacion = "DELETE"
+    eliminados = 0
 
     with open(archivo, newline="", encoding="utf-8") as f_in:
         reader = csv.DictReader(f_in, delimiter=delimiter)
@@ -833,7 +851,9 @@ def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
         if columna not in columnas:
             raise ValueError(f"La columna '{columna}' no existe")
 
-        with open(ruta_salida, "w", newline="", encoding="utf-8") as nuevo:
+        os.makedirs(os.path.dirname(ruta_procesado), exist_ok=True)
+
+        with open(ruta_procesado, "w", newline="", encoding="utf-8") as nuevo:
             writer = csv.DictWriter(nuevo, fieldnames=columnas, delimiter=delimiter)
             writer.writeheader()
 
@@ -842,6 +862,10 @@ def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
 
                 if not hp.cumple_condicion(dato, condicion, valor):
                     writer.writerow(fila)
+                else:
+                    eliminados += 1
+
+    registro_cambio_operations(ruta_operations,archivo,operacion,eliminados,'SI')
 
 
 # Función 6.E - Ana Freitas
