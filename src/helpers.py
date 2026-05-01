@@ -196,12 +196,14 @@ def check_coordenadas (dato, MAX, MIN):
 
     return res
 
+
 #Función de apoyo para la función 3.A - Sofia Martins
 def verificar_latitud(latitud):
     cumple=True
     if not numero(latitud) or not(-90<=float(latitud)<=90):
         cumple=False
     return cumple
+
 
 def verificar_longitud(longitud):
     cumple=True
