@@ -334,32 +334,36 @@ def detectar_registros_duplicados(ruta, separador, columna):
 
 
 # Ejercicio 3.E - Fe Cordoba
-def validar_country_code(ruta, separador=","):
+def validar_country_code(ruta, ruta_operations, separador=","):
     cods_invalidos = {}  # {fila: [(columna, valor, motivo)]}
     codigos_validos = ['AR','BO','BR','PY','UY','CH']
+    operacion = 'VALIDATION'
+    cant_invalidos = 0
 
     with open(ruta, encoding="utf-8") as archivo:
         lector = csv.reader(archivo, delimiter=separador)
         header = next(lector)
 
         if "countryCode" not in header:
-            raise ValueError("No existe la columna 'countryCode' en el dataset")
-
+            print("No existe la columna 'countryCode' en el dataset")
+            print("Se mostrara en pantalla un diccionario vacio")
+            registro_cambio_operations(ruta_operations, ruta, operacion, 0, 'ERROR')
+            return cods_invalidos
+            
         indice = header.index("countryCode")
 
         for num_fila, fila in enumerate(lector, start=1):
+            valor = fila[indice] if indice < len(fila) else ""
 
-            valor = fila[indice].strip() if indice < len(fila) else ""
+            motivo = hp.validar_country_code_registro(valor, codigos_validos)
 
-            if valor == "" or valor.lower() == "n/a":
+            if motivo:
                 cods_invalidos.setdefault(num_fila, []).append(
-                    ("countryCode", valor, "nulo")
+                    ("countryCode", valor, motivo)
                 )
-
-            elif valor not in codigos_validos:
-                cods_invalidos.setdefault(num_fila, []).append(
-                    ("countryCode", valor, "código inválido")
-                )
+                cant_invalidos += 1
+    
+    registro_cambio_operations(ruta_operations, ruta, operacion, cant_invalidos, 'ERROR')
 
     return cods_invalidos
 
@@ -858,11 +862,9 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, columna, valores_a_e
     return cant_eliminados
 
 # Ejercicio 6.C - Fe Cordoba
-def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
-    
-    carpeta = "processed_datasets"
-    if not os.path.exists(carpeta):
-        raise FileNotFoundError("La carpeta 'processed_datasets' no existe")
+def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
+
+    """Modifica el dataset procesado eliminando ciertos registros."""
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
@@ -871,27 +873,36 @@ def eliminar_por_condicion(archivo, columna, condicion, valor, delimiter=","):
     if valor == "" or valor == "N/A":
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
-    nombre_base = os.path.basename(archivo)
-    nombre_salida = f"eliminados_por_condicion_{nombre_base}"
-    ruta_salida = os.path.join(carpeta, nombre_salida)
+    operacion = "DELETE"
+    eliminados = 0
 
-    with open(archivo, newline="", encoding="utf-8") as f_in:
+    # si existe el archivo ocurrence del dataset en processed dataset se usa ese para leer sino el raw 
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else archivo
+
+    with open(ruta_entrada, newline="", encoding="utf-8") as f_in:
         reader = csv.DictReader(f_in, delimiter=delimiter)
-
         columnas = reader.fieldnames
 
         if columna not in columnas:
             raise ValueError(f"La columna '{columna}' no existe")
 
-        with open(ruta_salida, "w", newline="", encoding="utf-8") as nuevo:
-            writer = csv.DictWriter(nuevo, fieldnames=columnas, delimiter=delimiter)
+        filas = list(reader)  #guardo en lista el iterador ya que es peligroso leer y escribir un mismo archivo en caso de q ocurrence exista 
+
+        hp.asegurar_directorio(ruta_processed)  # en caso de que ocurrence no exista lo creamos, sino, no pasa nada 
+
+        with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out:  # y escribimos ahi 
+            writer = csv.DictWriter(f_out, fieldnames=columnas, delimiter=delimiter)
             writer.writeheader()
 
-            for fila in reader:
-                dato = fila[columna]
+            for fila in filas:
+                dato = fila[columna] # guardo el dato de esa columna 
 
-                if not hp.cumple_condicion(dato, condicion, valor):
+                if not hp.cumple_condicion(dato, condicion, valor): # si no cumple, lo escribo en el processed
                     writer.writerow(fila)
+                else:
+                    eliminados += 1  # si cumple debo eliminarlo (excluirlo del processed)
+
+    registro_cambio_operations(ruta_operations, ruta_entrada, operacion, eliminados, 'SI')
 
 
 # --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
