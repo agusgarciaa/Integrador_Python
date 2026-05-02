@@ -237,3 +237,15 @@ def validar(path,valor,c_delimiter=',',c_encoding='utf-8',**kwargs):
 
             #case 'coordinateUncertaintyInMeters':
 
+
+# Funcion de apoyo para el 3.C - Fe Cordoba 
+def validar_country_code_registro(valor, codigos_validos):
+    valor = valor.strip()
+
+    if valor == "" or valor.lower() == "n/a":
+        return "nulo"
+    
+    if valor not in codigos_validos:
+        return "código inválido"
+    
+    return None
