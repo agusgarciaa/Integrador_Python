@@ -723,43 +723,47 @@ def actualizar_campo(ruta_raw, ruta_processed, ruta_operations, separador, ident
     registros_actualizados = []
     operacion = "UPDATE"
     afectados = 0
+    val = {columna:nuevo_valor}
 
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
-    hp.validar()
-
-    try:
-        with open(ruta_entrada, encoding='utf-8') as archivo:
-            lector = csv.DictReader(archivo, delimiter=separador)
-            columnas = lector.fieldnames
-
-            if columna not in columnas:
-                print(f"Error: La columna '{columna}' no existe en el dataset.")
-                return
-            
-            for fila in lector:
-                if fila.get("occurrenceID") == identificador:
-                    fila[columna] = nuevo_valor
-                    afectados += 1
-                
-                registros_actualizados.append(fila)
-
-        hp.asegurar_directorio(ruta_processed)
-
-        with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
-            escritor = csv.DictWriter(archivo_salida, delimiter=separador, fieldnames=columnas)
-            escritor.writeheader()
-            escritor.writerows(registros_actualizados)
-
-        registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
-
-    except FileNotFoundError:
-        print(f"Error: No se encontró el archivo de entrada en {ruta_entrada}")
-        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+    valido = hp.validar(**val)
     
-    except Exception as e:
-        print(f"Ocurrió un error inesperado al actualizar: {e}")
-        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+    if valido[columna] == True:
+        try:
+            with open(ruta_entrada, encoding='utf-8') as archivo:
+                lector = csv.DictReader(archivo, delimiter=separador)
+                columnas = lector.fieldnames
+
+                if columna not in columnas:
+                    print(f"Error: La columna '{columna}' no existe en el dataset.")
+                    return
+                
+                for fila in lector:
+                    if fila.get("occurrenceID") == identificador:
+                        fila[columna] = nuevo_valor
+                        afectados += 1
+                    
+                    registros_actualizados.append(fila)
+
+            hp.asegurar_directorio(ruta_processed)
+
+            with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
+                escritor = csv.DictWriter(archivo_salida, delimiter=separador, fieldnames=columnas)
+                escritor.writeheader()
+                escritor.writerows(registros_actualizados)
+
+            registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
+
+        except FileNotFoundError:
+            print(f"Error: No se encontró el archivo de entrada en {ruta_entrada}")
+            registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+        
+        except Exception as e:
+            print(f"Ocurrió un error inesperado al actualizar: {e}")
+            registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+    else:
+        print('El valor no corresponde con el campo.')
 
 
 # Ejercicio 5.C - Ana Freitas
@@ -774,6 +778,8 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, ruta_operations, separ
     afectados = 0
     
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
+
+    val = hp.validar(**dic_cambios)
 
     try: 
         # Leer el archivo desde la ruta de origen (raw)
@@ -795,10 +801,15 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, ruta_operations, separ
 
         hp.asegurar_directorio(ruta_processed)
 
-        with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
-            escritor = csv.DictWriter(archivo_salida, fieldnames=columnas, delimiter=separador)
-            escritor.writeheader()
-            escritor.writerows(registros_para_guardar)
+        if all(val.values()) == True:
+            with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
+                escritor = csv.DictWriter(archivo_salida, fieldnames=columnas, delimiter=separador)
+                escritor.writeheader()
+                escritor.writerows(registros_para_guardar)
+        else:
+            for columna,es_valido in val.items():
+                if es_valido == False:
+                    print(f'El valor en el campo {columna} es inválido.')
 
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
 
