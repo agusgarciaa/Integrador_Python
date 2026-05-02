@@ -7,6 +7,7 @@ from pathlib import Path
 
 import src.file_manager as fm
 import src.helpers as hp
+import src.validaciones as va
 
 
 # Funcion para encontrar la ruta de los datasets - Ana Freitas 
@@ -266,22 +267,6 @@ def verificar_coordenada(ruta, separador):
     return nocumplen,len(nocumplen)
 
 
-#funcion 3b sofia martins
-def cordenadas_faltantes(fila):
-    lat = fila.get('decimalLatitude')
-    lon = fila.get('decimalLongitude')
-    
-    # Caso A: Existe latitud pero NO longitud (Error de Longitud)
-    if (lat != "" and lat is not None) and (lon == "" or lon is None):
-        return "FALTA_LONGITUD"
-    
-    # Caso B: Existe longitud pero NO latitud (Error de Latitud)
-    if (lon != "" and lon is not None) and (lat == "" or lat is None):
-        return "FALTA_LATITUD"
-    
-    return True
-
-
 # Ejercicio 3.C - Fe Cordoba
 def validar_fechas(ruta, ruta_operations, separador=","):
     fechas_invalidas = {}  # {fila: [(columna, valor, motivo)]}
@@ -344,7 +329,7 @@ def detectar_registros_duplicados(ruta, separador, columna):
 
 
 # Ejercicio 3.E - Fe Cordoba
-def validar_country_code(ruta,ruta_operations, separador=","):
+def validar_country_code(ruta, ruta_operations, separador=","):
     cods_invalidos = {}  # {fila: [(columna, valor, motivo)]}
     codigos_validos = ['AR','BO','BR','PY','UY','CH']
     operacion = 'VALIDATION'
@@ -357,28 +342,23 @@ def validar_country_code(ruta,ruta_operations, separador=","):
         if "countryCode" not in header:
             print("No existe la columna 'countryCode' en el dataset")
             print("Se mostrara en pantalla un diccionario vacio")
-            registro_cambio_operations(ruta_operations,ruta,operacion,0,'ERROR')
+            registro_cambio_operations(ruta_operations, ruta, operacion, 0, 'ERROR')
             return cods_invalidos
             
         indice = header.index("countryCode")
 
-        for num_fila, fila in enumerate(lector, start=1):   # arranca por primer fila con num=1
+        for num_fila, fila in enumerate(lector, start=1):
+            valor = fila[indice] if indice < len(fila) else ""
 
-            valor = fila[indice].strip() if indice < len(fila) else ""
+            motivo = hp.validar_country_code_registro(valor, codigos_validos)
 
-            if valor == "" or valor.lower() == "n/a":
+            if motivo:
                 cods_invalidos.setdefault(num_fila, []).append(
-                    ("countryCode", valor, "nulo")
-                )
-                cant_invalidos += 1
-
-            elif valor not in codigos_validos:
-                cods_invalidos.setdefault(num_fila, []).append(
-                    ("countryCode", valor, "código inválido")
+                    ("countryCode", valor, motivo)
                 )
                 cant_invalidos += 1
     
-    registro_cambio_operations(ruta_operations,ruta,operacion,cant_invalidos,'ERROR')
+    registro_cambio_operations(ruta_operations, ruta, operacion, cant_invalidos, 'ERROR')
 
     return cods_invalidos
 
@@ -496,55 +476,6 @@ def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
             
     return ret
 
-# Funcion 3.I - Ana Freitas
-def validar_campo_latitud_completo(ruta, separador=','):
-    """
-    Realiza una validación integral del campo 'decimalLatitude'
-    Agrupa tres criterios: rango global [-90, 90], pertenencia a América del Sur 
-    y verificación de integridad (que no falte la latitud si existe la longitud).
-    """
-
-    incorrectos = []
-
-    with open(ruta, mode='r', encoding='utf-8') as archivo:
-        leer = csv.DictReader(archivo, delimiter=separador)
-        for fila in leer:
-            lat = fila.get('decimalLatitude')
-            res_integridad = cordenadas_faltantes(fila)
-
-            es_rango_valido = hp.verificar_latitud(lat)
-            status_presencia = cordenadas_faltantes(fila) 
-            esta_en_latam = hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT )
-
-            if not es_rango_valido or not esta_en_latam or status_presencia == "FALTA_LATITUD":
-                incorrectos.append(fila)
-                
-    return len(incorrectos), incorrectos
-
-
-def validar_campo_longitud_completo(ruta, separador=','):
-    """
-    Realiza una validación integral del campo 'decimalLongitud'
-    Agrupa tres criterios: rango global [-180, 180], pertenencia a América del Sur 
-    y verificación de integridad (que no falte la longitud si existe la latitud).
-    """
-
-    incorrectos = []
-
-    with open(ruta, mode='r', encoding='utf-8') as archivo:
-        leer = csv.DictReader(archivo, delimiter=separador)
-        for fila in leer:
-            long = fila.get('decimalLongitud')
-
-            es_rango_valido = hp.verificar_longitud(long)
-            status_presencia = cordenadas_faltantes(fila) 
-            esta_en_latam = hp.check_coordenadas(long, hp.MAX_LONG, hp.MIN_LONG)
-
-            if not es_rango_valido or not esta_en_latam or status_presencia == "FALTA_LONGITUD":
-                incorrectos.append(fila)
-                
-    return len(incorrectos), incorrectos
-         
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
 #  Ejercicio 4.A/B - Fe Cordoba
@@ -784,50 +715,100 @@ def registrar_filtro (path,c_delimiter=',',c_encoding='utf-8',**kwargs):
 
 
 # Ejercicio 5.B - Ana Freitas
-def actualizar_campo(ruta_raw, ruta_processed, separador, identificador, columna, nuevo_valor):
+def actualizar_campo(ruta_raw, ruta_processed, ruta_operations, separador, identificador, columna, nuevo_valor):
+    """
+    Permite actualizar un valor específico en un registro identificado por occurrenceID.
+    """
+
     registros_actualizados = []
+    operacion = "UPDATE"
+    afectados = 0
+
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
     hp.validar()
 
-    with open(ruta_raw, encoding='utf-8') as archivo:
-        lector = csv.DictReader(archivo, delimiter=separador)
-        columnas = lector.fieldnames
-        
-        for fila in lector:
-            if fila.get("occurrenceID") == identificador:
-                fila[columna] = nuevo_valor
-            
-            registros_actualizados.append(fila)
+    try:
+        with open(ruta_entrada, encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo, delimiter=separador)
+            columnas = lector.fieldnames
 
-    with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo:
-        escritor = csv.DictWriter(archivo, delimiter=separador, fieldnames=columnas)
-        escritor.writeheader()
-        escritor.writerows(registros_actualizados)
+            if columna not in columnas:
+                print(f"Error: La columna '{columna}' no existe en el dataset.")
+                return
+            
+            for fila in lector:
+                if fila.get("occurrenceID") == identificador:
+                    fila[columna] = nuevo_valor
+                    afectados += 1
+                
+                registros_actualizados.append(fila)
+
+        hp.asegurar_directorio(ruta_processed)
+
+        with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
+            escritor = csv.DictWriter(archivo_salida, delimiter=separador, fieldnames=columnas)
+            escritor.writeheader()
+            escritor.writerows(registros_actualizados)
+
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo de entrada en {ruta_entrada}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+    
+    except Exception as e:
+        print(f"Ocurrió un error inesperado al actualizar: {e}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
 
 
 # Ejercicio 5.C - Ana Freitas
-def actualizar_multiples_campos(ruta_raw, ruta_processed, separador, identificador, dic_cambios):
+def actualizar_multiples_campos(ruta_raw, ruta_processed, ruta_operations, separador, identificador, dic_cambios):
+    """
+    Actualiza múltiples campos de un registro específico en una sola operación.
+    Recibe un diccionario con los campos y valores nuevos.
+    """
+
     registros_para_guardar = []
+    operacion = "UPDATE"
+    afectados = 0
     
-    # Leer el archivo desde la ruta de origen (raw)
-    with open(ruta_raw, encoding='utf-8') as archivo:
-        lector = csv.DictReader(archivo, delimiter=separador)
-        columnas = lector.fieldnames
-        
-        for fila in lector:
-            # Si encontramos el ID, actualizamos el diccionario en memoria RAM
-            if fila.get("occurrenceID") == identificador:
-                fila.update(dic_cambios)
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
+
+    try: 
+        # Leer el archivo desde la ruta de origen (raw)
+        with open(ruta_entrada, encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo, delimiter=separador)
+            columnas = lector.fieldnames
+
+            columnas_invalidas = [col for col in dic_cambios if col not in columnas]
+            if columnas_invalidas:
+                print(f"Error: Las columnas {columnas_invalidas} no existen en este dataset.")
+                return
             
-            # Guardamos la fila modificada o no en nuestra lista 
-            registros_para_guardar.append(fila)
+            for fila in lector:
+                if fila.get("occurrenceID") == identificador:
+                    fila.update(dic_cambios)
+                    afectados += 1
+                
+                registros_para_guardar.append(fila)
 
-    # Escribir el resultado en la ruta de destino la carpeta processed
-    with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo:
-        escritor = csv.DictWriter(archivo, fieldnames=columnas, delimiter=separador)
-        escritor.writeheader()
-        escritor.writerows(registros_para_guardar)
+        hp.asegurar_directorio(ruta_processed)
 
+        with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
+            escritor = csv.DictWriter(archivo_salida, fieldnames=columnas, delimiter=separador)
+            escritor.writeheader()
+            escritor.writerows(registros_para_guardar)
+
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo de entrada en {ruta_entrada}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+    
+    except Exception as e:
+        print(f"Ocurrió un error inesperado al actualizar: {e}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
 
  # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
     
@@ -951,6 +932,7 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
     operacion = "DELETE"
     eliminados = 0
 
+    # si existe el archivo ocurrence del dataset en processed dataset se usa ese para leer sino el raw 
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else archivo
 
     with open(ruta_entrada, newline="", encoding="utf-8") as f_in:
@@ -960,24 +942,68 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
         if columna not in columnas:
             raise ValueError(f"La columna '{columna}' no existe")
 
-        filas = list(reader)  
+        filas = list(reader)  #guardo en lista el iterador ya que es peligroso leer y escribir un mismo archivo en caso de q ocurrence exista 
 
-        hp.asegurar_directorio(ruta_processed)  
+        hp.asegurar_directorio(ruta_processed)  # en caso de que ocurrence no exista lo creamos, sino, no pasa nada 
 
-        with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out: 
+        with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out:  # y escribimos ahi 
             writer = csv.DictWriter(f_out, fieldnames=columnas, delimiter=delimiter)
             writer.writeheader()
 
             for fila in filas:
-                dato = fila[columna]
+                dato = fila[columna] # guardo el dato de esa columna 
 
-                if not hp.cumple_condicion(dato, condicion, valor): 
+                if not hp.cumple_condicion(dato, condicion, valor): # si no cumple, lo escribo en el processed
                     writer.writerow(fila)
                 else:
-                    eliminados += 1  
+                    eliminados += 1  # si cumple debo eliminarlo (excluirlo del processed)
 
     registro_cambio_operations(ruta_operations, ruta_entrada, operacion, eliminados, 'SI')
 
+# Función 6.E - Ana Freitas
+def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
+    """
+    Sanitización automática de datasets.
+    Recibe la ruta del archivo original y la ruta de destino en processed_datasets.
+    """
+    
+    registros_sanitizados = []
+    indices = set()
+    operacion = "DELETE"
+    eliminados = 0
+    codigos_validos = ['AR', 'BO', 'BR', 'PY', 'UY', 'CH']
+
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
+
+    try:
+        with open(ruta_entrada, mode='r', encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo, delimiter=separador)
+            header = lector.fieldnames
+
+            for fila in lector:
+                if va.es_registro_valido(fila, indices, codigos_validos):
+                    registros_sanitizados.append(fila)
+                else:
+                    eliminados += 1
+
+        hp.asegurar_directorio(ruta_processed) 
+        
+        with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
+            escritor = csv.DictWriter(archivo_salida, fieldnames=header, delimiter=separador)
+            escritor.writeheader()
+            escritor.writerows(registros_sanitizados)
+            
+        print(f"Sanitización finalizada. Registros conservados: {len(registros_sanitizados)}")
+
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, eliminados, 'SI')
+
+    except FileNotFoundError:
+        print(f"Error: No se pudo encontrar el archivo en {ruta_entrada}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+
+    except Exception as e:
+        print(f"Ocurrió un error inesperado: {e}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
 
 # --------------------------------------------------------------- Ejercicios 7 - Registro de operaciones en datasets --------------------------------------------------------------
 
