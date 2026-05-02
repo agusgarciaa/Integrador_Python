@@ -3,6 +3,13 @@ from datetime import datetime
 import csv
 import os
 
+# ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
+
+MAX_LAT = 13.0
+MIN_LAT = -56.0
+MAX_LONG = -34.0
+MIN_LONG = -82.0
+
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
 # Function para obtener el indice de una columna - Ana Freitas
