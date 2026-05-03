@@ -54,3 +54,8 @@
 2026-05-03 00:07:22 | inaturalist | DELETE | 0 registros
 2026-05-03 00:08:20 | inaturalist | VALIDATION | 2382613 registros |ERROR
 2026-05-03 00:16:18 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-03 00:34:01 | xenocanto | VALIDATION | 3064 registros |ERROR
+2026-05-03 00:34:01 | xenocanto | DELETE | 7695 registros
+2026-05-03 00:34:01 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-03 00:34:02 | xenocanto | UPDATE | 0 registros
+2026-05-03 00:34:02 | xenocanto | VALIDATION | 3064 registros |ERROR
