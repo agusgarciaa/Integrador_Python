@@ -248,34 +248,40 @@ def identificar_columnas_nulas(ruta, separador):
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 
-def verificar_coordenada(ruta, separador):
-    nocumplen=[]
-    with open(ruta, mode='r', encoding='utf-8', delimiter=separador) as archivo:
-        leer = csv.DictReader(archivo)
+def verificar_coordenada(ruta_raw, separador,ruta_operations):
+    try:
+      nocumplen=[]
+      with open(ruta_raw, mode='r', encoding='utf-8', delimiter=separador) as archivo:
+          leer = csv.DictReader(archivo)
 
-        for fila in leer:
-            latitud=fila.get('decimalLatitude')
-            longitud=fila.get('decimalLongitude')
+          for fila in leer:
+              latitud=fila.get('decimalLatitude')
+              longitud=fila.get('decimalLongitude')
         
-            aux1=hp.verificar_latitud(latitud)
-            aux2=hp.verificar_longitud(longitud)
+              aux1=hp.verificar_latitud(latitud)
+              aux2=hp.verificar_longitud(longitud)
 
-            if not aux1 or not aux2:
-                nocumplen.append(fila)
+              if not aux1 or not aux2:
+                  nocumplen.append(fila)
                
-    return nocumplen,len(nocumplen)
+      return nocumplen,len(nocumplen)
+    except Exception as e:
+        registro_cambio_operations(ruta_operations,ruta_raw,"VALIDATION",0,"ERROR")
 
 
 #funcion 3b sofia martins
-def cordenadas_faltantes(fila):
-    cumple=True
-    aux1=fila.get('decimalLatitude') 
-    aux2=fila.get('decimalLongitude') 
+def cordenadas_faltantes(fila,ruta_raw,ruta_operations):
+    try:
+      cumple=True
+      aux1=fila.get('decimalLatitude') 
+      aux2=fila.get('decimalLongitude') 
       
-    if ((aux1==""or aux1==None) and aux2!="") or (aux1!="" and (aux2==""or aux2==None)):
-         cumple=False
+      if ((aux1==""or aux1==None) and aux2!="") or (aux1!="" and (aux2==""or aux2==None)):
+           cumple=False
     
-    return cumple
+      return cumple
+    except Exception as e:
+        registro_cambio_operations(ruta_operations,ruta_raw,"VALIDATION",0,"ERROR")
 
 
 # Ejercicio 3.C - Fe Cordoba
