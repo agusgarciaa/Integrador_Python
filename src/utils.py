@@ -251,8 +251,8 @@ def identificar_columnas_nulas(ruta, separador):
 def verificar_coordenada(ruta_raw, separador,ruta_operations):
     try:
       nocumplen=[]
-      with open(ruta_raw, mode='r', encoding='utf-8', delimiter=separador) as archivo:
-          leer = csv.DictReader(archivo)
+      with open(ruta_raw, mode='r', encoding='utf-8') as archivo:
+          leer = csv.DictReader(archivo,delimiter=separador)
 
           for fila in leer:
               latitud=fila.get('decimalLatitude')
@@ -267,6 +267,7 @@ def verificar_coordenada(ruta_raw, separador,ruta_operations):
       return nocumplen,len(nocumplen)
     except Exception as e:
         registro_cambio_operations(ruta_operations,ruta_raw,"VALIDATION",0,"ERROR")
+        return [],0
 
 
 #funcion 3b sofia martins
@@ -282,6 +283,7 @@ def cordenadas_faltantes(fila,ruta_raw,ruta_operations):
       return cumple
     except Exception as e:
         registro_cambio_operations(ruta_operations,ruta_raw,"VALIDATION",0,"ERROR")
+        return False
 
 
 # Ejercicio 3.C - Fe Cordoba
