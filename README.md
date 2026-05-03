@@ -14,27 +14,6 @@ Desarrollo de una aplicación en Python para analizar y visualizar datos de biod
 --- 
 ## 📁 Estructura del Proyecto
 
-📦 code/
-├── 📁 documentation/
-├── 📁 logs/
-│   └── 📄 operations.log
-├── 📁 notebooks/
-│   ├── 📓 iadiza.ipynb
-│   ├── 📓 inaturalist.ipynb
-│   └── 📓 xenocanto.ipynb
-├── 📁 pages/
-│   ├── 🐍 03_Estado_del_sistema.py
-│   ├── 🐍 03_Busqueda.py
-│   └── 🐍 04_Visualización.py
-├── 📁 processed_datasets/
-├── 📁 raw_datasets/
-├── 📁 src/
-├── 📄 .gitignore
-├── 📄 .python-version
-├── 🐍 Inicio.py
-├── 📝 README.md
-└── 📄 requirements.txt
-
 - `documentation/`: Contiene la documentación de los tres datasets utilizados en el proyecto.
 - `notebooks/`: Contiene los archivos `.ipynb` con los ejercicios de análisis y limpieza de datos de los datasets.
 - `src/`: Código fuente adicional y módulos auxiliares.
