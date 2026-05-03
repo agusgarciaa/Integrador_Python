@@ -1,6 +1,14 @@
 from collections import Counter
 from datetime import datetime
 import csv
+import os
+
+# ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
+
+MAX_LAT = 13.0
+MIN_LAT = -56.0
+MAX_LONG = -34.0
+MIN_LONG = -82.0
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -180,3 +188,91 @@ def cumple_condicion(dato, condicion, valor):
         case _:
             # esto no debería ocurrir si validamos antes
             raise ValueError("Condición no válida")
+
+
+#Función de apoyo para la función 3.H - Lucía Cipolla
+def check_coordenadas (dato, MAX, MIN):
+    try:
+        dato = float(dato)
+        if dato<MIN or dato>MAX:
+            res=False
+        else:
+            res=True
+    except ValueError:
+        res=False
+
+    return res
+
+
+#Función de apoyo para la función 3.A - Sofia Martins
+def verificar_latitud(latitud):
+    cumple=True
+    if not numero(latitud) or not(-90<=float(latitud)<=90):
+        cumple=False
+    return cumple
+
+
+def verificar_longitud(longitud):
+    cumple=True
+    if not numero(longitud) or not(-180<=float(longitud)<=180):
+        cumple=False
+    return cumple
+
+
+# funcion de apoyo para las que crean/modifican processed datasets
+def asegurar_directorio(ruta_archivo):
+    carpeta = os.path.dirname(ruta_archivo)
+    os.makedirs(carpeta, exist_ok=True)
+
+# funcion auxiliar de validacion del punto 5.D
+def validar(**kwargs):
+    """
+        Recibe un kwargs (diccionario) donde la clave es la columna a modificar y el valor es el que se le
+        pretende dar al campo y lo interpreta.
+        Devuelve un diccionario donde la clave es la columna y el valor es un boolean True en caso de que "pase"
+        el filtro o False en caso contrario.
+        Parametros:
+            **kwargs: un diccionario con una cantidad indeterminada de parámetros. La clave debe ser la columna
+            a modificar y el valor debe ser el valor que se pretende insertar.
+            
+        no se usan librerías.
+    """
+    ret = {}
+    for columna in kwargs:
+        match columna:
+
+            case 'decimalLatitude'|'latitudeDecimal':
+                ret[columna] = check_coordenadas(kwargs[columna],MAX_LAT,MIN_LAT)
+            case 'decimalLongitude'|'longitudeDecimal':
+                ret[columna] = check_coordenadas(kwargs[columna],MAX_LONG,MIN_LONG)
+            case 'eventdate' | 'verbatimeventdate':
+                 aux = chequear_fecha(kwargs[columna])
+                 if (aux == None):
+                     aux = False
+                 else:
+                     aux = True
+                 ret[columna] = aux
+            case 'countryCode':
+                 aux = validar_country_code_registro(kwargs[columna],['AR','BO','BR','PY','UY','CH'])
+                 if (aux == "nulo" or aux == "código inválido"):
+                     aux = False
+                 else:
+                     aux = True
+                 ret[columna] = aux
+
+    return ret
+
+
+# Funcion de apoyo para el 3.C - Fe Cordoba 
+def validar_country_code_registro(valor, codigos_validos):
+    valor = valor.strip()
+
+    if valor == "" or valor.lower() == "n/a":
+        return "nulo"
+    
+    if valor not in codigos_validos:
+        return "código inválido"
+    
+    return None
+
+

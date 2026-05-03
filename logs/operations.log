@@ -1,0 +1,56 @@
+2026-04-30 10:33:14 | iadiza | DELETE | 1 registros
+2026-04-30 10:33:47 | iadiza | DELETE | 1 registros
+2026-04-30 10:51:19 | iadiza | DELETE | 0 registros |ERROR
+2026-04-30 21:06:50 | iadiza | VALIDATION | 0 registros |ERROR
+2026-04-30 21:06:50 | iadiza | VALIDATION | 3 registros |ERROR
+2026-04-30 21:06:50 | iadiza | DELETE | 15 registros
+2026-04-30 21:22:30 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-04-30 21:22:43 | inaturalist | VALIDATION | 1 registros |ERROR
+2026-04-30 21:23:07 | inaturalist | DELETE | 768205 registros
+2026-04-30 21:44:36 | xenocanto | VALIDATION | 3064 registros |ERROR
+2026-04-30 21:44:36 | xenocanto | DELETE | 7695 registros
+2026-04-30 21:44:36 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-01 12:23:10 | iadiza | DELETE | 0 registros
+2026-05-01 12:30:11 | iadiza | DELETE | 3 registros
+2026-05-02 18:52:17 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-02 18:52:38 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-02 19:00:34 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:00:43 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:00:49 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:01:03 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:01:07 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:01:40 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:28:00 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:28:10 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:28:28 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:28:30 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:33:46 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:36:07 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:37:09 | xenocanto | UPDATE | 0 registros
+2026-05-02 19:50:23 | xenocanto | UPDATE | 0 registros
+2026-05-02 20:02:59 | xenocanto | UPDATE | 0 registros
+2026-05-02 23:23:12 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-02 23:23:51 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-02 23:33:13 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-02 23:33:24 | inaturalist | VALIDATION | 1 registros |ERROR
+2026-05-02 23:38:36 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-02 23:38:50 | xenocanto | VALIDATION | 3064 registros |ERROR
+2026-05-02 23:40:54 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-02 23:46:29 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-02 23:49:49 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-02 23:49:59 | inaturalist | VALIDATION | 1 registros |ERROR
+2026-05-02 23:53:35 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-02 23:53:46 | inaturalist | VALIDATION | 1 registros |ERROR
+2026-05-02 23:54:08 | inaturalist | DELETE | 0 registros
+2026-05-02 23:55:08 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-02 23:56:53 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-02 23:59:22 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-03 00:01:04 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-03 00:01:15 | inaturalist | VALIDATION | 1 registros |ERROR
+2026-05-03 00:01:24 | inaturalist | DELETE | 0 registros
+2026-05-03 00:02:24 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-03 00:07:03 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-03 00:07:13 | inaturalist | VALIDATION | 1 registros |ERROR
+2026-05-03 00:07:22 | inaturalist | DELETE | 0 registros
+2026-05-03 00:08:20 | inaturalist | VALIDATION | 2382613 registros |ERROR
+2026-05-03 00:16:18 | inaturalist | VALIDATION | 2382613 registros |ERROR
