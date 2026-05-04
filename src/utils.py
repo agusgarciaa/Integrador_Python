@@ -37,13 +37,10 @@ def obtener_ruta_log(carpeta, archivo):
    
 #funcion 2a sofia martins
 def recorrer_diez_filas(ruta,delimiterr):
-    #abrimos el archivo con open, en modo de lectura,formato utf-8
+    """abre un dataset y imprime las primeras 10 filas"""
     with open(ruta, mode='r', encoding='utf-8') as archivo:
-         #nos salteamos la primera linea que es el encabezado
         next(archivo)
-         #le indicaremos al lector que los campos estan separados con ese delimitador
         modo = csv.reader(archivo, delimiter=delimiterr)
-         #imprimimos las primeras 10 filas, i sirve para contar por cual fila vamos
         for i, fila in enumerate(modo):
             if i < 10:
                 print(fila)
@@ -53,11 +50,9 @@ def recorrer_diez_filas(ruta,delimiterr):
 
 #funcion 2b sofia martins
 def imprimir_encabezados(ruta, delimiter=','):
-     #abrimos el archivo en modo lectura y con delimitador utf-8
+    """retorna el encabezado del dataset"""
     archivo = open(ruta, 'r', encoding='utf-8')
-     #le indicamos al reader que tipo de delimitador tienen los campos
     modo = csv.reader(archivo, delimiter=delimiter)
-     #imprimimos la primera linea,osea los encanbezados
     encabezado=next(modo)
     archivo.close()
     return encabezado
@@ -249,6 +244,9 @@ def identificar_columnas_nulas(ruta, separador):
 #funcion 3a sofia martins
 
 def verificar_coordenada(ruta_raw, separador,ruta_operations):
+    """verifica si las cordenadas decimallatitude y decimallongitude estan dentro del rango valido,
+       las que no cumple se agregan a una lista
+       se retorna la lista y la cantidad de elementos"""
     try:
       nocumplen=[]
       with open(ruta_raw, mode='r', encoding='utf-8') as archivo:
@@ -272,6 +270,8 @@ def verificar_coordenada(ruta_raw, separador,ruta_operations):
 
 #funcion 3b sofia martins
 def cordenadas_faltantes(fila,ruta_raw,ruta_operations):
+    """verifica si en una fila falta una de las cordenadas decimallatitude o decimallongitude,
+       si falta una devuelve un booleano"""
     try:
       cumple=True
       aux1=fila.get('decimalLatitude') 
@@ -587,9 +587,11 @@ def preparar_registro(registro, dataset, ruta, separador=","):
 
 #funcion 4f sofia martins
 def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
+    """agrega un registro al dataset pidiendo los valores al usuario,
+       si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
+       usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
     datos = []
     agregados=0
-     #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
     if os.path.isfile(ruta_processed):
         ruta=ruta_processed
     else:
@@ -600,13 +602,11 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
         f.seek(0)
-        #guardamos el archivo en una estructura para agregarle el registro nuevo
         lector = csv.DictReader(f, dialect=codificacion)
         header = lector.fieldnames
         for fila in lector:
             if fila and any(fila.values()):
                 datos.append(fila)
-    #creamos el registro a agregar,lo agregamos al final
     nuevo=crear_registro_vacio(header)
     for columna in nuevo.keys():
         valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
@@ -619,7 +619,6 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
             final[columna]=input("ingrese un id: ")     
     datos.append(final)
     agregados +=1
-    #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
@@ -634,25 +633,25 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
 
 #funcion4g sofia martins
 def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):  
+    """agregan varios registros al dataset pidiendo los valores al usuario,
+       si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
+       usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
     datos = []
     agregados=0
     if os.path.isfile(ruta_processed):
         ruta=ruta_processed
     else:
         ruta=ruta_raw
-     #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
     with open(ruta, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
         f.seek(0)
-        #guardamos el archivo en una estructura para agregarle el registro nuevo
         lector = csv.DictReader(f, dialect=codificacion)
         header = lector.fieldnames
         for fila in lector:
             if fila and any(fila.values()):
                 datos.append(fila)
-    #creamos el registro a agregar,lo agregamos al final
     opcion=1
     while(opcion!=0):
         opcion=int(input('quieres agregar un registro?1=si,0=no: '))
@@ -671,7 +670,6 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
                   final[columna]=input("ingrese un id: ")  
           datos.append(final)
           agregados += 1
-    #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
@@ -845,12 +843,14 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, ruta_operations, separ
     
 # Función 6.A - Sofia Martins
 def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
+    """elimina un registro del dataset pidiendo los valores al usuario,
+       si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
+       usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
     datos = []
     se_encontro = False
     eliminados = 0
     operacion = "DELETE"
 
-    # abrimos el archivo para leerlo, con sniffer obtenemos el delimitador
     if os.path.isfile(ruta_processed):
         ruta=ruta_processed
     else:
@@ -861,7 +861,6 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         terminator = aux2.lineterminator
         archivo.seek(0)
 
-        # guardamos el archivo en una estructura para eliminarle el registro
         lector = csv.DictReader(archivo, dialect=aux2)
         header = lector.fieldnames
 
@@ -886,7 +885,6 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         if not se_encontro:
             print("ese identificador no estaba en el registro")
 
-    # guardamos en pc el archivo nuevo con el registro eliminado
     if se_encontro:
         with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
             escribir = csv.DictWriter(
@@ -1064,6 +1062,7 @@ def obtener_fecha_hora_actual():
 
 # Ejercicio 7b - sofia martins
 def registro_cambio_operations(ruta_operations,ruta_raw,operacion,afectados,serealizo):
+    """registra en el archivo logs la operacion realizada y sus caracteristicas"""
     fecha=obtener_fecha_hora_actual()
     nombredataset=Path(ruta_raw).parent.name
     if serealizo=='SI':
