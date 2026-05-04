@@ -1,6 +1,5 @@
 from collections import Counter
 from datetime import datetime
-
 import csv
 import os
 
@@ -226,24 +225,42 @@ def asegurar_directorio(ruta_archivo):
     os.makedirs(carpeta, exist_ok=True)
 
 # funcion auxiliar de validacion del punto 5.D
-def validar(path,valor,c_delimiter=',',c_encoding='utf-8',**kwargs):
+def validar(**kwargs):
     """
-        valor: el valor que se intenta insertar en la columna
-        columna: la columna a analizar
+        Recibe un kwargs (diccionario) donde la clave es la columna a modificar y el valor es el que se le
+        pretende dar al campo y lo interpreta.
+        Devuelve un diccionario donde la clave es la columna y el valor es un boolean True en caso de que "pase"
+        el filtro o False en caso contrario.
+        Parametros:
+            **kwargs: un diccionario con una cantidad indeterminada de parámetros. La clave debe ser la columna
+            a modificar y el valor debe ser el valor que se pretende insertar.
+            
+        no se usan librerías.
     """
     ret = {}
     for columna in kwargs:
         match columna:
 
             case 'decimalLatitude'|'latitudeDecimal':
-                ret[columna] = verificar_latitud(valor)
+                ret[columna] = check_coordenadas(kwargs[columna],MAX_LAT,MIN_LAT)
             case 'decimalLongitude'|'longitudeDecimal':
-                ret[columna] = verificar_longitud(valor)
+                ret[columna] = check_coordenadas(kwargs[columna],MAX_LONG,MIN_LONG)
             case 'eventdate' | 'verbatimeventdate':
-                ret[columna] = chequear_fecha(valor)
-            #case 'countryCode':
+                 aux = chequear_fecha(kwargs[columna])
+                 if (aux == None):
+                     aux = False
+                 else:
+                     aux = True
+                 ret[columna] = aux
+            case 'countryCode':
+                 aux = validar_country_code_registro(kwargs[columna],['AR','BO','BR','PY','UY','CH'])
+                 if (aux == "nulo" or aux == "código inválido"):
+                     aux = False
+                 else:
+                     aux = True
+                 ret[columna] = aux
 
-            #case 'coordinateUncertaintyInMeters':
+    return ret
 
 
 # Funcion de apoyo para el 3.C - Fe Cordoba 
