@@ -23,21 +23,23 @@ Desarrollo de una aplicación en Python para analizar y visualizar datos de biod
 - `pages/`: Páginas secundarias de la aplicación Streamlit.
 - `logs/`: Contiene el archivo `operations.log` con el registro de las operaciones de los datasets.
 
-### Para el correcto funcionamiento de las rutas, es necesario organizar los archivos de la siguiente manera:
+#### - Para el correcto funcionamiento de las rutas, es necesario organizar los archivos de la siguiente manera:
 
-1. Datos Crudos (`raw_datasets/`)
+1. Datos Crudos (raw_datasets/)
 Debes crear manualmente estas carpetas (iadiza, xenocanto e inaturalist) y colocar los archivos originales en su interior:
 
-`raw_datasets/iadiza/`
-`raw_datasets/xenocanto/`
-`raw_datasets/inaturalist/`
+- `raw_datasets/iadiza/`
+- `raw_datasets/xenocanto/`
+- `raw_datasets/inaturalist/`
 
-2. Datos Procesados (`processed_datasets/`)
-Deben existir las carpetas de destino (iadiza, xenocanto e inaturalist), el archivo final se crea solo al ejecutar el código:
+2. Datos Procesados (processed_datasets/)
+Igual que en raw_datasets/, deben existir las carpetas de destino (iadiza, xenocanto e inaturalist), el archivo final se crea solo al ejecutar el código:
 
-`processed_datasets/iadiza/`
-`processed_datasets/xenocanto/`
-`processed_datasets/inaturalist/`
+- `processed_datasets/iadiza/`
+- `processed_datasets/xenocanto/`
+- `processed_datasets/inaturalist/`
+
+
 ---
 
 ## ⚙️ Requisitos Previos
