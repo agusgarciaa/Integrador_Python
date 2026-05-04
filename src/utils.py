@@ -976,9 +976,11 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
+        registro_cambio_operations(ruta_operations, archivo, operacion, 0, 'ERROR')
         raise ValueError("Condición no válida")
 
     if valor == "" or valor == "N/A":
+        registro_cambio_operations(ruta_operations, archivo, operacion, 0, 'ERROR')
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
     operacion = "DELETE"
@@ -992,6 +994,7 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
         columnas = reader.fieldnames
 
         if columna not in columnas:
+            registro_cambio_operations(ruta_operations, ruta_entrada, operacion, 0, 'ERROR')
             raise ValueError(f"La columna '{columna}' no existe")
 
         filas = list(reader)  #guardo en lista el iterador ya que es peligroso leer y escribir un mismo archivo en caso de q ocurrence exista 
