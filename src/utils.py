@@ -1020,7 +1020,7 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
     registro_cambio_operations(ruta_operations, ruta_entrada, operacion, eliminados, 'SI')
 
 
-# Función 6.E - Ana Freitas
+# Función 6.E - Ana Freitas y 6.F - Lucía Cipolla
 def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
     """
     Sanitización automática de datasets.
@@ -1028,9 +1028,11 @@ def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
     """
     
     registros_sanitizados = []
+    motivo_eliminacion = Counter()
     indices = set()
     operacion = "DELETE"
     eliminados = 0
+    total_registros = 0
     codigos_validos = ['AR', 'BO', 'BR', 'PY', 'UY', 'CH']
 
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
@@ -1041,10 +1043,13 @@ def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
             header = lector.fieldnames
 
             for fila in lector:
-                if va.es_registro_valido(fila, indices, codigos_validos):
+                es_valido,motivo = va.es_registro_valido(fila, indices, codigos_validos)
+                if es_valido:
                     registros_sanitizados.append(fila)
                 else:
+                    motivo_eliminacion[motivo] += 1
                     eliminados += 1
+                total_registros += 1
 
         fm.asegurar_directorio(ruta_processed) 
         
@@ -1054,6 +1059,11 @@ def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
             escritor.writerows(registros_sanitizados)
             
         print(f"Sanitización finalizada. Registros conservados: {len(registros_sanitizados)}")
+        print(f"Registros eliminados: {eliminados}")
+        if total_registros>0:
+         print(f"Porcentaje de registros eliminados: {eliminados/total_registros:.2%}")
+        for motivo,cantidad in motivo_eliminacion.items():
+           print(f"Motivo de eliminación: {motivo} - {cantidad}")
 
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, eliminados, 'SI')
 
