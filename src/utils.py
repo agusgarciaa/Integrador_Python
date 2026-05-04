@@ -254,7 +254,6 @@ def identificar_columnas_nulas(ruta, separador):
 
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
-
 def verificar_coordenada(ruta_raw, separador,ruta_operations):
     try:
       nocumplen=[]
