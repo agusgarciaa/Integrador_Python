@@ -83,11 +83,13 @@ def chequear_fecha(valor):
 def es_registro_valido(fila, indices, codigos_validos):
     """
     Agrupa todas las validaciones de la sección 3.
-    Retorna True si el registro está limpio, False si es conflictivo.
+    Retorna una tupla True,'Válido' si el registro está limpio, False,'<motivo del conflicto>' si es conflictivo.
     """
 
-    if not validar_campo_latitud(fila) or not validar_campo_longitud(fila):
-        return False
+    if not validar_campo_latitud(fila):
+        return (False,'Latitud')
+    if not validar_campo_longitud(fila):
+        return (False,'Longitud')
 
     columnas_a_validar = ['eventdate', 'verbatimeventdate']
 
@@ -97,27 +99,27 @@ def es_registro_valido(fila, indices, codigos_validos):
             if valor_fecha is not None and valor_fecha != "":
                 fecha_convertida = chequear_fecha(valor_fecha)
                 if fecha_convertida is None or fecha_convertida > datetime.now():
-                    return False
+                    return (False,'Fecha')
 
     identificador_unico = fila.get('occurrenceID')
     if identificador_unico in indices:
-        return False 
+        return (False, 'ID')
     indices.add(identificador_unico)
 
     codigo_pais = fila.get('countryCode')
     if codigo_pais and validar_country_code_registro(codigo_pais, codigos_validos):
-        return False
+        return (False,'País')
 
     incertidumbre_metros = fila.get('coordinateUncertaintyInMeters')
     if incertidumbre_metros:
         try:
             val = float(incertidumbre_metros)
             if val < 0 or val > 100:
-                return False
+                return (False,'Coordenada')
         except ValueError:
-            return False
+            return (False,'Valor')
 
-    return True
+    return (True,'Válido')
 
 
 # Funcion de apoyo para el 3.C - Fe Cordoba 
