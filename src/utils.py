@@ -600,7 +600,7 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
        usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
     datos = []
     agregados=0
-     #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
+     
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
@@ -625,7 +625,7 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
             final[columna]=input("ingrese un id: ")     
     datos.append(final)
     agregados +=1
-    #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+    
     fm.asegurar_directorio(ruta_processed)
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -649,7 +649,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
     
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
-     #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
+     
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
         codificacion = csv.Sniffer().sniff(muestra)
@@ -660,16 +660,21 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
         for fila in lector:
             if fila and any(fila.values()):
                 datos.append(fila)
+  
     opcion=1
     while(opcion!=0):
         opcion=int(input('quieres agregar un registro?1=si,0=no: '))
+
         if(opcion==0):
             break
+
         else:
           nuevo=crear_registro_vacio(header)
+
           for columna in nuevo.keys():
             valor = input(f'Ingrese el valor en la columna [{columna}]: ') 
             nuevo[columna] = valor 
+
           final={} 
           for columna in header:
               if columna in nuevo:
@@ -678,7 +683,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
                   final[columna]=input("ingrese un id: ")  
           datos.append(final)
           agregados += 1
-    #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+  
     fm.asegurar_directorio(ruta_processed)
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -899,7 +904,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
                 eliminados += 1
                 print("se elimino el registro")
                 break
-
+            
         if not se_encontro:
             print("ese identificador no estaba en el registro")
 
