@@ -205,6 +205,10 @@ def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
 
 # Ejerciico 2.I - Ana Freitas
 def verificar_tipo(ruta, separador, columna, tipo_dato):
+    """
+    Coordina la extracción de una columna y delega el cálculo de métricas 
+    según el tipo de dato especificado (numérico, texto o coordenadas).
+    """
 
     with open(ruta, encoding="utf-8") as archivo:
         lector = csv.reader(archivo, delimiter=separador)
@@ -214,7 +218,7 @@ def verificar_tipo(ruta, separador, columna, tipo_dato):
         
         indice = hp.obtener_indice(header, columna)
 
-        lista_columna = [line[indice] for line in lector if len(line) > indice] # Guarda solo los datos de la columna deseada y salta las filas que vienen vacías o incompletas.
+        lista_columna = [line[indice] for line in lector if len(line) > indice] 
 
     if tipo_dato == 'numeric':
         return hp.calcular_numericos(lista_columna)
@@ -226,7 +230,10 @@ def verificar_tipo(ruta, separador, columna, tipo_dato):
     
 # Ejercicio 2.J - Ana Freitas
 def identificar_columnas_nulas(ruta, separador):
-
+    """
+    Identifica qué columnas del dataset no tienen ningún dato cargado 
+    en ninguno de los registros (están 100% vacías).
+    """
     with open(ruta, encoding="utf-8") as archivo:
         lector = csv.reader(archivo, delimiter=separador)
         header = next(lector)
@@ -296,7 +303,7 @@ def validar_fechas(ruta, ruta_operations, separador=","):
                 if valor == "" or valor.lower() == "n/a":
                     continue
 
-                fecha = hp.chequear_fecha(valor)
+                fecha = va.chequear_fecha(valor)
 
                 if fecha is None:
                     fechas_invalidas.setdefault(num_fila, []).append(
@@ -315,9 +322,11 @@ def validar_fechas(ruta, ruta_operations, separador=","):
     return fechas_invalidas
 
 
-
 # Ejercicio 3.D - Ana Freitas
 def detectar_registros_duplicados(ruta, separador, columna):
+    """
+    Lee un archivo y extrae una columna específica para identificar valores repetidos.
+    """
     with open(ruta, encoding="utf-8") as archivo:
         lector = csv.reader(archivo, delimiter=separador)
         header = next(lector)
@@ -350,7 +359,7 @@ def validar_country_code(ruta, ruta_operations, separador=","):
         for num_fila, fila in enumerate(lector, start=1):
             valor = fila[indice] if indice < len(fila) else ""
 
-            motivo = hp.validar_country_code_registro(valor, codigos_validos)
+            motivo = va.validar_country_code_registro(valor, codigos_validos)
 
             if motivo:
                 cods_invalidos.setdefault(num_fila, []).append(
@@ -512,7 +521,7 @@ def validar_registro(registro, separador=','):
     # Validación de fecha
     fecha = registro.get("eventDate")
     if fecha:
-        fecha_a_verificar = hp.chequear_fecha(fecha)
+        fecha_a_verificar = va.chequear_fecha(fecha)
         if fecha_a_verificar is None:
             errores.append("Fecha inválida")
 
@@ -571,12 +580,9 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     datos = []
     agregados=0
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-    if os.path.isfile(ruta_processed):
-        ruta=ruta_processed
-    else:
-        ruta=ruta_raw
-        
-    with open(ruta, 'r', newline='', encoding='utf-8') as f:
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
+
+    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
@@ -601,6 +607,7 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     datos.append(final)
     agregados +=1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+    fm.asegurar_directorio(ruta_processed)
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
@@ -617,12 +624,11 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
 def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):  
     datos = []
     agregados=0
-    if os.path.isfile(ruta_processed):
-        ruta=ruta_processed
-    else:
-        ruta=ruta_raw
+    
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
+
      #abrimos el archivo para leerlo,con sniffer obtenemos el delimitador que usa el archivo para usarlo mas adelante
-    with open(ruta, 'r', newline='', encoding='utf-8') as f:
+    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
         muestra = f.read(512)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
@@ -653,6 +659,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
           datos.append(final)
           agregados += 1
     #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+    fm.asegurar_directorio(ruta_processed)
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
@@ -718,73 +725,84 @@ def registrar_filtro (path,c_delimiter=',',c_encoding='utf-8',**kwargs):
 # Ejercicio 5.B - Ana Freitas
 def actualizar_campo(ruta_raw, ruta_processed, ruta_operations, separador, identificador, columna, nuevo_valor):
     """
-    Permite actualizar un valor específico en un registro identificado por occurrenceID.
+    Actualiza un valor validando consistencia y reportando errores.
     """
-
-    registros_actualizados = []
     operacion = "UPDATE"
     afectados = 0
-    val = {columna:nuevo_valor}
-
+ 
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
-
-    valido = hp.validar(**val)
     
-    if valido[columna] == True:
-        try:
-            with open(ruta_entrada, encoding='utf-8') as archivo:
-                lector = csv.DictReader(archivo, delimiter=separador)
-                columnas = lector.fieldnames
+    dict_val = {columna: nuevo_valor}
+    resultados_val = va.validar(**dict_val)
+    es_valido = resultados_val.get(columna, True) 
 
-                if columna not in columnas:
-                    print(f"Error: La columna '{columna}' no existe en el dataset.")
-                    return
+    if not es_valido:
+        print(f"Error: El valor '{nuevo_valor}' no es válido para la columna '{columna}'.")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+        return
+
+    registros_actualizados = []
+
+    try:
+        with open(ruta_entrada, mode='r', encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo, delimiter=separador)
+            columnas = lector.fieldnames
+
+            if columna not in columnas:
+                print(f"Error: La columna '{columna}' no existe en el dataset.")
+                return
+
+            for fila in lector:
+                id_en_archivo = str(fila.get("id", "").strip() or fila.get("gbifID", "").strip() or fila.get("occurrenceID", "").strip())
+                id_buscado = str(identificador).strip()
+        
+                if id_en_archivo == id_buscado:
+                    fila[columna] = str(nuevo_valor)
+                    afectados += 1
                 
-                for fila in lector:
-                    if fila.get("occurrenceID") == identificador:
-                        fila[columna] = nuevo_valor
-                        afectados += 1
-                    
-                    registros_actualizados.append(fila)
+                registros_actualizados.append(fila)
 
-            hp.asegurar_directorio(ruta_processed)
-
+        if afectados > 0:
+            fm.asegurar_directorio(ruta_processed)
             with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
                 escritor = csv.DictWriter(archivo_salida, delimiter=separador, fieldnames=columnas)
                 escritor.writeheader()
                 escritor.writerows(registros_actualizados)
-
+            
+            print(f"Éxito: Se actualizaron {afectados} registro(s).")
             registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
+        else:
+            print(f"Error: No se realizaron cambios. No existe el id: '{identificador}'")
+            registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
 
-        except FileNotFoundError:
-            print(f"Error: No se encontró el archivo de entrada en {ruta_entrada}")
-            registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
-        
-        except Exception as e:
-            print(f"Ocurrió un error inesperado al actualizar: {e}")
-            registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
-    else:
-        print('El valor no corresponde con el campo.')
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
 
 
 # Ejercicio 5.C - Ana Freitas
 def actualizar_multiples_campos(ruta_raw, ruta_processed, ruta_operations, separador, identificador, dic_cambios):
     """
     Actualiza múltiples campos de un registro específico en una sola operación.
-    Recibe un diccionario con los campos y valores nuevos.
     """
-
-    registros_para_guardar = []
     operacion = "UPDATE"
     afectados = 0
-    
+
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
-    val = hp.validar(**dic_cambios)
+    resultados_val = va.validar(**dic_cambios)
+    campos_invalidos = [col for col, valido in resultados_val.items() if not valido]
+    
+    if campos_invalidos:
+        for col in campos_invalidos:
+            print(f"Error: El valor para la columna '{col}' es inválido.")
+        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+        return
 
-    try: 
-        # Leer el archivo desde la ruta de origen (raw)
-        with open(ruta_entrada, encoding='utf-8') as archivo:
+    registros_para_guardar = []
+
+    try:
+        with open(ruta_entrada, mode='r', encoding='utf-8') as archivo:
             lector = csv.DictReader(archivo, delimiter=separador)
             columnas = lector.fieldnames
 
@@ -794,33 +812,32 @@ def actualizar_multiples_campos(ruta_raw, ruta_processed, ruta_operations, separ
                 return
             
             for fila in lector:
-                if fila.get("occurrenceID") == identificador:
-                    fila.update(dic_cambios)
+                id_en_archivo = str(fila.get("id", "").strip() or  fila.get("gbifID", "").strip() or  fila.get("occurrenceID", "").strip())
+                id_buscado = str(identificador).strip()
+
+                if id_en_archivo == id_buscado:
+                    fila.update({k: str(v) for k, v in dic_cambios.items()})
                     afectados += 1
                 
                 registros_para_guardar.append(fila)
 
-        hp.asegurar_directorio(ruta_processed)
-
-        if all(val.values()) == True:
+        if afectados > 0:
+            fm.asegurar_directorio(ruta_processed)
             with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
-                escritor = csv.DictWriter(archivo_salida, fieldnames=columnas, delimiter=separador)
+                escritor = csv.DictWriter(archivo_salida, delimiter=separador, fieldnames=columnas)
                 escritor.writeheader()
                 escritor.writerows(registros_para_guardar)
+            
+            print(f"Éxito: Se actualizaron {afectados} registro(s) con múltiples campos.")
+            registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
         else:
-            for columna,es_valido in val.items():
-                if es_valido == False:
-                    print(f'El valor en el campo {columna} es inválido.')
+            print(f"Error: No se encontró el registro con ID '{identificador}'")
+            registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
 
-        registro_cambio_operations(ruta_operations, ruta_raw, operacion, afectados, 'SI')
-
-    except FileNotFoundError:
-        print(f"Error: No se encontró el archivo de entrada en {ruta_entrada}")
-        registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
-    
     except Exception as e:
         print(f"Ocurrió un error inesperado al actualizar: {e}")
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
+
 
  # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
     
@@ -831,12 +848,9 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
     eliminados = 0
     operacion = "DELETE"
 
-    # abrimos el archivo para leerlo, con sniffer obtenemos el delimitador
-    if os.path.isfile(ruta_processed):
-        ruta=ruta_processed
-    else:
-        ruta=ruta_raw
-    with open(ruta, 'r', newline='', encoding='utf-8') as archivo:
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
+
+    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as archivo:
         aux = archivo.read(512)
         aux2 = csv.Sniffer().sniff(aux)
         terminator = aux2.lineterminator
@@ -867,8 +881,8 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         if not se_encontro:
             print("ese identificador no estaba en el registro")
 
-    # guardamos en pc el archivo nuevo con el registro eliminado
     if se_encontro:
+        fm.asegurar_directorio(ruta_processed)
         with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
             escribir = csv.DictWriter(
                 archivo2,
@@ -886,13 +900,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         serealizo = "ERROR"
 
     print(f"archivos eliminados: {eliminados}")
-    registro_cambio_operations(
-        ruta_operations,
-        ruta_raw,
-        operacion,
-        eliminados,
-        serealizo
-    )
+    registro_cambio_operations(ruta_operations, ruta_raw, operacion, eliminados, serealizo)
 
 
 # Función 6.B - Agustin Garcia
@@ -903,14 +911,10 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
     valores_a_eliminar = [v.strip() for v in valores_a_eliminar]
     operacion = "DELETE"
 
-    try:
-        # usar processed si existe
-        if os.path.isfile(ruta_processed):
-            ruta = ruta_processed
-        else:
-            ruta = ruta_raw
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
-        with open(ruta, encoding="utf-8") as archivo:
+    try:
+        with open(ruta_entrada, encoding="utf-8") as archivo:
             lector = csv.reader(archivo, delimiter=separador)
             header = next(lector)
 
@@ -919,6 +923,8 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
                 raise ValueError("Columna no encontrada.")
 
             cant_eliminados = 0
+
+            fm.asegurar_directorio(ruta_processed)
 
             with open(ruta_processed, "w", newline='', encoding="utf-8") as salida:
                 escritor = csv.writer(salida, delimiter=separador)
@@ -972,7 +978,7 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
 
         filas = list(reader)  #guardo en lista el iterador ya que es peligroso leer y escribir un mismo archivo en caso de q ocurrence exista 
 
-        hp.asegurar_directorio(ruta_processed)  # en caso de que ocurrence no exista lo creamos, sino, no pasa nada 
+        fm.asegurar_directorio(ruta_processed)  # en caso de que ocurrence no exista lo creamos, sino, no pasa nada 
 
         with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out:  # y escribimos ahi 
             writer = csv.DictWriter(f_out, fieldnames=columnas, delimiter=delimiter)
@@ -1015,7 +1021,7 @@ def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
                 else:
                     eliminados += 1
 
-        hp.asegurar_directorio(ruta_processed) 
+        fm.asegurar_directorio(ruta_processed) 
         
         with open(ruta_processed, mode='w', encoding='utf-8', newline='') as archivo_salida:
             escritor = csv.DictWriter(archivo_salida, fieldnames=header, delimiter=separador)
@@ -1051,5 +1057,6 @@ def registro_cambio_operations(ruta_operations,ruta_raw,operacion,afectados,sere
         cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros\n"
     if serealizo=="ERROR":
         cadena=f"{fecha} | {nombredataset} | {operacion} | {afectados} registros |ERROR\n"
+    print(serealizo)
     with open(ruta_operations,'a',encoding='utf-8',newline='') as archivo:
         archivo.write(cadena)
