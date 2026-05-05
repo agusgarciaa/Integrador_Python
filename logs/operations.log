@@ -210,6 +210,43 @@
 2026-05-04 16:44:37 | iadiza | DELETE | 7 registros
 2026-05-04 16:44:37 | iadiza | DELETE | 2363 registros
 2026-05-04 16:50:41 | iadiza | DELETE | 2370 registros
+<<<<<<< HEAD
+2026-05-04 19:50:06 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 19:50:06 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 19:50:06 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 19:52:49 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 19:52:49 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 19:52:49 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 19:53:34 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 19:53:34 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 19:53:34 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 20:26:43 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 20:27:05 | iadiza | DELETE | 1 registros
+2026-05-04 20:29:12 | iadiza | INSERT | 1 registros
+2026-05-04 21:28:39 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:28:39 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 21:28:40 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:33:35 | iadiza | INSERT | 1 registros
+2026-05-04 21:41:29 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:41:29 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 21:41:29 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:58:14 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:58:14 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 21:58:14 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:59:46 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:59:46 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 21:59:46 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 21:59:51 | iadiza | UPDATE | 4 registros
+2026-05-04 21:59:51 | iadiza | UPDATE | 4 registros
+2026-05-04 22:00:04 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:00:04 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:01:01 | iadiza | DELETE | 1 registros
+2026-05-04 22:01:01 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:01:53 | iadiza | DELETE | 1 registros
+2026-05-04 22:01:53 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:02:11 | iadiza | DELETE | 1 registros
+2026-05-04 22:02:11 | iadiza | DELETE | 0 registros |ERROR
+=======
 =======
 >>>>>>> 9341794b35c57210e37b3981d4689d301ddc82e4
 >>>>>>> Stashed changes
@@ -408,3 +445,17 @@
 2026-05-04 22:25:54 | xenocanto | VALIDATION | 0 registros |ERROR
 2026-05-04 22:25:55 | xenocanto | VALIDATION | 3064 registros |ERROR
 2026-05-04 22:25:57 | xenocanto | UPDATE | 0 registros |ERROR
+>>>>>>> 854db9e30ef09abeb244b5518b0c992d0cf4d715
+2026-05-04 22:51:05 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 22:51:05 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-04 22:51:05 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-04 22:52:08 | iadiza | INSERT | 1 registros
+2026-05-04 22:53:05 | iadiza | UPDATE | 0 registros |ERROR
+2026-05-04 22:53:05 | iadiza | UPDATE | 0 registros |ERROR
+2026-05-04 22:53:35 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:53:35 | iadiza | DELETE | 0 registros
+2026-05-04 22:53:35 | iadiza | DELETE | 1 registros
+2026-05-04 22:58:27 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:58:27 | iadiza | DELETE | 0 registros |ERROR
+2026-05-04 22:58:27 | iadiza | DELETE | 0 registros
+2026-05-04 22:58:27 | iadiza | DELETE | 0 registros
