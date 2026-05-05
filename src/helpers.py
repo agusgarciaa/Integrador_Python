@@ -1,7 +1,6 @@
 from collections import Counter
 from datetime import datetime
 import csv
-import os
 
 # ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -14,7 +13,11 @@ MIN_LONG = -82.0
 
 # Function para obtener el indice de una columna - Ana Freitas
 def obtener_indice(header, columna):
-    header_limpio = [col.strip().lower() for col in header] # Limpia espacios invisibles en el header
+    """
+    Busca la posición numérica de una columna en el encabezado,
+    normalizando el texto para evitar errores por mayúsculas o espacios.
+    """
+    header_limpio = [col.strip().lower() for col in header]
     nombre_columna = columna.strip().lower() 
     
     try:
@@ -26,21 +29,34 @@ def obtener_indice(header, columna):
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
 def calcular_numericos(lista):
-    numeros = [float(num) for num in lista if num.strip()] # Crea una lista de números sin los espacios en blanco
+    """
+    Calcula el mínimo, máximo y promedio de una lista de valores numéricos.
+    """
+    numeros = [float(num) for num in lista if num.strip()] 
 
-    return 'menor valor encontrado: ', min(numeros), 'mayor valor encontrado: ',  sum(numeros), 'promedio: ', sum(numeros) / len(lista)
+    menor = min(numeros)
+    mayor = max(numeros)
+    promedio = sum(numeros) / len(numeros) if numeros else 0
+
+    return 'menor valor encontrado: ', menor, 'mayor valor encontrado: ', mayor, 'promedio: ', promedio
 
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
 def calcular_text(lista):
-    texto = [len(text.strip()) for text in lista] # Crea una lista de strings sin los espacios en blanco 
-
+    """
+    Analiza la longitud de las cadenas de texto en la columna.
+    """
+    texto = [len(text.strip()) for text in lista] 
+    
     return min(texto), max(texto)
 
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
 def calcular_coordenada(lista):
-    coordenada = [float(num) for num in lista]
+    """
+    Calcula los extremos geográficos (mínimo y máximo) de una lista de coordenadas.
+    """
+    coordenada = [float(num) for num in lista if num.strip()]
 
     return max(coordenada), min(coordenada)
 
@@ -53,36 +69,15 @@ def numero(dato):
 
 # Funcion de apoyo para el ejercicio 3.D - Ana Freitas
 def detectar_duplicados(lista):
+    """
+    Analiza una lista de identificadores y reporta la cantidad y cuáles son los duplicados.
+    """
     conteo_ids = Counter(lista) 
     
     repetidos = [id for id, cantidad in conteo_ids.items() if cantidad > 1]
     duplicados = sum(cantidad - 1 for cantidad in conteo_ids.values() if cantidad > 1)
     
     return 'registros duplicados: ', duplicados, 'identificador se repite: ', repetidos
-
-
-# Funcion para el ejercicio 3.C - Fe Cordoba
-def chequear_fecha(valor):
-    """
-    Intenta convertir un string a fecha usando distintos formatos.
-    Retorna un objeto datetime si es válido, o None si no lo es.
-    """
-
-    formatos = [
-        "%d-%m-%Y",
-        "%Y-%m-%d",
-        "%m-%Y",
-        "%Y",
-        "%Y-%m-%dT%H:%M:%S"
-    ]
-
-    for formato in formatos:
-        try:
-            return datetime.strptime(valor, formato)
-        except ValueError:
-            continue
-
-    return None
 
 
 # Funcion de apoyo para el ejercicio 3.G - Agustin Garcia
@@ -219,60 +214,6 @@ def verificar_longitud(longitud):
     return cumple
 
 
-# funcion de apoyo para las que crean/modifican processed datasets
-def asegurar_directorio(ruta_archivo):
-    carpeta = os.path.dirname(ruta_archivo)
-    os.makedirs(carpeta, exist_ok=True)
 
-# funcion auxiliar de validacion del punto 5.D
-def validar(**kwargs):
-    """
-        Recibe un kwargs (diccionario) donde la clave es la columna a modificar y el valor es el que se le
-        pretende dar al campo y lo interpreta.
-        Devuelve un diccionario donde la clave es la columna y el valor es un boolean True en caso de que "pase"
-        el filtro o False en caso contrario.
-        Parametros:
-            **kwargs: un diccionario con una cantidad indeterminada de parámetros. La clave debe ser la columna
-            a modificar y el valor debe ser el valor que se pretende insertar.
-            
-        no se usan librerías.
-    """
-    ret = {}
-    for columna in kwargs:
-        match columna:
-
-            case 'decimalLatitude'|'latitudeDecimal':
-                ret[columna] = check_coordenadas(kwargs[columna],MAX_LAT,MIN_LAT)
-            case 'decimalLongitude'|'longitudeDecimal':
-                ret[columna] = check_coordenadas(kwargs[columna],MAX_LONG,MIN_LONG)
-            case 'eventdate' | 'verbatimeventdate':
-                 aux = chequear_fecha(kwargs[columna])
-                 if (aux == None):
-                     aux = False
-                 else:
-                     aux = True
-                 ret[columna] = aux
-            case 'countryCode':
-                 aux = validar_country_code_registro(kwargs[columna],['AR','BO','BR','PY','UY','CH'])
-                 if (aux == "nulo" or aux == "código inválido"):
-                     aux = False
-                 else:
-                     aux = True
-                 ret[columna] = aux
-
-    return ret
-
-
-# Funcion de apoyo para el 3.C - Fe Cordoba 
-def validar_country_code_registro(valor, codigos_validos):
-    valor = valor.strip()
-
-    if valor == "" or valor.lower() == "n/a":
-        return "nulo"
-    
-    if valor not in codigos_validos:
-        return "código inválido"
-    
-    return None
 
 

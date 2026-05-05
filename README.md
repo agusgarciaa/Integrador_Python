@@ -14,27 +14,6 @@ Desarrollo de una aplicación en Python para analizar y visualizar datos de biod
 --- 
 ## 📁 Estructura del Proyecto
 
-📦 code/
-├── 📁 documentation/
-├── 📁 logs/
-│   └── 📄 operations.log
-├── 📁 notebooks/
-│   ├── 📓 iadiza.ipynb
-│   ├── 📓 inaturalist.ipynb
-│   └── 📓 xenocanto.ipynb
-├── 📁 pages/
-│   ├── 🐍 03_Estado_del_sistema.py
-│   ├── 🐍 03_Busqueda.py
-│   └── 🐍 04_Visualización.py
-├── 📁 processed_datasets/
-├── 📁 raw_datasets/
-├── 📁 src/
-├── 📄 .gitignore
-├── 📄 .python-version
-├── 🐍 Inicio.py
-├── 📝 README.md
-└── 📄 requirements.txt
-
 - `documentation/`: Contiene la documentación de los tres datasets utilizados en el proyecto.
 - `notebooks/`: Contiene los archivos `.ipynb` con los ejercicios de análisis y limpieza de datos de los datasets.
 - `src/`: Código fuente adicional y módulos auxiliares.
@@ -43,6 +22,23 @@ Desarrollo de una aplicación en Python para analizar y visualizar datos de biod
 - `Inicio.py`: Archivo principal para la ejecución de la aplicación web Streamlit.
 - `pages/`: Páginas secundarias de la aplicación Streamlit.
 - `logs/`: Contiene el archivo `operations.log` con el registro de las operaciones de los datasets.
+
+#### - Para el correcto funcionamiento de las rutas, es necesario organizar los archivos de la siguiente manera:
+
+1. Datos Crudos (raw_datasets/)
+Debes crear manualmente estas carpetas (iadiza, xenocanto e inaturalist) y colocar los archivos originales en su interior:
+
+- `raw_datasets/iadiza/`
+- `raw_datasets/xenocanto/`
+- `raw_datasets/inaturalist/`
+
+2. Datos Procesados (processed_datasets/)
+Igual que en raw_datasets/, deben existir las carpetas de destino (iadiza, xenocanto e inaturalist), el archivo final se crea solo al ejecutar el código:
+
+- `processed_datasets/iadiza/`
+- `processed_datasets/xenocanto/`
+- `processed_datasets/inaturalist/`
+
 
 ---
 
