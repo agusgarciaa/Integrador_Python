@@ -1,6 +1,5 @@
 from collections import Counter
 from datetime import datetime
-
 import csv
 
 # ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
