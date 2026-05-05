@@ -99,15 +99,7 @@ def es_registro_valido(fila, indices, codigos_validos):
             if valor_fecha is not None and valor_fecha != "":
                 fecha_convertida = chequear_fecha(valor_fecha)
                 if fecha_convertida is None or fecha_convertida > datetime.now():
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                     return (False,'Fecha')
-=======
-                    return False
->>>>>>> Stashed changes
-=======
-                    return False
->>>>>>> Stashed changes
 
     identificador_unico = fila.get('occurrenceID')
     if identificador_unico in indices:
@@ -116,14 +108,7 @@ def es_registro_valido(fila, indices, codigos_validos):
 
     codigo_pais = fila.get('countryCode')
     if codigo_pais and validar_country_code_registro(codigo_pais, codigos_validos):
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         return (False,'País')
-=======
-=======
->>>>>>> Stashed changes
-        return False
->>>>>>> Stashed changes
 
     incertidumbre_metros = fila.get('coordinateUncertaintyInMeters')
     if incertidumbre_metros:
@@ -134,15 +119,7 @@ def es_registro_valido(fila, indices, codigos_validos):
         except ValueError:
             return (False,'Valor')
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     return (True,'Válido')
-=======
-    return True
->>>>>>> Stashed changes
-=======
-    return True
->>>>>>> Stashed changes
 
 
 # Funcion de apoyo para el 3.C - Fe Cordoba 

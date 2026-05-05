@@ -683,7 +683,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
                   final[columna]=input("ingrese un id: ")  
           datos.append(final)
           agregados += 1
-    #guardamos en pc el archivo nuevo con el registro agregado,usamos el delimitador para que todo quede delimitado como estaba originalmente
+  
     fm.asegurar_directorio(ruta_processed)
     with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
@@ -695,6 +695,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
     operacion="INSERT"
     serealizo="SI"
     registro_cambio_operations(ruta_operations,ruta_raw,operacion,agregados,serealizo)
+
     
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
@@ -963,7 +964,7 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
                         escritor.writerow(fila)
                         continue
 
-                    if fila[indice].strip() in valores_a_eliminar:
+                    if fila[indice] in valores_a_eliminar:
                         cant_eliminados += 1
                     else:
                         escritor.writerow(fila)
