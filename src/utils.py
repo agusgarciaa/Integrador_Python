@@ -429,7 +429,7 @@ def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100
 # Ejercicio 3.G - Agustin Garcia
 def calidad_dataset (ruta, ruta_operations, id, separador=","):
     total = total_registros(ruta, separador)
-    #  _, coordenadas_invalidas = verificar_coordenada(ruta, separador) 
+    _, coordenadas_invalidas = verificar_coordenada(ruta, separador, ruta_operations) 
     fechas_invalidas = validar_fechas(ruta, ruta_operations, separador)
     cant_fechas_invalidas = len(fechas_invalidas)
     _, duplicados, _, _ = detectar_registros_duplicados(ruta, separador, id)
@@ -437,7 +437,7 @@ def calidad_dataset (ruta, ruta_operations, id, separador=","):
 
     resumen = {
         "total_registros": total,
-       #  "coordenadas_invalidas": coordenadas_invalidas,
+       "coordenadas_invalidas": coordenadas_invalidas,
         "fechas_invalidas": cant_fechas_invalidas,
         "duplicados": duplicados,
         "taxonomia_incompleta": taxonomia_incompleta
@@ -447,7 +447,7 @@ def calidad_dataset (ruta, ruta_operations, id, separador=","):
     RESUMEN DE CALIDAD DEL DATASET
     -------------------
     Total: {total}
-    Coordenadas inválidas: {0}
+    Coordenadas inválidas: {coordenadas_invalidas}
     Fechas inválidas: {cant_fechas_invalidas}
     Duplicados: {duplicados}
     Taxonomía incompleta: {taxonomia_incompleta}
@@ -695,6 +695,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
     operacion="INSERT"
     serealizo="SI"
     registro_cambio_operations(ruta_operations,ruta_raw,operacion,agregados,serealizo)
+
     
 
 # --------------------------------------------------------------- Ejercicios 5 - Actualización de registros en datasets --------------------------------------------------------------
@@ -963,7 +964,7 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
                         escritor.writerow(fila)
                         continue
 
-                    if fila[indice].strip() in valores_a_eliminar:
+                    if fila[indice] in valores_a_eliminar:
                         cant_eliminados += 1
                     else:
                         escritor.writerow(fila)
