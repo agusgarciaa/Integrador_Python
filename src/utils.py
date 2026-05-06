@@ -939,10 +939,8 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
     valores_a_eliminar = [v.strip() for v in valores_a_eliminar]
     operacion = "DELETE"
 
-    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
-
     try:
-        with open(ruta_entrada, encoding="utf-8") as archivo:
+        with open(ruta_raw, encoding="utf-8") as archivo: 
             lector = csv.reader(archivo, delimiter=separador)
             header = next(lector)
 
@@ -954,9 +952,8 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
 
             fm.asegurar_directorio(ruta_processed)
 
-            with open(ruta_processed, "w", newline='', encoding="utf-8") as salida:
+            with open(ruta_processed, "w", newline='', encoding="utf-8") as salida: 
                 escritor = csv.writer(salida, delimiter=separador)
-
                 escritor.writerow(header)
 
                 for fila in lector:
@@ -972,7 +969,7 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
         print(f"Se eliminaron {cant_eliminados} registros.")
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, cant_eliminados, 'SI')
         return cant_eliminados
-    
+
     except Exception as e:
         print(f"Error: {e}")
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
