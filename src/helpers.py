@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import datetime
+from pathlib import Path
 import csv
 
 # ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
@@ -214,6 +215,18 @@ def verificar_longitud(longitud):
     return cumple
 
 
+# Helper para 1.b de la segunda parte.
+def obtener_nombres_datasets():
 
+    ruta_datasets = Path("processed_datasets")
+
+    datasets = []
+
+    for carpeta in ruta_datasets.iterdir():
+
+        if carpeta.is_dir():
+            datasets.append(carpeta.name)
+
+    return datasets
 
 
