@@ -1,4 +1,8 @@
 import streamlit as st 
+import src.webmanager as wb 
+
+wb.opcion_sidebar()
+dataset = st.session_state.dataset_actual
 
 # Configuración de la página (P1)
 st.set_page_config(page_title="BioData Explorer - Inicio", page_icon="🌿", layout="wide")
