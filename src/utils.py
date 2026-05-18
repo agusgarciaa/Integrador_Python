@@ -975,7 +975,6 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, 0, 'ERROR')
         return 0
     
-    
 # Ejercicio 6.C - Fe Cordoba
 def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
 
@@ -1063,10 +1062,12 @@ def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
             
         print(f"Sanitización finalizada. Registros conservados: {len(registros_sanitizados)}")
         print(f"Registros eliminados: {eliminados}")
-        if total_registros>0:
-         print(f"Porcentaje de registros eliminados: {eliminados/total_registros:.2%}")
+
+        if total_registros > 0:
+            print(f"Porcentaje de registros eliminados: {eliminados/total_registros:.2%}")
+
         for motivo,cantidad in motivo_eliminacion.items():
-           print(f"Motivo de eliminación: {motivo} - {cantidad}")
+            print(f"Motivo de eliminación: {motivo} - {cantidad}")
 
         registro_cambio_operations(ruta_operations, ruta_raw, operacion, eliminados, 'SI')
 

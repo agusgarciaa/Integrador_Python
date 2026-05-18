@@ -27,9 +27,7 @@ def validar_campo_latitud(fila):
     if lat is None:
         return False
     
-    es_valida = (hp.verificar_latitud(lat) and 
-                 hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT) and 
-                 cordenadas_faltantes(fila) != "FALTA_LATITUD")
+    es_valida = (hp.verificar_latitud(lat) and hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT) and cordenadas_faltantes(fila) != "FALTA_LATITUD")
     return es_valida
 
 
@@ -44,9 +42,7 @@ def validar_campo_longitud(fila):
     if lon is None:
         return False
     
-    es_valida = (hp.verificar_longitud(lon) and 
-                 hp.check_coordenadas(lon, hp.MAX_LONG, hp.MIN_LONG) and 
-                 cordenadas_faltantes(fila) != "FALTA_LONGITUD")
+    es_valida = (hp.verificar_longitud(lon) and hp.check_coordenadas(lon, hp.MAX_LONG, hp.MIN_LONG) and cordenadas_faltantes(fila) != "FALTA_LONGITUD")
     return es_valida
 
 
@@ -79,7 +75,7 @@ def chequear_fecha(valor):
     return None
 
 
-# Funcion 6.E - Ana Freitas
+# Funcion de apoyo para el ejercicio 6.E - Ana Freitas
 def es_registro_valido(fila, indices, codigos_validos):
     """
     Agrupa todas las validaciones de la sección 3.
