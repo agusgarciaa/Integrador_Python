@@ -131,4 +131,17 @@ def mostrar_busqueda_texto_libre():
     # Retornamos el dataframe filtrado para que pueda ser usado en los siguientes ejercicios
     return df_filtrado
     
-    
+
+#Funcion 2.D - Lucía Cipolla
+def exportar_resultados (reg=None):
+    """
+        reg: Debe recibir lo que retorne mostrar_busqueda_texto_libre(). Puede ser un tipo DataFrame o None.
+    """
+    if (reg.empty):
+        st.warning('No se puede importar un archivo vacío')
+        return
+    else:
+        if (isinstance(reg,pd.DataFrame)):
+            return reg.to_csv(index=False).encode('utf-8')
+        else:
+            st.warning('Ocurrió un problema inesperado')
