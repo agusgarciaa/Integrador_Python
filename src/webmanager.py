@@ -6,6 +6,7 @@ import pandas as pd
 
 import src.utils as ut
 import src.helpers as hp
+import src.validaciones as va
 
 
 #funcion 1.a sofia martins
@@ -130,7 +131,110 @@ def mostrar_busqueda_texto_libre():
 
     # Retornamos el dataframe filtrado para que pueda ser usado en los siguientes ejercicios
     return df_filtrado
-    
+
+
+# para obtener valores de una columna 
+def obtener_opciones(df, columna):
+
+    return sorted(
+        df[columna]
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+
+# obtiene los country code del dataframe
+def obtener_paises_validos(df):
+
+    codigos = (
+        df["countryCode"]
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+    codigos_validos = []
+
+    for codigo in codigos:
+
+        if va.validar_country_code_registro(codigo,['AR', 'BO', 'BR', 'PY', 'UY', 'CH']):
+            codigos_validos.append(codigo)
+
+    return sorted(codigos_validos)
+
+
+#filtra para la busqueda 
+def aplicar_filtros(
+    df,
+    nombres_cientificos=None,
+    observador=None,
+    paises=None,
+    provincias=None,
+    fecha_inicio=None,
+    fecha_fin=None
+):
+
+    df_filtrado = df.copy()
+
+    # Nombre científico
+    if nombres_cientificos:
+
+        df_filtrado = df_filtrado[
+            df_filtrado["scientificName"].isin(nombres_cientificos)
+        ]
+
+    # Observador
+    if observador:
+
+        df_filtrado = df_filtrado[
+            df_filtrado["recordedBy"]
+            .astype(str)
+            .str.contains(
+                observador,
+                case=False,
+                na=False
+            )
+        ]
+
+    # País y acomodar para xenocanto
+    if paises:
+
+        df_filtrado = df_filtrado[
+            df_filtrado["countryCode"].isin(paises)
+        ]
+
+    # Provincia  y acomodar para xenocanto
+    if provincias:
+
+        df_filtrado = df_filtrado[
+            df_filtrado["stateProvince"].isin(provincias)
+        ]
+
+    # Fechas
+    if "eventDate" in df_filtrado.columns:
+
+        df_filtrado["eventDate"] = pd.to_datetime(
+            df_filtrado["eventDate"],
+            errors="coerce"
+        )
+
+        if fecha_inicio and fecha_fin:
+
+            df_filtrado = df_filtrado[
+                (
+                    df_filtrado["eventDate"]
+                    >= pd.to_datetime(fecha_inicio)
+                )
+                &
+                (
+                    df_filtrado["eventDate"]
+                    <= pd.to_datetime(fecha_fin)
+                )
+            ]
+
+    return df_filtrado
+
 
 #Funcion 2.D - Lucía Cipolla
 def exportar_resultados (reg=None):
