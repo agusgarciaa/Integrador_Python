@@ -70,7 +70,7 @@ def opcion_sidebar(separador=','):
                     """)
 
 
-#F unción 2.A - Ana Freitas
+# Función 2.A - Ana Freitas
 def mostrar_busqueda_texto_libre():
     """
     Se encarga de la interfaz de búsqueda por texto libre.
