@@ -8,7 +8,7 @@ import src.utils as ut
 import src.helpers as hp
 import src.validaciones as va
 
-COUNTRY_CODES = ['AR', 'BO', 'BR', 'PY', 'UY', 'CH']
+COUNTRY_CODES = ['AR', 'BO', 'BR', 'PY', 'UY', 'CL']
 
 
 #funcion 1.a sofia martins
