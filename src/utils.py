@@ -358,7 +358,7 @@ def detectar_registros_duplicados(ruta, separador, columna):
 # Ejercicio 3.E - Fe Cordoba
 def validar_country_code(ruta, ruta_operations, separador=","):
     cods_invalidos = {}  # {fila: [(columna, valor, motivo)]}
-    codigos_validos = ['AR','BO','BR','PY','UY','CH']
+    codigos_validos = ['AR','BO','BR','PY','UY','CL']
     operacion = 'VALIDATION'
     cant_invalidos = 0
 
