@@ -33,64 +33,42 @@ if archivo is None:
     st.stop()
 
 if dataset == "iadiza":
-
-    df = pd.read_csv(
-        archivo,
-        sep="\t"
-    )
+    df = pd.read_csv(archivo, sep="\t")
 else:
-
     df = pd.read_csv(archivo)
     
-st.write(df.columns) #en iadiza con y sin tab muestra todo en una columna y anda mal 
-
+st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
 
 # Opciones dinámicas
-nombres_cientificos = wb.obtener_opciones(
-    df,
-    "scientificName"
-)
+nombres_cientificos = wb.obtener_opciones(df, "scientificName")
 
-#acomodar para xenocanto
-provincias = wb.obtener_opciones(
-    df,
-    "stateProvince"
-)
-#acomodar para xenocanto
-paises = wb.obtener_paises_validos(df)
+if (dataset != 'xenocanto'):
+    provincias = wb.obtener_opciones(df, "stateProvince")
+    paises = wb.obtener_paises_validos(df)
+else: 
+    paises = wb.obtener_opciones(df, "country")
 
 # Interfaz
 st.title("Búsqueda de ocurrencias")
 
-filtro_nombre = st.multiselect(
-    "Nombre científico",
-    nombres_cientificos 
-)
+filtro_nombre = st.multiselect("Nombre científico", nombres_cientificos )
 
-filtro_observador = st.text_input(
-    "Observador"
-)
+filtro_observador = st.text_input("Observador")
 
-filtro_pais = st.multiselect(
-    "País",
-    paises
-)
+filtro_pais = st.multiselect("País", paises)
 
-filtro_provincia = st.multiselect(
-      "Provincia",
-       provincias
-    )
+if (dataset == 'xenocanto'):
+    filtro_provincia = []
+else:
+    filtro_provincia = st.multiselect("Provincia", provincias)
 
-fecha_inicio = st.date_input(
-    "Fecha inicio"
-)
+fecha_inicio = st.date_input("Fecha inicio")
 
-fecha_fin = st.date_input(
-    "Fecha fin"
-)
+fecha_fin = st.date_input("Fecha fin")
+
+#st.write(df['recordedBy']) # era para ver q valores tenia esa columna y probar que ande
 
 # Aplicar filtros
-
 df_filtrado = wb.aplicar_filtros(
     df,
     nombres_cientificos=filtro_nombre,
@@ -101,12 +79,9 @@ df_filtrado = wb.aplicar_filtros(
     fecha_fin=fecha_fin
 )
 
+
 # Mostrar resultados
-
-st.write(
-    f"Resultados encontrados: {len(df_filtrado)}"
-)
-
+st.write(f"Resultados encontrados: {len(df_filtrado)}")
 st.dataframe(df_filtrado)
 
 
