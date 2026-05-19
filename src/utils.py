@@ -982,11 +982,11 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
-        registro_cambio_operations(ruta_operations, archivo, operacion, 0, 'ERROR')
+        registro_cambio_operations(ruta_operations, archivo, 'VALIDATION', 0, 'ERROR')
         raise ValueError("Condición no válida")
 
     if valor == "" or valor == "N/A":
-        registro_cambio_operations(ruta_operations, archivo, operacion, 0, 'ERROR')
+        registro_cambio_operations(ruta_operations, archivo, 'VALIDATION', 0, 'ERROR')
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
     operacion = "DELETE"
