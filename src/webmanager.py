@@ -8,6 +8,8 @@ import src.utils as ut
 import src.helpers as hp
 import src.validaciones as va
 
+COUNTRY_CODES = ['AR', 'BO', 'BR', 'PY', 'UY', 'CH']
+
 
 #funcion 1.a sofia martins
 def Dataframe_dataset(nombre,separador=','):
@@ -135,9 +137,10 @@ def mostrar_busqueda_texto_libre():
 
 # para obtener valores de una columna 
 def obtener_opciones(df, columna):
+    valores = df[columna]
 
     return sorted(
-        df[columna]
+        valores
         .dropna()
         .astype(str)
         .unique()
@@ -158,7 +161,7 @@ def obtener_paises_validos(df):
 
     for codigo in codigos:
 
-        if va.validar_country_code_registro(codigo,['AR', 'BO', 'BR', 'PY', 'UY', 'CH']):
+        if not va.validar_country_code_registro(codigo, COUNTRY_CODES):
             codigos_validos.append(codigo)
 
     return sorted(codigos_validos)
@@ -197,26 +200,29 @@ def aplicar_filtros(
             )
         ]
 
-    # País y acomodar para xenocanto
-    if paises:
+    nombre_dataset = st.session_state.dataset_actual
+    if (nombre_dataset != 'xenocanto'):
+        if paises:
 
-        df_filtrado = df_filtrado[
-            df_filtrado["countryCode"].isin(paises)
-        ]
+          df_filtrado = df_filtrado[
+             df_filtrado["countryCode"].isin(paises)
+          ]
+        if provincias:
 
-    # Provincia  y acomodar para xenocanto
-    if provincias:
-
-        df_filtrado = df_filtrado[
-            df_filtrado["stateProvince"].isin(provincias)
-        ]
+         df_filtrado = df_filtrado[
+             df_filtrado["stateProvince"].isin(provincias)
+          ]
+    else:
+        if paises:
+            patron_paises = "|".join(paises)
+            df_filtrado = df_filtrado[df_filtrado['country'].str.contains(patron_paises, case=False, na=False)]
 
     # Fechas
     if "eventDate" in df_filtrado.columns:
 
-        df_filtrado["eventDate"] = pd.to_datetime(
-            df_filtrado["eventDate"],
-            errors="coerce"
+        # SOLUCIÓN DEFINITIVA: Convertimos fila por fila a UTC de forma aislada
+        df_filtrado["eventDate"] = df_filtrado["eventDate"].apply(
+            lambda x: pd.to_datetime(x, errors="coerce", utc=True) if pd.notna(x) else pd.NaT
         )
 
         if fecha_inicio and fecha_fin:
@@ -224,12 +230,12 @@ def aplicar_filtros(
             df_filtrado = df_filtrado[
                 (
                     df_filtrado["eventDate"]
-                    >= pd.to_datetime(fecha_inicio)
+                    >= pd.to_datetime(fecha_inicio, utc=True)
                 )
                 &
                 (
                     df_filtrado["eventDate"]
-                    <= pd.to_datetime(fecha_fin)
+                    <= pd.to_datetime(fecha_fin, utc=True)
                 )
             ]
 

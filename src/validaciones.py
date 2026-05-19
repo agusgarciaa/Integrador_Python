@@ -61,6 +61,7 @@ def chequear_fecha(valor):
     formatos = [
         "%d-%m-%Y",
         "%Y-%m-%d",
+        "%y-%m-%d",
         "%m-%Y",
         "%Y",
         "%Y-%m-%dT%H:%M:%S"
