@@ -1,17 +1,16 @@
 import streamlit as st
 import src.webmanager as wb 
-import src.validaciones as va
+import src.helpers as hp
 import pandas as pd
 from pathlib import Path
-
 from datetime import datetime
+
+st.title("Página de Búsqueda (P3)")
 
 wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
-
 RUTA_DATASET = Path("processed_datasets") / dataset
 
-st.title("Página de Búsqueda (P3)")
 
 # Llamamos a la función del Ejercicio 2.A que acabamos de crear 
 df_resultados = wb.mostrar_busqueda_texto_libre()
@@ -25,7 +24,6 @@ if df_resultados is not None:
 # 2.b Fe Cordoba
 # Cargar dataset
 archivo = next(RUTA_DATASET.iterdir(), None)
-
 if archivo is None:
     st.error("No hay archivo en la carpeta")
     st.stop()
@@ -38,30 +36,23 @@ else:
 # st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
 
 # Opciones sacadas del dataframe
-nombres_cientificos = wb.obtener_opciones(df, "scientificName")
-
+nombres_cientificos = hp.obtener_opciones(df, "scientificName")
 if (dataset != 'xenocanto'):
-    provincias = wb.obtener_opciones(df, "stateProvince")
-    paises = wb.obtener_paises_validos(df)
+    provincias = hp.obtener_opciones(df, "stateProvince")
+    paises = hp.obtener_paises_validos(df)
 else: 
-    paises = wb.obtener_opciones(df, "country")
+    paises = hp.obtener_opciones(df, "country")
 
 # Interfaz
 st.title("Búsqueda de ocurrencias")
-
 filtro_nombre = st.multiselect("Nombre científico", nombres_cientificos )
-
 filtro_observador = st.text_input("Observador")
-
 filtro_pais = st.multiselect("País", paises)
-
 if (dataset == 'xenocanto'):
     filtro_provincia = []
 else:
     filtro_provincia = st.multiselect("Provincia", provincias)
-
 fecha_inicio = st.date_input("Fecha inicio")
-
 fecha_fin = st.date_input("Fecha fin")
 
 #st.write(df['recordedBy']) # era para ver q valores tenia esa columna y probar que ande

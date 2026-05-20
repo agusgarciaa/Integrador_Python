@@ -2,6 +2,7 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 import csv
+import src.validaciones as va
 
 # ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -9,6 +10,8 @@ MAX_LAT = 13.0
 MIN_LAT = -56.0
 MAX_LONG = -34.0
 MIN_LONG = -82.0
+
+COUNTRY_CODES = ['AR', 'BO', 'BR', 'PY', 'UY', 'CL']
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -230,3 +233,32 @@ def obtener_nombres_datasets():
     return datasets
 
 
+# para 2.b Fe Cordoba
+# obtener valores de una columna 
+def obtener_opciones(df, columna):
+    valores = df[columna]
+
+    return sorted(
+        valores
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+
+# obtiene los country code del dataframe
+def obtener_paises_validos(df):
+    codigos = (
+        df["countryCode"]
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+    codigos_validos = []
+
+    for codigo in codigos:
+        if not va.validar_country_code_registro(codigo, COUNTRY_CODES):
+            codigos_validos.append(codigo)
+
+    return sorted(codigos_validos)

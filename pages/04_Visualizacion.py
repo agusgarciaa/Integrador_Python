@@ -5,9 +5,10 @@ import src.utils as ut
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+
+st.title("Gráficos")
 wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
-
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 archivo = next(RUTA_DATASET.iterdir(), None)
@@ -17,8 +18,7 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
 
-st.title("Gráficos")
-
+#3.D Fe Cordoba
 diccionario_nulos = ut.porcentaje_nulos(archivo)
 
 # Creamos una Serie de Pandas con ese diccionario
