@@ -16,6 +16,7 @@ def Dataframe_dataset(nombre,separador=','):
 
 #Funcion 1.b y C - Fe Cordoba, Agustin Garcia
 def opcion_sidebar(separador=','):
+    """Configura la barra lateral de Streamlit para la selección del dataset."""
     datasets = hp.obtener_nombres_datasets()
     if not datasets:
         st.sidebar.error("No hay datasets disponibles")
@@ -143,7 +144,7 @@ def aplicar_filtros(
     fecha_inicio=None,
     fecha_fin=None
 ):
-
+    """Filtra el DataFrame según los parámetros de búsqueda seleccionados."""
     df_filtrado = df.copy()
 
     # Nombre científico

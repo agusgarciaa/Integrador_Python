@@ -19,6 +19,7 @@ else:
     df = pd.read_csv(archivo)
 
 #3.D Fe Cordoba
+"""Calcula y grafica el porcentaje de datos no nulos por columna."""
 diccionario_nulos = ut.porcentaje_nulos(archivo)
 
 # Creamos una Serie de Pandas con ese diccionario

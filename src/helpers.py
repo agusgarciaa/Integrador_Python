@@ -236,8 +236,8 @@ def obtener_nombres_datasets():
 # para 2.b Fe Cordoba
 # obtener valores de una columna 
 def obtener_opciones(df, columna):
+    """Obtiene los valores únicos, no nulos y como texto de una columna."""
     valores = df[columna]
-
     return sorted(
         valores
         .dropna()
@@ -248,6 +248,7 @@ def obtener_opciones(df, columna):
 
 # obtiene los country code del dataframe
 def obtener_paises_validos(df):
+    """Filtra y obtiene los country codes válidos del dataframe."""
     codigos = (
         df["countryCode"]
         .dropna()
@@ -256,7 +257,6 @@ def obtener_paises_validos(df):
     )
 
     codigos_validos = []
-
     for codigo in codigos:
         if not va.validar_country_code_registro(codigo, COUNTRY_CODES):
             codigos_validos.append(codigo)
