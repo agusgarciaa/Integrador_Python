@@ -35,9 +35,9 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
     
-st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
+# st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
 
-# Opciones dinámicas
+# Opciones sacadas del dataframe
 nombres_cientificos = wb.obtener_opciones(df, "scientificName")
 
 if (dataset != 'xenocanto'):
@@ -76,7 +76,6 @@ df_filtrado = wb.aplicar_filtros(
     fecha_inicio=fecha_inicio,
     fecha_fin=fecha_fin
 )
-
 
 # Mostrar resultados
 st.write(f"Resultados encontrados: {len(df_filtrado)}")
