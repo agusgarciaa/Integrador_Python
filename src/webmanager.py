@@ -135,6 +135,7 @@ def mostrar_busqueda_texto_libre():
     return df_filtrado
 
 
+# 2.b Fe Cordoba
 # para obtener valores de una columna 
 def obtener_opciones(df, columna):
     valores = df[columna]
@@ -220,7 +221,7 @@ def aplicar_filtros(
     # Fechas
     if "eventDate" in df_filtrado.columns:
 
-        # SOLUCIÓN DEFINITIVA: Convertimos fila por fila a UTC de forma aislada
+        # Convertimos fila por fila a UTC de forma aislada
         df_filtrado["eventDate"] = df_filtrado["eventDate"].apply(
             lambda x: pd.to_datetime(x, errors="coerce", utc=True) if pd.notna(x) else pd.NaT
         )

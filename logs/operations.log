@@ -445,46 +445,9 @@
 2026-05-04 22:58:27 | iadiza | DELETE | 0 registros |ERROR
 2026-05-04 22:58:27 | iadiza | DELETE | 0 registros
 2026-05-04 22:58:27 | iadiza | DELETE | 0 registros
-<<<<<<< HEAD
-2026-05-06 16:37:38 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:37:38 | iadiza | VALIDATION | 3 registros |ERROR
-2026-05-06 16:37:38 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:39:25 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:39:25 | iadiza | VALIDATION | 3 registros |ERROR
-2026-05-06 16:39:25 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:40:37 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:40:37 | iadiza | VALIDATION | 3 registros |ERROR
-2026-05-06 16:40:37 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:43:54 | xenocanto | UPDATE | 1 registros
-2026-05-06 16:43:54 | xenocanto | UPDATE | 1 registros
-2026-05-06 16:44:59 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:44:59 | iadiza | VALIDATION | 3 registros |ERROR
-2026-05-06 16:44:59 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:45:07 | iadiza | UPDATE | 1 registros
-2026-05-06 16:46:12 | iadiza | UPDATE | 1 registros
-2026-05-06 16:46:13 | iadiza | UPDATE | 1 registros
-2026-05-06 16:50:04 | iadiza | DELETE | 0 registros |ERROR
-2026-05-06 16:50:04 | iadiza | DELETE | 0 registros |ERROR
-2026-05-06 16:50:20 | iadiza | DELETE | 0 registros |ERROR
-2026-05-06 16:50:21 | iadiza | DELETE | 0 registros
-2026-05-06 16:50:21 | iadiza | DELETE | 0 registros |ERROR
-2026-05-06 16:50:33 | iadiza | DELETE | 1 registros
-2026-05-06 16:50:34 | iadiza | DELETE | 0 registros
-2026-05-06 16:50:34 | iadiza | DELETE | 0 registros |ERROR
-2026-05-06 16:51:03 | iadiza | DELETE | 1 registros
-2026-05-06 16:51:03 | iadiza | DELETE | 0 registros
-2026-05-06 16:51:03 | iadiza | DELETE | 7 registros
-2026-05-06 16:51:03 | iadiza | DELETE | 2363 registros
-2026-05-06 16:52:12 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:52:12 | iadiza | VALIDATION | 3 registros |ERROR
-2026-05-06 16:52:12 | iadiza | VALIDATION | 0 registros |ERROR
-2026-05-06 16:52:18 | iadiza | UPDATE | 1 registros
-2026-05-06 16:52:18 | iadiza | UPDATE | 1 registros
-=======
 2026-05-06 16:27:29 | iadiza | DELETE | 1 registros
 2026-05-06 16:40:01 | iadiza | DELETE | 1 registros
 2026-05-06 16:41:06 | iadiza | DELETE | 4 registros
->>>>>>> 2e6aee4e02ddd47f449a6cdacbb3e9a8d5f4e615
 2026-05-18 18:50:18 | iadiza | INSERT | 1 registros
 2026-05-18 19:05:56 | inaturalist | DELETE | 0 registros |ERROR
 2026-05-18 19:06:24 | inaturalist | DELETE | 0 registros
