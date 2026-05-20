@@ -518,3 +518,9 @@
 2026-05-19 16:51:45 | iadiza | VALIDATION | 0 registros |ERROR
 2026-05-19 17:05:22 | xenocanto | DELETE | 0 registros |ERROR
 2026-05-19 17:07:17 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-19 23:12:24 | iadiza | INSERT | 1 registros
+2026-05-19 23:16:43 | inaturalist | INSERT | 1 registros
+2026-05-20 12:05:25 | inaturalist | DELETE | 0 registros |ERROR
+2026-05-20 12:05:53 | inaturalist | DELETE | 0 registros
+2026-05-20 12:06:17 | inaturalist | DELETE | 1192138 registros
+2026-05-20 12:06:21 | inaturalist | DELETE | 14315 registros
