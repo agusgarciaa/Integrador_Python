@@ -22,6 +22,13 @@ if df_resultados is not None:
 
 
 # 2.b Fe Cordoba
+"""
+    Renderiza la interfaz de usuario para la búsqueda de ocurrencias.
+    
+    Carga el dataset activo aplicando los separadores correspondientes, extrae 
+    las opciones únicas para los componentes de selección mutiple, 
+    y muestra los resultados filtrados en una tabla interactiva de Streamlit.
+    """
 # Cargar dataset
 archivo = next(RUTA_DATASET.iterdir(), None)
 if archivo is None:

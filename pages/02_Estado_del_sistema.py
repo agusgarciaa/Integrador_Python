@@ -10,6 +10,7 @@ st.title("Logs generados.")
 ruta = ut.obtener_ruta_log("logs", "operations.log")
 
 # 4.E Fe Cordoba
+"""Muestra la interfaz de filtrado y métricas para el archivo de logs."""
 df_logs = pd.read_csv(ruta, sep="|", names=["fecha", "dataset", "operacion", "registros", "estado"])
 df_logs['operacion'] = df_logs['operacion'].str.strip()
 
