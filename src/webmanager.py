@@ -8,8 +8,6 @@ import src.utils as ut
 import src.helpers as hp
 import src.validaciones as va
 
-COUNTRY_CODES = ['AR', 'BO', 'BR', 'PY', 'UY', 'CL']
-
 
 #funcion 1.a sofia martins
 def Dataframe_dataset(nombre,separador=','):
@@ -136,39 +134,6 @@ def mostrar_busqueda_texto_libre():
 
 
 # 2.b Fe Cordoba
-# para obtener valores de una columna 
-def obtener_opciones(df, columna):
-    valores = df[columna]
-
-    return sorted(
-        valores
-        .dropna()
-        .astype(str)
-        .unique()
-    )
-
-
-# obtiene los country code del dataframe
-def obtener_paises_validos(df):
-
-    codigos = (
-        df["countryCode"]
-        .dropna()
-        .astype(str)
-        .unique()
-    )
-
-    codigos_validos = []
-
-    for codigo in codigos:
-
-        if not va.validar_country_code_registro(codigo, COUNTRY_CODES):
-            codigos_validos.append(codigo)
-
-    return sorted(codigos_validos)
-
-
-#filtra para la busqueda 
 def aplicar_filtros(
     df,
     nombres_cientificos=None,
@@ -220,14 +185,12 @@ def aplicar_filtros(
 
     # Fechas
     if "eventDate" in df_filtrado.columns:
-
         # Convertimos fila por fila a UTC de forma aislada
         df_filtrado["eventDate"] = df_filtrado["eventDate"].apply(
             lambda x: pd.to_datetime(x, errors="coerce", utc=True) if pd.notna(x) else pd.NaT
         )
 
         if fecha_inicio and fecha_fin:
-
             df_filtrado = df_filtrado[
                 (
                     df_filtrado["eventDate"]
