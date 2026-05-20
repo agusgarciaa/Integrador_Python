@@ -358,7 +358,7 @@ def detectar_registros_duplicados(ruta, separador, columna):
 # Ejercicio 3.E - Fe Cordoba
 def validar_country_code(ruta, ruta_operations, separador=","):
     cods_invalidos = {}  # {fila: [(columna, valor, motivo)]}
-    codigos_validos = ['AR','BO','BR','PY','UY','CH']
+    codigos_validos = ['AR','BO','BR','PY','UY','CL']
     operacion = 'VALIDATION'
     cant_invalidos = 0
 
@@ -982,11 +982,11 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
-        registro_cambio_operations(ruta_operations, archivo, operacion, 0, 'ERROR')
+        registro_cambio_operations(ruta_operations, archivo, 'VALIDATION', 0, 'ERROR')
         raise ValueError("Condición no válida")
 
     if valor == "" or valor == "N/A":
-        registro_cambio_operations(ruta_operations, archivo, operacion, 0, 'ERROR')
+        registro_cambio_operations(ruta_operations, archivo, 'VALIDATION', 0, 'ERROR')
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
     operacion = "DELETE"
