@@ -6,12 +6,10 @@ from pathlib import Path
 
 from datetime import datetime
 
-
 wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
 
 RUTA_DATASET = Path("processed_datasets") / dataset
-
 
 st.title("Página de Búsqueda (P3)")
 
@@ -92,3 +90,29 @@ if (para_exportar is not None):
                     data=para_exportar,
                     file_name=f'{dataset}-{datetime.now().strftime('%d/%m/%y')}.csv',
                     mime='text/csv')
+    
+nombre_dataset = st.session_state.get('dataset_actual', 'default')
+
+col_especie = "scientificName"
+col_observador = "recordedBy"
+
+if nombre_dataset == 'xenocanto':
+    col_pais = "country"
+    col_provincia = None  
+else:
+    col_pais = "countryCode"
+    col_provincia = "stateProvince"
+    
+st.subheader("resumen estadistico del subconjunto mostrado:")
+if len(df_filtrado)>0:
+    especies = df_filtrado[col_especie].nunique() if col_especie in df_filtrado.columns else 0
+    paises = df_filtrado[col_pais].nunique() if (col_pais and col_pais in df_filtrado.columns) else 0
+    provincias = df_filtrado[col_provincia].nunique() if (col_provincia and col_provincia in df_filtrado.columns) else 0
+    observadores = df_filtrado[col_observador].nunique() if col_observador in df_filtrado.columns else 0
+
+    st.markdown(f"cantidad de especies unicas: {especies}")
+    st.markdown(f"cantidad de paises representados: {paises}")
+    st.markdown(f"cantidad de provincias representadas: {provincias}")
+    st.markdown(f"cantidad de observadores que participaron: {observadores}")
+else:
+    st.markdown("No hay datos para mostrar el resumen estadístico.")
