@@ -60,12 +60,12 @@ with c3:
 with c4:
     st.write(f"**Validaciones:** {total_validation}")
 
-# 8.c Mostrar la tabla interactiva
+# Mostrar la tabla interactiva
 st.write("### Logs filtrados")
 st.dataframe(df_filtrado)
 
 
-# mostrar logs tabulados
+# 8.c Mostrar logs tabulados y sus metricas
 st.header('Logs totales')
 st.subheader("Métricas resumidas de todos los logs")
 
