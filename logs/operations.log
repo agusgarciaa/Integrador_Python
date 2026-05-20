@@ -448,6 +448,8 @@
 2026-05-06 16:27:29 | iadiza | DELETE | 1 registros
 2026-05-06 16:40:01 | iadiza | DELETE | 1 registros
 2026-05-06 16:41:06 | iadiza | DELETE | 4 registros
+<<<<<<< HEAD
+=======
 2026-05-18 18:50:18 | iadiza | INSERT | 1 registros
 2026-05-18 19:05:56 | inaturalist | DELETE | 0 registros |ERROR
 2026-05-18 19:06:24 | inaturalist | DELETE | 0 registros
@@ -487,3 +489,4 @@
 2026-05-20 12:05:53 | inaturalist | DELETE | 0 registros
 2026-05-20 12:06:17 | inaturalist | DELETE | 1192138 registros
 2026-05-20 12:06:21 | inaturalist | DELETE | 14315 registros
+>>>>>>> fececb296c4b5a1716757d0da97d431e1f556d56

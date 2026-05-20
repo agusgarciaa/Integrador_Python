@@ -9,6 +9,9 @@ st.title("Página de Búsqueda (P3)")
 
 wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
+if not dataset:
+    st.warning("Por favor seleccioná un dataset desde el menú lateral.")
+    st.stop()  # Detiene la ejecución del resto de la página
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 
@@ -75,10 +78,8 @@ df_filtrado = wb.aplicar_filtros(
     fecha_fin=fecha_fin
 )
 
-# Mostrar resultados
-st.write(f"Resultados encontrados: {len(df_filtrado)}")
-st.dataframe(df_filtrado)
-
+# 2.C
+wb.mostrar_resultados(df_filtrado, st.session_state.dataset_actual)
 
 # Botón de descarga de la tabla en formato CSV
 para_exportar = wb.exportar_resultados(df_resultados)
@@ -100,7 +101,7 @@ else:
     col_pais = "countryCode"
     col_provincia = "stateProvince"
     
-st.subheader("resumen estadistico del subconjunto mostrado:")
+st.subheader("Resumen estadistico del subconjunto mostrado:")
 if len(df_filtrado)>0:
     especies = df_filtrado[col_especie].nunique() if col_especie in df_filtrado.columns else 0
     paises = df_filtrado[col_pais].nunique() if (col_pais and col_pais in df_filtrado.columns) else 0
