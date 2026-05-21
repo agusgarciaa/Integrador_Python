@@ -5,9 +5,10 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 
-st.title("Página de Búsqueda (P3)")
-
 wb.opcion_sidebar()
+
+st.title("Página de Búsqueda ")
+
 dataset = st.session_state.dataset_actual
 if not dataset:
     st.warning("Por favor seleccioná un dataset desde el menú lateral.")
@@ -23,15 +24,9 @@ if df_resultados is not None:
     st.write(f"Registros encontrados: {len(df_resultados)}")
     st.dataframe(df_resultados)
 
+st.divider()
 
 # 2.b Fe Cordoba
-"""
-    Renderiza la interfaz de usuario para la búsqueda de ocurrencias.
-    
-    Carga el dataset activo aplicando los separadores correspondientes, extrae 
-    las opciones únicas para los componentes de selección mutiple, 
-    y muestra los resultados filtrados en una tabla interactiva de Streamlit.
-    """
 # Cargar dataset
 archivo = next(RUTA_DATASET.iterdir(), None)
 if archivo is None:
@@ -77,6 +72,8 @@ df_filtrado = wb.aplicar_filtros(
     fecha_inicio=fecha_inicio,
     fecha_fin=fecha_fin
 )
+
+st.divider() 
 
 # 2.C
 wb.mostrar_resultados(df_filtrado, st.session_state.dataset_actual)

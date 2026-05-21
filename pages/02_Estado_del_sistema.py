@@ -6,6 +6,8 @@ import src.utils as ut
 import src.webmanager as wb 
 import pandas as pd
 
+wb.opcion_sidebar()
+
 st.title("Logs generados.")
 ruta = ut.obtener_ruta_log("logs", "operations.log")
 

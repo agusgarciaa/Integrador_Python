@@ -3,6 +3,7 @@ from datetime import datetime
 
 import streamlit as st 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 import src.utils as ut
 import src.helpers as hp
@@ -10,7 +11,7 @@ import src.validaciones as va
 
 
 #funcion 1.a sofia martins
-def Dataframe_dataset(nombre,separador=','):
+def dataframe_dataset(nombre,separador=','):
     dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
     return dataframe
 
@@ -85,8 +86,8 @@ def mostrar_busqueda_texto_libre():
     """
 
     # Verificamos que exista un dataset seleccionado en la sesión
-    if "dataset_actual" not in st.session_state:
-        st.warning("Por favor, seleccione un dataset en el menú lateral.")
+    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
+        st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
         return
 
     nombre_dataset = st.session_state.dataset_actual
@@ -109,7 +110,7 @@ def mostrar_busqueda_texto_libre():
         return
 
     # Cargamos el DataFrame completo en memoria usando la función de la Etapa 1
-    df = Dataframe_dataset(archivo, separador=separador)
+    df = dataframe_dataset(archivo, separador=separador)
 
     st.subheader("Búsqueda por texto libre")
     
@@ -337,3 +338,221 @@ def exportar_resultados (reg=None):
             return reg.to_csv(index=False).encode('utf-8')
         else:
             st.warning('Ocurrió un problema inesperado')
+
+
+# --- EJERCICIO 3.A: Gráfico de Barra ---
+def graficar_registros_por_ubicacion():
+    """
+    Genera un gráfico de barras por país o por provincia según los datos disponibles.
+    """
+
+    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
+        st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
+        return
+
+    dataset_nombre = st.session_state.dataset_actual
+    separador = "\t" if dataset_nombre == "iadiza" else ","
+    
+    ruta_carpeta = Path("processed_datasets") / dataset_nombre
+    archivo = None
+    if ruta_carpeta.exists():
+        for archivo in ruta_carpeta.iterdir():
+            if archivo.is_file():
+                archivo = archivo
+                break
+
+    if not archivo:
+        st.error("No se encontró el archivo de datos.")
+        return
+
+    df = dataframe_dataset(archivo, separador=separador)
+
+    st.subheader("Distribución geográfica de registros")
+
+    # Mapeo de columnas a minúsculas para evitar problemas de formato
+    columnas_mapeadas = {col.lower(): col for col in df.columns}
+    col_pais = columnas_mapeadas.get('country') 
+    col_provincia = columnas_mapeadas.get('stateprovince') or columnas_mapeadas.get('locality')
+
+    # Si la columna 'country' EXISTE en el archivo
+    if col_pais:
+        df[col_pais] = df[col_pais].astype(str).str.strip()
+        df_limpio = df[~df[col_pais].isin(['nan', '', 'None'])]
+        paises_unicos = df_limpio[col_pais].unique()
+        cantidad_paises = len(paises_unicos)
+    else:
+        # Si NO existe la columna 'country', asumimos que es un solo país implícito
+        cantidad_paises = 1
+        paises_unicos = ["No especificado (País Único)"]
+
+    # --- CASO A: El dataset explícitamente tiene más de un país ---
+    if cantidad_paises > 1:
+        st.info(f"El dataset contiene registros de {cantidad_paises} países.")
+        
+        n_paises = st.slider(
+            "Seleccione cuántos países desea visualizar (los N más frecuentes):",
+            min_value=1,
+            max_value=int(cantidad_paises),
+            value=min(5, int(cantidad_paises))
+        )
+        
+        datos_grafico = df_limpio[col_pais].value_counts().head(n_paises)
+        titulo_grafico = f"Top {n_paises} de registros por País"
+        etiqueta_x = "País"
+
+    # --- CASO B: Un solo país (o no tiene la columna 'country' pero queremos ver provincias) ---
+    elif cantidad_paises == 1:
+        pais_actual = paises_unicos[0]
+        
+        if col_pais:
+            st.info(f"Todos los registros pertenecen a un único país: **{pais_actual}**")
+        else:
+            st.info("El dataset no especifica columna de país. Se organiza directamente por ubicación regional.")
+        
+        if not col_provincia:
+            st.warning("No se encontraron columnas de provincia o localidad ('stateProvince' / 'locality') para este dataset.")
+            return
+            
+        # Limpiamos y extraemos las provincias/localidades más frecuentes
+        df[col_provincia] = df[col_provincia].astype(str).str.strip()
+        df_prov_filtrado = df[~df[col_provincia].isin(['nan', '', 'None'])]
+        
+        datos_grafico = df_prov_filtrado[col_provincia].value_counts().head(15) 
+        titulo_grafico = f"Top 15 de registros por Provincia/Localidad"
+        etiqueta_x = "Provincia / Localidad"
+    else:
+        st.warning("No hay registros válidos para graficar.")
+        return
+
+    if not datos_grafico.empty:
+        # Invertimos el orden de los datos para que el más grande quede arriba en el gráfico horizontal
+        datos_ordenados = datos_grafico.iloc[::-1]
+        
+        # Creamos la figura y el gráfico
+        figura, grafico = plt.subplots(figsize=(10, 6)) # Un poco más alto para dar aire entre filas
+        
+        # CAMBIO CLAVE: Usamos 'barh' en lugar de 'bar' para hacer las barras horizontales
+        datos_ordenados.plot(kind='barh', ax=grafico, color='skyblue', edgecolor='black')
+        
+        # Configuramos los títulos y etiquetas (¡Ojo! Los ejes se invierten)
+        grafico.set_title(titulo_grafico, fontsize=12, fontweight='bold')
+        grafico.set_xlabel("Cantidad de Registros", fontsize=10) # Ahora la cantidad está abajo
+        grafico.set_ylabel(etiqueta_x, fontsize=10)             # El nombre geográfico está al costado
+        
+        # Ajustamos el tamaño de la letra de los nombres para que quepan bien
+        grafico.tick_params(axis='y', labelsize=9)
+        
+        # Dejamos espacio a la izquierda para que los nombres largos no se corten
+        figura.subplots_adjust(left=0.3, right=0.95, top=0.9, bottom=0.1) 
+        
+        # Mostramos en Streamlit
+        st.pyplot(figura)
+        plt.close(figura)
+
+
+# --- EJERCICIO 4.A: Formuario ---
+def insertar_nuevo_registro():
+    """
+    Crea un formulario dinámico para ingresar un nuevo registro en el dataset activo, validando los campos y guardando los cambios.
+    """
+    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
+        st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
+        return
+
+    # Ahora es 100% seguro obtener el nombre porque sabemos que no es None
+    dataset_nombre = st.session_state.dataset_actual
+    
+    # Si el dataset es 'iadiza', usamos tabulador (\t), de lo contrario usamos coma (,)
+    separador = "\t" if dataset_nombre.lower() == "iadiza" else "," 
+    
+    # Construye la ruta de forma segura sin peligro de TypeError
+    ruta_carpeta = Path("processed_datasets") / dataset_nombre 
+    archivo_target = None
+
+    if ruta_carpeta.exists():
+        for archivo in ruta_carpeta.iterdir():
+            if archivo.is_file():
+                archivo_target = archivo
+                break
+
+    if not archivo_target:
+        st.error("No se encontró el archivo de datos.")
+        return
+
+    # Carga el DataFrame actual (Ejercicio 1.A)
+    df = dataframe_dataset(archivo_target, separador=separador)
+
+    st.subheader(f"Insertar registro en: {dataset_nombre.capitalize()}")
+
+    # 2. DEFINICIÓN DE ATRIBUTOS PRINCIPALES: Seleccionamos las columnas clave del estándar Darwin Core
+    # Esto evita abrumar al usuario si el dataset tiene 50 columnas, mostrando solo las más importantes
+    columnas_clave = ['scientificname', 'eventdate', 'country', 'stateprovince', 'locality', 'recordedby', 'individualcount']
+    
+    # Filtramos las columnas reales del dataset que coincidan con nuestros atributos principales
+    campos_formulario = [col for col in df.columns if col.lower() in columnas_clave]
+
+    # Si por alguna razón no coincide ninguna, usamos las primeras 5 columnas por defecto
+    if not campos_formulario:
+        campos_formulario = df.columns.tolist()[:5]
+
+    # 3. CREACIÓN DEL FORMULARIO DE STREAMLIT (st.form)
+    # Usar st.form es obligatorio para que la página no se recargue con cada letra que escribe el usuario
+    with st.form(key="formulario_insercion"):
+        st.write("Complete los datos del nuevo registro:")
+        
+        # Diccionario para almacenar lo que el usuario escribe en cada campo
+        datos_ingresados = {}
+        
+        # Generamos los campos de entrada de forma dinámica recorriendo la lista
+        for campo in campos_formulario:
+            # Si la columna es de tipo numérico (como conteo de individuos), usamos un input numérico
+            if df[campo].dtype in ['int64', 'float64']:
+                datos_ingresados[campo] = st.number_input(f"{campo}:", min_value=0, value=0)
+            else:
+                # Para texto libre (nombres, fechas, localidades) usamos entrada de texto común
+                datos_ingresados[campo] = st.text_input(f"{campo}:", value="")
+        
+        # Botón de envío obligatorio dentro de todo st.form
+        boton_enviar = st.form_submit_button(label="Confirmar Inserción")
+
+    # 4. PROCESAMIENTO Y VALIDACIÓN AL HACER CLICK EN EL BOTÓN
+    if boton_enviar:
+        # Bandera para controlar si todo el formulario es válido
+        formulario_valido = True
+        
+        # REQUERIMIENTO: Mostrar mensajes de error específicos por campo (Ejercicio 4.A)
+        for campo, valor in datos_ingresados.items():
+            # Validación básica local: verificar que no se envíen campos obligatorios vacíos
+            if str(valor).strip() == "":
+                st.error(f"El campo '{campo}' no puede estar vacío.")
+                formulario_valido = False
+    
+
+        if not va.validar(**datos_ingresados):
+            st.error("La validación de la estructura o consistencia de datos ha fallado.")
+            formulario_valido = False
+
+        # 5. INSERCIÓN REAL Y PERSISTENCIA (Si todo es válido)
+        if formulario_valido:
+            try:
+                # Convertimos el diccionario de datos ingresados en un nuevo DataFrame de una sola fila
+                nuevo_registro_df = pd.DataFrame([datos_ingresados])
+                
+                # Concatenamos (añadimos) el nuevo registro al DataFrame original
+                df_actualizado = pd.concat([df, nuevo_registro_df], ignore_index=True)
+                
+                # Guardamos el DataFrame actualizado sobrescribiendo el archivo en processed_datasets
+                df_actualizado.to_csv(archivo_target, sep=separador, index=False, encoding='utf-8')
+                
+                # REQUERIMIENTO: Informar al usuario sobre el resultado exitoso
+                st.success("¡Registro insertado con éxito en el dataset!")
+                
+                # ut.registrar_operacion("INSERT", dataset_nombre, "Éxito: Registro añadido manualmente")
+                
+                # Forzamos a Streamlit a limpiar el formulario mostrando los datos actualizados
+                st.balloons()
+                
+            except Exception as un_error:
+                # Si algo falla en la escritura o procesamiento, informamos el error y lo registramos en el log
+                st.error(f"Error crítico al insertar el registro: {un_error}")
+                # ut.registrar_operacion("ERROR", dataset_nombre, f"Fallo en INSERT: {un_error}")
