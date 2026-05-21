@@ -262,3 +262,19 @@ def obtener_paises_validos(df):
             codigos_validos.append(codigo)
 
     return sorted(codigos_validos)
+
+
+# Helpers para la función 2.C
+def obtener_columnas_relevantes(nombre_dataset, columnas_disponibles, columnas_relevantes_constante):
+    relevantes = columnas_relevantes_constante.get(nombre_dataset, [])
+    if not relevantes:
+        return None
+    return [columna for columna in relevantes if columna in columnas_disponibles]
+
+def paginar(df, pagina, registros_por_pagina):
+    total = len(df)
+    total_paginas = max(1, (total + registros_por_pagina - 1) // registros_por_pagina)
+    pagina = max(1, min(pagina, total_paginas))
+    inicio = (pagina - 1) * registros_por_pagina
+    fin = min(inicio + registros_por_pagina, total)
+    return df.iloc[inicio:fin], inicio, fin, total_paginas
