@@ -5,12 +5,15 @@ import src.utils as ut
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+wb.opcion_sidebar()
 
 # 2. Título principal de la página P4
 st.title("Página de Visualización")
 
+# Llamar al ejercicio 3.A - Ana Freitas
+wb.graficar_registros_por_ubicacion()
+
 st.title("Gráficos")
-wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
 RUTA_DATASET = Path("processed_datasets") / dataset
 
@@ -59,6 +62,3 @@ fig = ax.get_figure()
 st.pyplot(fig)
 
 
-
-# Llamar al ejercicio 3.A - Ana Freitas
-wb.graficar_registros_por_ubicacion()
