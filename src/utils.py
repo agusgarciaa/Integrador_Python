@@ -71,11 +71,14 @@ def column_index (path,c_delimiter=',',c_encoding='utf-8'):
         se usan las librerias: csv
     """
     dict_index = {}
-    with open(path, mode='r', encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo, delimiter=c_delimiter)
-        header = next(lector)
-        for i, columna in enumerate(header):
-            dict_index[columna] = i
+    try:
+        with open(path, mode='r', encoding=c_encoding) as archivo:
+            lector = csv.reader(archivo, delimiter=c_delimiter)
+            header = next(lector)
+            for i, columna in enumerate(header):
+                dict_index[columna] = i
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
     return dict_index
 
 
@@ -179,21 +182,28 @@ def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
     """
     freq = Counter()
     nombre = str(nombre)
-    with open(path, mode='r', encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo, delimiter=c_delimiter)
-        header = next(lector)
-        match nombre.isdigit():
-            case True:
-                nombre = int(nombre)
-                for elemento in lector:
-                    freq[elemento[nombre]]+= 1
-            case False:
-                if nombre in header:
-                    pos = header.index(nombre)
-                    for elemento in lector:
-                        freq[elemento[pos]]+= 1
-                else:
-                    print('No se encontró la columna.')
+    try:
+        with open(path, mode='r', encoding=c_encoding) as archivo:
+            lector = csv.reader(archivo, delimiter=c_delimiter)
+            header = next(lector)
+            match nombre.isdigit():
+                case True:
+                    nombre = int(nombre)
+                    if (nombre <= len(header)):
+                        for elemento in lector:
+                            freq[elemento[nombre]]+= 1
+                    else:
+                        print(f'El número ingresado excede la cantidad de columnas. La columna {nombre} no existe. ')
+                case False:
+                    if nombre in header:
+                        pos = header.index(nombre)
+                        for elemento in lector:
+                            freq[elemento[pos]]+= 1
+                    else:
+                        print('No se encontró la columna.')
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
+
     freq=dict(freq)
     return freq
 
@@ -405,23 +415,24 @@ def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100
     """
     res = []
     campo='coordinateUncertaintyInMeters'
-    with open(path, mode='r', encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo,delimiter=c_delimiter)
-        header = next(lector)
-        indice_dict = column_index(path,c_delimiter,c_encoding)
-        try:
-            x = indice_dict[campo]
-            for i,elemento in enumerate(lector):
-                try:
-                    e = elemento[x]
-                    if float(e)<0 or float(e)>valor_alto:
+    try:
+        with open(path, mode='r', encoding=c_encoding) as archivo:
+            lector = csv.DictReader(archivo,delimiter=c_delimiter)
+            try:
+                for elemento in lector:
+                    try:
+                        e = elemento[campo]
+                        if float(e)<0 or float(e)>valor_alto:
+                            res.append(True)
+                        else:
+                            res.append(False)
+                    except ValueError:
                         res.append(True)
-                    else:
-                        res.append(False)
-                except ValueError:
-                    res.append(True)
-        except KeyError:
-            print('El dataset no contiene el campo "coordinateUncertaintyInMeters".')
+            except KeyError:
+                print('El dataset no contiene el campo "coordinateUncertaintyInMeters".')
+
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
             
     return res
 
@@ -466,41 +477,42 @@ def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
             c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
             c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
 
-        se usan las librrerías: csv, utils
+        se usan las librerías: csv, utils
     """
     ret = []
-
-    with open(path,mode='r',encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo,delimiter=c_delimiter)
-        header = next(lector)
-        aux = column_index(path,c_delimiter)
-        try:
-            lat = aux['decimalLatitude']
-        except KeyError:
-            try:
-                lat = aux['latitudeDecimal']
-            except KeyError:
-                print('No se encontró una latitud. ')
-                lat = None
-        try:
-            long = aux['decimalLongitude']
-        except KeyError:
-            try:
-                long = aux['longitudeDecimal']
-            except KeyError:
-                print('No se encontró una longitud. ')
-                long = None
-
-        if (lat is not None) and (long is not None):
-            for i,elemento in enumerate(lector):
-                dat_lat = elemento[lat]
-                dat_long = elemento[long]
-                
-                res_lat = hp.check_coordenadas(dat_lat,hp.MAX_LAT,hp.MIN_LAT)
-                res_long = hp.check_coordenadas(dat_long,hp.MAX_LONG,hp.MIN_LONG)
-                
-                ret.append((res_lat,res_long))
+    columnas_lat = ['decimalLatitude','latitudeDecimal']
+    columnas_long = ['decimalLongitude','longitudeDecimal']
+    lat_key= None
+    long_key = None
+    try:
+        with open(path,mode='r',encoding=c_encoding) as archivo:
+            lector = csv.DictReader(archivo,delimiter=c_delimiter)
+            for col in columnas_lat:
+                if (col in lector.fieldnames):
+                    lat_key=col
+                    break
+            for col in columnas_long:
+                if (col in lector.fieldnames):
+                    long_key=col
+                    break
             
+            if (lat_key is None):
+                print('No se encontró una latitud.')
+            if (long_key is None):
+                print('No se encontró una longitud.')
+
+            if (lat_key is not None) and (long_key is not None):
+                for elemento in lector:
+                    dat_lat = elemento[lat_key]
+                    dat_long = elemento[long_key]
+                    
+                    res_lat = hp.check_coordenadas(dat_lat,hp.MAX_LAT,hp.MIN_LAT)
+                    res_long = hp.check_coordenadas(dat_long,hp.MAX_LONG,hp.MIN_LONG)
+                    
+                    ret.append((res_lat,res_long))
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
+
     return ret
 
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
@@ -729,21 +741,24 @@ def registrar_filtro (path,c_delimiter=',',c_encoding='utf-8',**kwargs):
         print('No se encontraron columnas válidas.')
         return []
 
-    with open(path,mode='r',encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo,delimiter=c_delimiter)
-        header = next(lector)
+    try:
+        with open(path,mode='r',encoding=c_encoding) as archivo:
+            lector = csv.reader(archivo,delimiter=c_delimiter)
+            header = next(lector)
 
-        ret = []
+            ret = []
 
-        for fila in lector:  
-            valido = True
-            for n,columna in enumerate(i):  
-                cel = fila[columna]  
-                if (str(cel).strip().lower() != val[n]):
-                    valido = False
-                    break
-            if (valido==True):
-                ret.append(fila)
+            for fila in lector:  
+                valido = True
+                for n,columna in enumerate(i):  
+                    celda = fila[columna]  
+                    if (str(celda).strip().lower() != val[n]):
+                        valido = False
+                        break
+                if (valido==True):
+                    ret.append(fila)
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
 
     return ret
 
