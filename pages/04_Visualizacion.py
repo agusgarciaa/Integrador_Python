@@ -6,6 +6,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 
+# 2. Título principal de la página P4
+st.title("Página de Visualización")
+
 st.title("Gráficos")
 wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
@@ -55,3 +58,7 @@ fig = ax.get_figure()
 
 st.pyplot(fig)
 
+
+
+# Llamar al ejercicio 3.A - Ana Freitas
+wb.graficar_registros_por_ubicacion()
