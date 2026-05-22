@@ -1,13 +1,15 @@
-import streamlit as st
-import src.webmanager as wb 
-import src.helpers as hp
-import pandas as pd
 from pathlib import Path
 from datetime import datetime
 
-wb.opcion_sidebar()
+import pandas as pd
+import streamlit as st
+
+import src.web_manager as wb 
+import src.helpers as hp
+
 
 st.title("Página de Búsqueda ")
+wb.opcion_sidebar()
 
 dataset = st.session_state.dataset_actual
 if not dataset:
@@ -16,13 +18,12 @@ if not dataset:
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 
-# Llamamos a la función del Ejercicio 2.A que acabamos de crear 
 df_resultados = wb.mostrar_busqueda_texto_libre()
 
-# Mostrar la tabla interactiva 
+# 4. Mostrar la tabla interactiva si se obtuvo un resultado válido
 if df_resultados is not None:
-    st.write(f"Registros encontrados: {len(df_resultados)}")
-    st.dataframe(df_resultados)
+    st.write(f"📋 **Registros encontrados:** {len(df_resultados)}")
+    st.dataframe(df_resultados, use_container_width=True)
 
 st.divider()
 
