@@ -51,10 +51,9 @@ def recorrer_diez_filas(ruta,delimiterr):
 #funcion 2b sofia martins
 def imprimir_encabezados(ruta, delimiter=','):
     """retorna el encabezado del dataset"""
-    archivo = open(ruta, 'r', encoding='utf-8')
-    modo = csv.reader(archivo, delimiter=delimiter)
-    encabezado=next(modo)
-    archivo.close()
+    with open(ruta, 'r', encoding='utf-8') as archivo:
+        modo = csv.reader(archivo, delimiter=delimiter)
+        encabezado=next(modo)
     return encabezado
     
 
@@ -604,7 +603,7 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
-        muestra = f.read(512)
+        muestra = f.read(2048)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
         f.seek(0)
@@ -627,7 +626,7 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     agregados +=1
     
     fm.asegurar_directorio(ruta_processed)
-    with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
+    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
            escribir.writeheader()
@@ -651,7 +650,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
 
      
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
-        muestra = f.read(512)
+        muestra = f.read(2048)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
         f.seek(0)
@@ -685,7 +684,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
           agregados += 1
   
     fm.asegurar_directorio(ruta_processed)
-    with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
+    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
         escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
            escribir.writeheader()
@@ -880,7 +879,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as archivo:
-        aux = archivo.read(512)
+        aux = archivo.read(2048)
         aux2 = csv.Sniffer().sniff(aux)
         terminator = aux2.lineterminator
         archivo.seek(0)
@@ -911,7 +910,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
 
     if se_encontro:
         fm.asegurar_directorio(ruta_processed)
-        with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
+        with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo2:
             escribir = csv.DictWriter(
                 archivo2,
                 fieldnames=header,
