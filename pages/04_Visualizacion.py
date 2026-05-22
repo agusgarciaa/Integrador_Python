@@ -1,13 +1,23 @@
-import src.webmanager as wb 
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
-import src.utils as ut
-from pathlib import Path
 import matplotlib.pyplot as plt
 
-wb.opcion_sidebar()
-dataset = st.session_state.dataset_actual
+import src.web_manager as wb 
+import src.graficos as gr
+import src.lecturas as lec
 
+wb.opcion_sidebar()
+
+# 2. Título principal de la página P4
+st.title("Página de Visualización")
+
+# Llamar al ejercicio 3.A - Ana Freitas
+gr.graficar_registros_por_ubicacion()
+
+st.title("Gráficos")
+dataset = st.session_state.dataset_actual
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 archivo = next(RUTA_DATASET.iterdir(), None)
@@ -17,9 +27,9 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
 
-st.title("Gráficos")
-
-diccionario_nulos = ut.porcentaje_nulos(archivo)
+#3.D Fe Cordoba
+"""Calcula y grafica el porcentaje de datos no nulos por columna."""
+diccionario_nulos = lec.porcentaje_nulos(archivo)
 
 # Creamos una Serie de Pandas con ese diccionario
 serie_nulos = pd.Series(diccionario_nulos)

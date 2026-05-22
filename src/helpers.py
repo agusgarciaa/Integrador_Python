@@ -2,6 +2,7 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 import csv
+import src.validaciones as va
 
 # ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -9,6 +10,8 @@ MAX_LAT = 13.0
 MIN_LAT = -56.0
 MAX_LONG = -34.0
 MIN_LONG = -82.0
+
+COUNTRY_CODES = ['AR', 'BO', 'BR', 'PY', 'UY', 'CL']
 
 # ----------------------------------------- Funciones de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
 
@@ -29,37 +32,83 @@ def obtener_indice(header, columna):
     
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
-def calcular_numericos(lista):
+def calcular_numericos(lector, indice):
     """
-    Calcula el mínimo, máximo y promedio de una lista de valores numéricos.
+    Calcula mínimo, máximo y promedio leyendo fila por fila.
     """
-    numeros = [float(num) for num in lista if num.strip()] 
+    menor = float('inf') 
+    mayor = float('-inf') 
+    suma = 0.0
+    contador = 0
 
-    menor = min(numeros)
-    mayor = max(numeros)
-    promedio = sum(numeros) / len(numeros) if numeros else 0
+    for fila in lector:
+        if len(fila) > indice:
+            valor_str = fila[indice].strip()
+            if valor_str and valor_str.lower() != 'n/a':
+                try:
+                    num = float(valor_str)
+                    if num < menor: menor = num
+                    if num > mayor: mayor = num
+                    suma += num
+                    contador += 1
+                except ValueError:
+                    continue 
 
-    return 'menor valor encontrado: ', menor, 'mayor valor encontrado: ', mayor, 'promedio: ', promedio
+    promedio = suma / contador if contador > 0 else 0.0
 
+    return {
+        "menor_valor": menor if contador > 0 else None,
+        "mayor_valor": mayor if contador > 0 else None,
+        "promedio": promedio
+    }
 
 # Funcion de apoyo para el ejercicio 2.I - Ana Freitas
-def calcular_text(lista):
+def calcular_text(lector, indice):
     """
-    Analiza la longitud de las cadenas de texto en la columna.
+    Calcula la longitud mínima y máxima de texto leyendo fila por fila.
     """
-    texto = [len(text.strip()) for text in lista] 
-    
-    return min(texto), max(texto)
+    menor_longitud = float('inf')
+    mayor_longitud = float('-inf')
+    contador = 0
+
+    for fila in lector:
+        if len(fila) > indice:
+            texto = fila[indice].strip()
+            largo = len(texto)
+            if largo < menor_longitud: menor_longitud = largo
+            if largo > mayor_longitud: mayor_longitud = largo
+            contador += 1
+
+    return {
+        "longitud_minima": menor_longitud if contador > 0 else 0,
+        "longitud_maxima": mayor_longitud if contador > 0 else 0
+    }
 
 
-# Funcion de apoyo para el ejercicio 2.I - Ana Freitas
-def calcular_coordenada(lista):
+def calcular_coordenada(lector, indice):
     """
-    Calcula los extremos geográficos (mínimo y máximo) de una lista de coordenadas.
+    Calcula extremos geográficos leyendo fila por fila.
     """
-    coordenada = [float(num) for num in lista if num.strip()]
+    menor = float('inf')
+    mayor = float('-inf')
+    contador = 0
 
-    return max(coordenada), min(coordenada)
+    for fila in lector:
+        if len(fila) > indice:
+            valor_str = fila[indice].strip()
+            if valor_str and valor_str.lower() != 'n/a':
+                try:
+                    num = float(valor_str)
+                    if num < menor: menor = num
+                    if num > mayor: mayor = num
+                    contador += 1
+                except ValueError:
+                    continue
+
+    return {
+        "menor_valor": menor if contador > 0 else None,
+        "mayor_valor": mayor if contador > 0 else None
+    }
 
 
 # Funcion de apoyo para el ejercicio 3.A - Sofia Martins
@@ -230,3 +279,48 @@ def obtener_nombres_datasets():
     return datasets
 
 
+# para 2.b Fe Cordoba
+# obtener valores de una columna 
+def obtener_opciones(df, columna):
+    """Obtiene los valores únicos, no nulos y como texto de una columna."""
+    valores = df[columna]
+    return sorted(
+        valores
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+
+# obtiene los country code del dataframe
+def obtener_paises_validos(df):
+    """Filtra y obtiene los country codes válidos del dataframe."""
+    codigos = (
+        df["countryCode"]
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+    codigos_validos = []
+    for codigo in codigos:
+        if not va.validar_country_code_registro(codigo, COUNTRY_CODES):
+            codigos_validos.append(codigo)
+
+    return sorted(codigos_validos)
+
+
+# Helpers para la función 2.C
+def obtener_columnas_relevantes(nombre_dataset, columnas_disponibles, columnas_relevantes_constante):
+    relevantes = columnas_relevantes_constante.get(nombre_dataset, [])
+    if not relevantes:
+        return None
+    return [columna for columna in relevantes if columna in columnas_disponibles]
+
+def paginar(df, pagina, registros_por_pagina):
+    total = len(df)
+    total_paginas = max(1, (total + registros_por_pagina - 1) // registros_por_pagina)
+    pagina = max(1, min(pagina, total_paginas))
+    inicio = (pagina - 1) * registros_por_pagina
+    fin = min(inicio + registros_por_pagina, total)
+    return df.iloc[inicio:fin], inicio, fin, total_paginas

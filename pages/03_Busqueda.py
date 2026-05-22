@@ -1,31 +1,35 @@
-import streamlit as st
-import src.webmanager as wb 
-import src.validaciones as va
-import pandas as pd
 from pathlib import Path
-
 from datetime import datetime
 
-wb.opcion_sidebar()
-dataset = st.session_state.dataset_actual
+import pandas as pd
+import streamlit as st
 
+import src.web_manager as wb 
+import src.helpers as hp
+
+
+st.title("Página de Búsqueda ")
+wb.opcion_sidebar()
+
+dataset = st.session_state.dataset_actual
+if not dataset:
+    st.warning("Por favor seleccioná un dataset desde el menú lateral.")
+    st.stop()  # Detiene la ejecución del resto de la página
 RUTA_DATASET = Path("processed_datasets") / dataset
 
-st.title("Página de Búsqueda (P3)")
 
-# Llamamos a la función del Ejercicio 2.A que acabamos de crear 
 df_resultados = wb.mostrar_busqueda_texto_libre()
 
-# Mostrar la tabla interactiva 
+# 4. Mostrar la tabla interactiva si se obtuvo un resultado válido
 if df_resultados is not None:
-    st.write(f"Registros encontrados: {len(df_resultados)}")
-    st.dataframe(df_resultados)
+    st.write(f"📋 **Registros encontrados:** {len(df_resultados)}")
+    st.dataframe(df_resultados, use_container_width=True)
 
+st.divider()
 
 # 2.b Fe Cordoba
 # Cargar dataset
 archivo = next(RUTA_DATASET.iterdir(), None)
-
 if archivo is None:
     st.error("No hay archivo en la carpeta")
     st.stop()
@@ -35,33 +39,26 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
     
-st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
+# st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
 
-# Opciones dinámicas
-nombres_cientificos = wb.obtener_opciones(df, "scientificName")
-
+# Opciones sacadas del dataframe
+nombres_cientificos = hp.obtener_opciones(df, "scientificName")
 if (dataset != 'xenocanto'):
-    provincias = wb.obtener_opciones(df, "stateProvince")
-    paises = wb.obtener_paises_validos(df)
+    provincias = hp.obtener_opciones(df, "stateProvince")
+    paises = hp.obtener_paises_validos(df)
 else: 
-    paises = wb.obtener_opciones(df, "country")
+    paises = hp.obtener_opciones(df, "country")
 
 # Interfaz
 st.title("Búsqueda de ocurrencias")
-
 filtro_nombre = st.multiselect("Nombre científico", nombres_cientificos )
-
 filtro_observador = st.text_input("Observador")
-
 filtro_pais = st.multiselect("País", paises)
-
 if (dataset == 'xenocanto'):
     filtro_provincia = []
 else:
     filtro_provincia = st.multiselect("Provincia", provincias)
-
 fecha_inicio = st.date_input("Fecha inicio")
-
 fecha_fin = st.date_input("Fecha fin")
 
 #st.write(df['recordedBy']) # era para ver q valores tenia esa columna y probar que ande
@@ -77,11 +74,10 @@ df_filtrado = wb.aplicar_filtros(
     fecha_fin=fecha_fin
 )
 
+st.divider() 
 
-# Mostrar resultados
-st.write(f"Resultados encontrados: {len(df_filtrado)}")
-st.dataframe(df_filtrado)
-
+# 2.C
+wb.mostrar_resultados(df_filtrado, st.session_state.dataset_actual)
 
 # Botón de descarga de la tabla en formato CSV
 para_exportar = wb.exportar_resultados(df_resultados)
@@ -103,7 +99,7 @@ else:
     col_pais = "countryCode"
     col_provincia = "stateProvince"
     
-st.subheader("resumen estadistico del subconjunto mostrado:")
+st.subheader("Resumen estadistico del subconjunto mostrado:")
 if len(df_filtrado)>0:
     especies = df_filtrado[col_especie].nunique() if col_especie in df_filtrado.columns else 0
     paises = df_filtrado[col_pais].nunique() if (col_pais and col_pais in df_filtrado.columns) else 0
