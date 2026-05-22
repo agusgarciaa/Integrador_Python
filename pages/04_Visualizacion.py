@@ -64,4 +64,19 @@ fig = ax.get_figure()
 
 st.pyplot(fig)
 
-
+st.subheader("cantidad de registros por año")
+if "eventDate" in df.columns:
+    df_temporal=df.copy()
+    df_temporal["eventDate"] = pd.to_datetime(df_temporal["eventDate"],errors='coerce',format='mixed',utc=True).dt.tz_localize(None)
+    excluidos=len(df)-df_temporal["eventDate"].notna().sum()
+    
+    if df_temporal["eventDate"].notna().sum()>0:
+        df_definitivo=df_temporal[["eventDate"]].dropna().copy()
+        df_definitivo["año"]=df_definitivo["eventDate"].dt.year
+        años=df_definitivo.groupby("año").size()
+        st.line_chart(años)
+        st.write(f"registros excluidos: {excluidos}")
+    else:
+        st.warning("no hay registros con fechas validas para el grafico")
+else:
+    st.warning("no existe la columna eventDate en el dataset")
