@@ -7,6 +7,9 @@ from pathlib import Path
 
 # funcion de apoyo para las que crean/modifican processed datasets
 def asegurar_directorio(ruta_archivo):
+    """
+    Crea las carpetas necesarias si no existen en el disco.
+    """
     carpeta = os.path.dirname(ruta_archivo)
     os.makedirs(carpeta, exist_ok=True) 
 

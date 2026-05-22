@@ -448,3 +448,153 @@
 2026-05-06 16:27:29 | iadiza | DELETE | 1 registros
 2026-05-06 16:40:01 | iadiza | DELETE | 1 registros
 2026-05-06 16:41:06 | iadiza | DELETE | 4 registros
+2026-05-21 09:35:07 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:35:07 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 09:35:07 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:36:10 | iadiza | INSERT | 1 registros
+2026-05-21 09:36:11 | iadiza | UPDATE | 1 registros
+2026-05-21 09:36:11 | iadiza | UPDATE | 1 registros
+2026-05-21 09:36:18 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:36:18 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 09:36:18 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:36:19 | iadiza | UPDATE | 1 registros
+2026-05-21 09:36:19 | iadiza | UPDATE | 1 registros
+2026-05-21 09:36:20 | iadiza | DELETE | 1 registros
+2026-05-21 09:36:29 | iadiza | DELETE | 4 registros
+2026-05-21 09:36:30 | iadiza | DELETE | 0 registros
+2026-05-21 09:36:30 | iadiza | DELETE | 2366 registros
+2026-05-21 09:41:38 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:41:38 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 09:41:38 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:41:39 | iadiza | UPDATE | 1 registros
+2026-05-21 09:41:39 | iadiza | UPDATE | 1 registros
+2026-05-21 09:41:41 | iadiza | DELETE | 0 registros |ERROR
+2026-05-21 09:41:41 | iadiza | DELETE | 4 registros
+2026-05-21 09:41:41 | iadiza | DELETE | 0 registros
+2026-05-21 09:41:41 | iadiza | DELETE | 2366 registros
+2026-05-21 09:44:01 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:44:01 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 09:44:02 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:44:13 | iadiza | UPDATE | 1 registros
+2026-05-21 09:44:13 | iadiza | UPDATE | 1 registros
+2026-05-21 09:55:11 | iadiza | UPDATE | 1 registros
+2026-05-21 09:55:11 | iadiza | UPDATE | 1 registros
+2026-05-21 09:55:37 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:55:37 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 09:55:37 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 09:55:38 | iadiza | UPDATE | 1 registros
+2026-05-21 09:55:38 | iadiza | UPDATE | 1 registros
+2026-05-21 09:55:46 | iadiza | DELETE | 0 registros |ERROR
+2026-05-21 09:55:46 | iadiza | DELETE | 4 registros
+2026-05-21 09:55:46 | iadiza | DELETE | 0 registros
+2026-05-21 09:55:46 | iadiza | DELETE | 2366 registros
+2026-05-21 20:54:08 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 20:55:29 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 20:55:29 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 20:55:30 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 20:57:36 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 20:57:36 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 20:57:36 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 20:58:51 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 20:58:51 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 20:58:51 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:00:09 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:00:09 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 21:00:09 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:01:55 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:01:55 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 21:01:55 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:01:58 | iadiza | UPDATE | 0 registros |ERROR
+2026-05-21 21:01:58 | iadiza | UPDATE | 0 registros |ERROR
+2026-05-21 21:02:43 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:02:43 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 21:02:43 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:02:47 | iadiza | UPDATE | 1 registros
+2026-05-21 21:02:47 | iadiza | UPDATE | 1 registros
+2026-05-21 21:04:20 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:04:20 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 21:04:20 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:04:23 | iadiza | UPDATE | 1 registros
+2026-05-21 21:04:23 | iadiza | UPDATE | 1 registros
+2026-05-21 21:04:29 | iadiza | DELETE | 0 registros |ERROR
+2026-05-21 21:04:29 | iadiza | DELETE | 4 registros
+2026-05-21 21:04:29 | iadiza | DELETE | 0 registros
+2026-05-21 21:04:29 | iadiza | DELETE | 2366 registros
+2026-05-21 21:06:37 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:06:37 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 21:06:37 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 21:06:50 | iadiza | UPDATE | 1 registros
+2026-05-21 21:06:50 | iadiza | UPDATE | 1 registros
+2026-05-21 21:06:55 | iadiza | DELETE | 0 registros |ERROR
+2026-05-21 21:06:55 | iadiza | DELETE | 4 registros
+2026-05-21 21:06:55 | iadiza | DELETE | 0 registros
+2026-05-21 21:06:55 | iadiza | DELETE | 2366 registros
+2026-05-21 23:07:04 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:07:05 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:07:05 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:07:05 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:07:30 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:07:30 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:07:30 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:07:31 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:07:31 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:07:31 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:08:32 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:08:32 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:08:32 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:08:33 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:08:33 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:08:33 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:08:40 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:08:40 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:08:40 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:08:41 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:08:41 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:08:41 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:10:03 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:10:03 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:10:03 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:10:03 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:10:04 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:10:04 | xenocanto | UPDATE | 1 registros
+2026-05-21 23:10:04 | xenocanto | DELETE | 1 registros
+2026-05-21 23:10:04 | xenocanto | DELETE | 2423 registros
+2026-05-21 23:10:26 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:10:27 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:10:27 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:10:27 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:10:28 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-21 23:10:28 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-21 23:10:28 | xenocanto | DELETE | 1 registros
+2026-05-21 23:10:28 | xenocanto | DELETE | 2423 registros
+2026-05-21 23:10:57 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 23:10:57 | iadiza | VALIDATION | 3 registros |ERROR
+2026-05-21 23:10:57 | iadiza | VALIDATION | 0 registros |ERROR
+2026-05-21 23:10:57 | iadiza | UPDATE | 0 registros |ERROR
+2026-05-21 23:10:57 | iadiza | UPDATE | 0 registros |ERROR
+2026-05-21 23:10:59 | iadiza | DELETE | 0 registros |ERROR
+2026-05-21 23:10:59 | iadiza | DELETE | 4 registros
+2026-05-21 23:10:59 | iadiza | DELETE | 0 registros
+2026-05-21 23:10:59 | iadiza | DELETE | 2366 registros
+2026-05-21 23:11:48 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:11:48 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:11:49 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:11:49 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:11:49 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-21 23:11:49 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-21 23:11:50 | xenocanto | DELETE | 1 registros
+2026-05-21 23:11:50 | xenocanto | DELETE | 2423 registros
+2026-05-21 23:12:21 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:12:21 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:12:21 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-21 23:12:21 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-21 23:12:22 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-21 23:12:22 | xenocanto | UPDATE | 0 registros |ERROR
+2026-05-21 23:12:22 | xenocanto | DELETE | 1 registros
+2026-05-21 23:12:22 | xenocanto | DELETE | 2423 registros
+2026-05-21 23:14:57 | inaturalist | UPDATE | 1 registros
+2026-05-21 23:15:03 | inaturalist | UPDATE | 1 registros
+2026-05-21 23:15:12 | inaturalist | DELETE | 0 registros |ERROR
+2026-05-21 23:15:58 | inaturalist | DELETE | 0 registros
+2026-05-21 23:16:13 | inaturalist | DELETE | 1192138 registros
+2026-05-21 23:16:16 | inaturalist | DELETE | 14315 registros
