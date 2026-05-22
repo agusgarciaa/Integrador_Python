@@ -28,7 +28,7 @@ def imprimir_encabezados(ruta, delimiter=','):
     encabezado=next(modo)
     archivo.close()
     return encabezado
-    
+
 
 # Ejercicio 2.C - Lucia Cipolla
 def column_index (path,c_delimiter=',',c_encoding='utf-8'):
@@ -43,11 +43,14 @@ def column_index (path,c_delimiter=',',c_encoding='utf-8'):
         se usan las librerias: csv
     """
     dict_index = {}
-    with open(path, mode='r', encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo, delimiter=c_delimiter)
-        header = next(lector)
-        for i, columna in enumerate(header):
-            dict_index[columna] = i
+    try:
+        with open(path, mode='r', encoding=c_encoding) as archivo:
+            lector = csv.reader(archivo, delimiter=c_delimiter)
+            header = next(lector)
+            for i, columna in enumerate(header):
+                dict_index[columna] = i
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
     return dict_index
 
 
@@ -151,69 +154,103 @@ def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
     """
     freq = Counter()
     nombre = str(nombre)
-    with open(path, mode='r', encoding=c_encoding) as archivo:
-        lector = csv.reader(archivo, delimiter=c_delimiter)
-        header = next(lector)
-        match nombre.isdigit():
-            case True:
-                nombre = int(nombre)
-                for elemento in lector:
-                    freq[elemento[nombre]]+= 1
-            case False:
-                if nombre in header:
-                    pos = header.index(nombre)
-                    for elemento in lector:
-                        freq[elemento[pos]]+= 1
-                else:
-                    print('No se encontró la columna.')
+    try:
+        with open(path, mode='r', encoding=c_encoding) as archivo:
+            lector = csv.reader(archivo, delimiter=c_delimiter)
+            header = next(lector)
+            match nombre.isdigit():
+                case True:
+                    nombre = int(nombre)
+                    if (nombre <= len(header)):
+                        for elemento in lector:
+                            freq[elemento[nombre]]+= 1
+                    else:
+                        print(f'El número ingresado excede la cantidad de columnas. La columna {nombre} no existe. ')
+                case False:
+                    if nombre in header:
+                        pos = header.index(nombre)
+                        for elemento in lector:
+                            freq[elemento[pos]]+= 1
+                    else:
+                        print('No se encontró la columna.')
+    except FileNotFoundError:
+        print('No se encontró el archivo. ')
+
     freq=dict(freq)
     return freq
 
 
-# Ejerciico 2.I - Ana Freitas
+# Ejercicio 2.I - Ana Freitas 
 def verificar_tipo(ruta, separador, columna, tipo_dato):
     """
-    Coordina la extracción de una columna y delega el cálculo de métricas 
-    según el tipo de dato especificado (numérico, texto o coordenadas).
+    Coordina la lectura del archivo fila por fila (eficiente en memoria)
+    y delega el cálculo de métricas según el tipo de dato (numérico, texto o coordenadas).
     """
+    try:
+        with open(ruta, mode='r', encoding="utf-8") as archivo:
+            lector = csv.reader(archivo, delimiter=separador)
+            header = next(lector)
+            
+            indice = hp.obtener_indice(header, columna)
+            if indice is None or indice == -1:
+                print(f"Error: No se encontró la columna '{columna}' en el dataset.")
+                return None
 
-    with open(ruta, encoding="utf-8") as archivo:
-        lector = csv.reader(archivo, delimiter=separador)
-        header = next(lector)
+            if tipo_dato == 'numeric':
+                return hp.calcular_numericos(lector, indice)
+            elif tipo_dato == 'text':
+                return hp.calcular_text(lector, indice)
+            elif tipo_dato == 'coordinate':
+                return hp.calcular_coordenada(lector, indice)
+            else:
+                print(f"Error: El tipo de dato '{tipo_dato}' no es válido.")
+                return None
 
-        lista_columna = []
-        
-        indice = hp.obtener_indice(header, columna)
-
-        lista_columna = [line[indice] for line in lector if len(line) > indice] 
-
-    if tipo_dato == 'numeric':
-        return hp.calcular_numericos(lista_columna)
-    elif tipo_dato == 'text':
-        return hp.calcular_text(lista_columna)
-    elif tipo_dato == "coordinate":
-        return hp.calcular_coordenada(lista_columna)
+    except FileNotFoundError:
+        print(f"Error Crítico: No se pudo encontrar el archivo en la ruta: {ruta}")
+        return None
+    except PermissionError:
+        print(f"Error de Permisos: No se puede leer el archivo en {ruta}.")
+        return None
+    except Exception as e:
+        print(f"Ocurrió un error inesperado al procesar el dataset: {e}")
+        return None
     
-    
+
 # Ejercicio 2.J - Ana Freitas
 def identificar_columnas_nulas(ruta, separador):
     """
     Identifica qué columnas del dataset no tienen ningún dato cargado 
     en ninguno de los registros (están 100% vacías).
+    Devuelve una lista con los nombres de las columnas vacías.
     """
-    with open(ruta, encoding="utf-8") as archivo:
-        lector = csv.reader(archivo, delimiter=separador)
-        header = next(lector)
+    try:
+        with open(ruta, mode='r', encoding="utf-8") as archivo:
+            lector = csv.reader(archivo, delimiter=separador)
+            header = next(lector)
 
-        indices_vacios = set(range(len(header)))
+            indices_vacios = set(range(len(header)))
 
-        for line in lector:
-            for index in list(indices_vacios):
-                if index < len(line) and line[index].strip():
-                    indices_vacios.remove(index)
+            for line in lector:
+                for index in list(indices_vacios):
+                    if index < len(line):
+                        valor = line[index].strip()
+                        if valor and valor.upper() != "N/A":
+                            indices_vacios.remove(index)
 
-            if not indices_vacios:
-                break
-    
-    columnas_vacias = [header[index] for index in indices_vacios]
-    return 'Columnas que solo tienen nulos: ', columnas_vacias
+                if not indices_vacios:
+                    break
+        
+        columnas_vacias = [header[index] for index in indices_vacios]
+        
+        return columnas_vacias
+
+    except FileNotFoundError:
+        print(f"Error Crítico: No se pudo encontrar el archivo en la ruta: {ruta}")
+        return []
+    except PermissionError:
+        print(f"Error de Permisos: No se puede leer el archivo en {ruta}.")
+        return []
+    except Exception as e:
+        print(f"Ocurrió un error inesperado al procesar el dataset: {e}")
+        return []

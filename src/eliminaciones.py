@@ -54,13 +54,8 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
 
     if se_encontro:
         fm.asegurar_directorio(ruta_processed)
-        with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
-            escribir = csv.DictWriter(
-                archivo2,
-                fieldnames=header,
-                lineterminator=terminator,
-                extrasaction='ignore'
-            )
+        with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo_salida:
+            escribir = csv.DictWriter(archivo_salida, fieldnames=header, lineterminator=terminator, extrasaction='ignore')
             if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
                 escribir.writeheader()
             escribir.writerows(datos)
@@ -120,9 +115,11 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
     
 
 # Ejercicio 6.C - Fe Cordoba
-def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
+def eliminar_por_condicion(ruta_raw, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
 
     """Modifica el dataset procesado eliminando ciertos registros."""
+    operacion = "DELETE"
+    eliminados = 0
 
     condiciones_validas = ["==", "!=", ">", ">=", "<", "<="]
     if condicion not in condiciones_validas:
@@ -133,35 +130,31 @@ def eliminar_por_condicion(archivo, ruta_processed, ruta_operations, columna, co
         re.registro_cambio_operations(ruta_operations, archivo, 'VALIDATION', 0, 'ERROR')
         raise ValueError("El valor a comparar no puede ser vacío o 'N/A'")
 
-    operacion = "DELETE"
-    eliminados = 0
+    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
-    # si existe el archivo ocurrence del dataset en processed dataset se usa ese para leer sino el raw 
-    ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else archivo
-
-    with open(ruta_entrada, newline="", encoding="utf-8") as f_in:
-        reader = csv.DictReader(f_in, delimiter=delimiter)
+    with open(ruta_entrada, newline="", encoding="utf-8") as archivo:
+        reader = csv.DictReader(archivo, delimiter=delimiter)
         columnas = reader.fieldnames
 
         if columna not in columnas:
             re.registro_cambio_operations(ruta_operations, ruta_entrada, operacion, 0, 'ERROR')
             raise ValueError(f"La columna '{columna}' no existe")
 
-        filas = list(reader)  #guardo en lista el iterador ya que es peligroso leer y escribir un mismo archivo en caso de q ocurrence exista 
+        filas = list(reader) 
 
-        fm.asegurar_directorio(ruta_processed)  # en caso de que ocurrence no exista lo creamos, sino, no pasa nada 
+        fm.asegurar_directorio(ruta_processed)  
 
-        with open(ruta_processed, "w", newline="", encoding="utf-8") as f_out:  # y escribimos ahi 
-            writer = csv.DictWriter(f_out, fieldnames=columnas, delimiter=delimiter)
+        with open(ruta_processed, "w", newline="", encoding="utf-8") as archivo_salida: 
+            writer = csv.DictWriter(archivo_salida, fieldnames=columnas, delimiter=delimiter)
             writer.writeheader()
 
             for fila in filas:
-                dato = fila[columna] # guardo el dato de esa columna 
+                dato = fila[columna] 
 
-                if not hp.cumple_condicion(dato, condicion, valor): # si no cumple, lo escribo en el processed
+                if not hp.cumple_condicion(dato, condicion, valor): 
                     writer.writerow(fila)
                 else:
-                    eliminados += 1  # si cumple debo eliminarlo (excluirlo del processed)
+                    eliminados += 1 
 
     re.registro_cambio_operations(ruta_operations, ruta_entrada, operacion, eliminados, 'SI')
 
