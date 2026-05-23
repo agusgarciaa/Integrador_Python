@@ -12,9 +12,9 @@ import src.registros as re
     
 # Función 6.A - Sofia Martins
 def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
-    """elimina un registro del dataset pidiendo los valores al usuario,
-       si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
-       usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
+    """Elimina un registro del dataset pidiendo los valores al usuario, si existe el archivo processed trabajo sobre ese,
+    sino con raw y guarda el resultado en processed usamos sniffer para imitar las caracteristicas del archivo  original y guardar en el mismo formato.
+    """
     datos = []
     se_encontro = False
     eliminados = 0
@@ -23,7 +23,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as archivo:
-        aux = archivo.read(512)
+        aux = archivo.read(2048)
         aux2 = csv.Sniffer().sniff(aux)
         terminator = aux2.lineterminator
         archivo.seek(0)
@@ -54,8 +54,9 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
 
     if se_encontro:
         fm.asegurar_directorio(ruta_processed)
-        with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo_salida:
-            escribir = csv.DictWriter(archivo_salida, fieldnames=header, lineterminator=terminator, extrasaction='ignore')
+        with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo_salida:
+            escribir = csv.DictWriter(
+                archivo_salida, fieldnames=header, lineterminator=terminator, extrasaction='ignore')
             if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
                 escribir.writeheader()
             escribir.writerows(datos)
@@ -71,9 +72,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
 
 # Función 6.B - Agustin Garcia
 def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, columna, valores_a_eliminar, separador =","):
-    """Función que elimina registros cuyo valor en una columna pertenezca a una lista
-        de valores suministrada por el usuario.
-    """
+    """Función que elimina registros cuyo valor en una columna pertenezca a una lista de valores suministrada por el usuario."""
     valores_a_eliminar = [v.strip() for v in valores_a_eliminar]
     operacion = "DELETE"
 
@@ -116,7 +115,6 @@ def eliminar_registros_por_valor (ruta_raw, ruta_processed, ruta_operations, col
 
 # Ejercicio 6.C - Fe Cordoba
 def eliminar_por_condicion(ruta_raw, ruta_processed, ruta_operations, columna, condicion, valor, delimiter=","):
-
     """Modifica el dataset procesado eliminando ciertos registros."""
     operacion = "DELETE"
     eliminados = 0
@@ -161,11 +159,7 @@ def eliminar_por_condicion(ruta_raw, ruta_processed, ruta_operations, columna, c
 
 # Función 6.E - Ana Freitas y 6.F - Lucía Cipolla
 def sanitizar_dataset(ruta_raw, ruta_processed, ruta_operations, separador=','):
-    """
-    Sanitización automática de datasets.
-    Recibe la ruta del archivo original y la ruta de destino en processed_datasets.
-    """
-    
+    """Sanitización automática de datasets. Recibe la ruta del archivo original y la ruta de destino en processed_datasets."""
     registros_sanitizados = []
     motivo_eliminacion = Counter()
     indices = set()

@@ -11,7 +11,9 @@ def obtener_fecha_hora_actual():
 
 # Ejercicio 7b - sofia martins
 def registro_cambio_operations(ruta_operations,ruta_raw,operacion,afectados,serealizo):
-    """registra en el archivo logs la operacion realizada y sus caracteristicas"""
+    """
+    Registra en el archivo logs la operacion realizada y sus caracteristicas.
+    """
     fecha=obtener_fecha_hora_actual()
     nombredataset=Path(ruta_raw).parent.name
     if serealizo=='SI':

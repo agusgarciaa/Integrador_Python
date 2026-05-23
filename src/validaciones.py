@@ -10,9 +10,11 @@ import src.lecturas as le
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 def verificar_coordenada(ruta_raw, separador,ruta_operations):
-    """verifica si las cordenadas decimallatitude y decimallongitude estan dentro del rango valido,
-       las que no cumple se agregan a una lista
-       se retorna la lista y la cantidad de elementos"""
+    """
+    Verifica si las cordenadas decimallatitude y decimallongitude estan dentro del rango valido,
+    las que no cumple se agregan a una lista
+    se retorna la lista y la cantidad de elementos;
+    """
     try:
       nocumplen=[]
       with open(ruta_raw, mode='r', encoding='utf-8') as archivo:
@@ -37,7 +39,7 @@ def verificar_coordenada(ruta_raw, separador,ruta_operations):
 #funcion 3b sofia martins
 def cordenadas_faltantes(fila):
     """
-    verifica si en una fila falta una de las cordenadas decimallatitude o decimallongitude, si falta una devuelve un booleano
+    Verifica si en una fila falta una de las cordenadas decimallatitude o decimallongitude, si falta una devuelve un booleano.
     """
     lat = fila.get('decimalLatitude')
     lon = fila.get('decimalLongitude')
@@ -57,7 +59,6 @@ def chequear_fecha(valor):
     Intenta convertir un string a fecha usando distintos formatos.
     Retorna un objeto datetime si es válido, o None si no lo es.
     """
-
     if valor is None or str(valor).strip() == "":
         return None
 
@@ -180,15 +181,15 @@ def validar_country_code(ruta, ruta_operations, separador=","):
 # Ejercicio 3.F - Lucia Cipolla
 def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
-            valor_alto: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
+    Recibe el path de un archivo en formato csv y lo lee.
+    Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+        valor_alto: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
 
-        se usan las librerias: csv, utils
+    se usan las librerias: csv, utils
     """
     res = []
     campo='coordinateUncertaintyInMeters'
@@ -212,7 +213,6 @@ def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100
         print('No se encontró el archivo. ')
             
     return res
-
 
 
 # Ejercicio 3.G - Agustin Garcia
@@ -248,14 +248,14 @@ def calidad_dataset (ruta, ruta_operations, id, separador=","):
 # Ejercicio 3.H - Lucia Cipolla
 def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+    Recibe el path de un archivo en formato csv y lo lee.
+    Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
 
-        se usan las librerías: csv, utils
+    se usan las librerías: csv, utils
     """
     ret = []
     columnas_lat = ['decimalLatitude','latitudeDecimal']
@@ -330,7 +330,6 @@ def es_registro_valido(fila, indices, codigos_validos):
     Agrupa todas las validaciones de la sección 3.
     Retorna una tupla True,'Válido' si el registro está limpio, False,'<motivo del conflicto>' si es conflictivo.
     """
-
     if not validar_campo_latitud(fila):
         return (False,'Latitud')
     if not validar_campo_longitud(fila):
