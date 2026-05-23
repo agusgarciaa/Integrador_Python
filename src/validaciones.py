@@ -50,7 +50,7 @@ def cordenadas_faltantes(fila):
     if (lon != "" and lon is not None) and (lat == "" or lat is None):
         return "FALTA_LATITUD"
     
-    return True
+    return "Existe las dos coordenadas"
 
 
 # Funcion para el ejercicio 3.C - Fe Cordoba
@@ -302,11 +302,10 @@ def validar_campo_latitud(fila):
     """
     lat = fila.get('decimalLatitude') or fila.get('latitudeDecimal')
 
-    if lat is None:
-        return False
-    
-    es_valida = (hp.verificar_latitud(lat) and hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT) and cordenadas_faltantes(fila) != "FALTA_LATITUD")
-    return es_valida
+    if lat is None or lat == "":
+        return True 
+   
+    return hp.verificar_latitud(lat) and hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT)
 
 
 # Funcion 3.I - Ana Freitas
@@ -317,11 +316,10 @@ def validar_campo_longitud(fila):
     """
     lon = fila.get('decimalLongitude') or fila.get('longitudeDecimal')
 
-    if lon is None:
-        return False
+    if lon is None or lon == "":
+        return True
     
-    es_valida = (hp.verificar_longitud(lon) and hp.check_coordenadas(lon, hp.MAX_LONG, hp.MIN_LONG) and cordenadas_faltantes(fila) != "FALTA_LONGITUD")
-    return es_valida
+    return hp.verificar_longitud(lon) and hp.check_coordenadas(lon, hp.MAX_LONG, hp.MIN_LONG)
 
 
 # Funcion de apoyo para el ejercicio 6.E - Ana Freitas
