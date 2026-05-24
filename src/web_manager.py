@@ -18,7 +18,9 @@ def dataframe_dataset(nombre,separador=','):
 
 #Funcion 1.b y C - Fe Cordoba, Agustin Garcia
 def opcion_sidebar(separador=','):
-    """Configura la barra lateral de Streamlit para la selección del dataset."""
+    """
+    Configura la barra lateral de Streamlit para la selección del dataset.
+    """
     datasets = hp.obtener_nombres_datasets()
     if not datasets:
         st.sidebar.error("No hay datasets disponibles")
@@ -84,7 +86,6 @@ def mostrar_busqueda_texto_libre():
     Se encarga de la interfaz de búsqueda por texto libre.
     Lee el dataset activo en la sesión y aplica el filtro reutilizando la función registrar_filtro (5.A) de la primera etapa.
     """
-
     # Verificamos que exista un dataset seleccionado en la sesión
     if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
         st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")

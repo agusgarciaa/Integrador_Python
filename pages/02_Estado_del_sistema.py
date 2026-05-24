@@ -9,6 +9,8 @@ import pandas as pd
 import src.web_manager as wb 
 import src.rutas as rut
 
+st.set_page_config(page_title="EStado del Sistema- Logs", layout="wide")
+
 st.title("Logs generados.")
 
 wb.opcion_sidebar()

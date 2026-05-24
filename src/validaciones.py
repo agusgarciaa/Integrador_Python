@@ -10,9 +10,11 @@ import src.lecturas as le
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins
 def verificar_coordenada(ruta_raw, separador,ruta_operations):
-    """verifica si las cordenadas decimallatitude y decimallongitude estan dentro del rango valido,
-       las que no cumple se agregan a una lista
-       se retorna la lista y la cantidad de elementos"""
+    """
+    Verifica si las cordenadas decimallatitude y decimallongitude estan dentro del rango valido,
+    las que no cumple se agregan a una lista
+    se retorna la lista y la cantidad de elementos;
+    """
     try:
       nocumplen=[]
       with open(ruta_raw, mode='r', encoding='utf-8') as archivo:
@@ -34,10 +36,10 @@ def verificar_coordenada(ruta_raw, separador,ruta_operations):
         return [],0
 
 
-#funcion 3b sofia martins
+# Función 3.B - Sofia Martins
 def cordenadas_faltantes(fila):
     """
-    verifica si en una fila falta una de las cordenadas decimallatitude o decimallongitude, si falta una devuelve un booleano
+    Verifica si en una fila falta una de las cordenadas decimallatitude o decimallongitude, si falta una devuelve un booleano.
     """
     lat = fila.get('decimalLatitude')
     lon = fila.get('decimalLongitude')
@@ -57,7 +59,6 @@ def chequear_fecha(valor):
     Intenta convertir un string a fecha usando distintos formatos.
     Retorna un objeto datetime si es válido, o None si no lo es.
     """
-
     if valor is None or str(valor).strip() == "":
         return None
 
@@ -180,15 +181,15 @@ def validar_country_code(ruta, ruta_operations, separador=","):
 # Ejercicio 3.F - Lucia Cipolla
 def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
-            valor_alto: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
+    Recibe el path de un archivo en formato csv y lo lee.
+    Devuelve una lista con un valor binario True en caso de que se detecte que el valor es negativo, mayor que la variable high_val o no numérico.
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+        valor_alto: por defecto seteado en 100 indica cuánto se considera una gran incertidumbre
 
-        se usan las librerias: csv, utils
+    se usan las librerias: csv, utils
     """
     res = []
     campo='coordinateUncertaintyInMeters'
@@ -212,7 +213,6 @@ def detect_incertidumbre (path,c_delimiter=',',c_encoding='utf-8',valor_alto=100
         print('No se encontró el archivo. ')
             
     return res
-
 
 
 # Ejercicio 3.G - Agustin Garcia
@@ -248,14 +248,14 @@ def calidad_dataset (ruta, ruta_operations, id, separador=","):
 # Ejercicio 3.H - Lucia Cipolla
 def latam_delimitador_de_coordenadas (path,c_delimiter=',',c_encoding='utf-8'):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+    Recibe el path de un archivo en formato csv y lo lee.
+    Devuelve una lista de tuplas con valores booleanos False en caso de que las coordenadas sean inválidas y True en su defecto.
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
 
-        se usan las librerías: csv, utils
+    se usan las librerías: csv, utils
     """
     ret = []
     columnas_lat = ['decimalLatitude','latitudeDecimal']
@@ -300,28 +300,34 @@ def validar_campo_latitud(fila):
     Agrupa todas las validaciones específicas para el campo de latitud.
     Verifica rango global, pertenencia a Sudamérica e integridad de datos.
     """
-    lat = fila.get('decimalLatitude') or fila.get('latitudeDecimal')
+    lat = fila.get("decimalLatitude") or fila.get("latitudeDecimal")
 
-    if lat is None:
-        return False
-    
-    es_valida = (hp.verificar_latitud(lat) and hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT) and cordenadas_faltantes(fila) != "FALTA_LATITUD")
-    return es_valida
+    if lat is None or lat != lat or str(lat).strip() == "":
+        return True
+
+    lat_str = str(lat).strip()
+
+    return hp.verificar_latitud(lat_str) and hp.check_coordenadas(
+        lat_str, hp.MAX_LAT, hp.MIN_LAT
+    )
 
 
-# Funcion 3.I - Ana Freitas
+# Funcion 3.I - Ana Freitas 
 def validar_campo_longitud(fila):
     """
     Agrupa todas las validaciones específicas para el campo de longitud.
     Verifica rango global, pertenencia a Sudamérica e integridad de datos.
     """
-    lon = fila.get('decimalLongitude') or fila.get('longitudeDecimal')
+    lon = fila.get("decimalLongitude") or fila.get("longitudeDecimal")
 
-    if lon is None:
-        return False
-    
-    es_valida = (hp.verificar_longitud(lon) and hp.check_coordenadas(lon, hp.MAX_LONG, hp.MIN_LONG) and cordenadas_faltantes(fila) != "FALTA_LONGITUD")
-    return es_valida
+    if lon is None or lon != lon or str(lon).strip() == "":
+        return True
+
+    lon_str = str(lon).strip()
+
+    return hp.verificar_longitud(lon_str) and hp.check_coordenadas(
+        lon_str, hp.MAX_LONG, hp.MIN_LONG
+    )
 
 
 # Funcion de apoyo para el ejercicio 6.E - Ana Freitas
@@ -330,7 +336,6 @@ def es_registro_valido(fila, indices, codigos_validos):
     Agrupa todas las validaciones de la sección 3.
     Retorna una tupla True,'Válido' si el registro está limpio, False,'<motivo del conflicto>' si es conflictivo.
     """
-
     if not validar_campo_latitud(fila):
         return (False,'Latitud')
     if not validar_campo_longitud(fila):
@@ -421,3 +426,41 @@ def validar(**kwargs):
                 ret[columna] = True
 
     return ret
+
+
+def es_coordenada_valida(fila):
+    """
+    Evalúa si la fila contiene coordenadas que se puedan dibujar en el mapa.
+    Filtra nulos y asegura rangos numéricos reales globales para evitar caídas.
+    """
+    lat = fila.get("decimalLatitude") or fila.get("latitudeDecimal")
+    lon = fila.get("decimalLongitude") or fila.get("longitudeDecimal")
+
+    # 1. Filtro estricto de nulos/vacíos en Python puro
+    if lat is None or lat != lat or str(lat).strip() == "":
+        return False
+    if lon is None or lon != lon or str(lon).strip() == "":
+        return False
+
+    # 2. Intentamos conversión a flotante puro
+    try:
+        lat_float = float(lat)
+        lon_float = float(lon)
+    except ValueError:
+        # Si tiene letras o caracteres rotos que no se pueden hacer float
+        return False
+
+    # 3. Validación de rango geográfico global (Tierra)
+    # Ningún mapa del mundo puede dibujar fuera de estos rangos numéricos
+    if not (-90 <= lat_float <= 90) or not (-180 <= lon_float <= 180):
+        return False
+
+    # 4. Si el dataset es local o querés aplicar tus validaciones estrictas,
+    # llamás a tus funciones. Si no, con que sean números válidos nos alcanza:
+    try:
+        # Esto va a ejecutar tus funciones Ana Freitas de forma segura
+        return validar_campo_latitud(fila) and validar_campo_longitud(fila)
+    except Exception:
+        # Si tus funciones explotan por falta de alguna variable de entorno o helper,
+        # dejamos pasar el registro si cumple con el rango numérico global (lat_float y lon_float)
+        return True

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import src.web_manager as wm
 import src.validaciones as va
 
-# --- EJERCICIO 4.A: Formuario ---
+# Función 4.A (segunda parte)- Ana Freitas
 def insertar_nuevo_registro():
     """
     Crea un formulario dinámico para ingresar un nuevo registro en el dataset activo, validando los campos y guardando los cambios.

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 import src.web_manager as wm
 
-# --- EJERCICIO 3.A: Gráfico de Barra ---
+# Función 3.A (segunda parte)- Ana Freitas
 def graficar_registros_por_ubicacion():
     """
     Genera un gráfico de barras por país o por provincia según los datos disponibles.
