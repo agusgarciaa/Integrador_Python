@@ -426,3 +426,41 @@ def validar(**kwargs):
                 ret[columna] = True
 
     return ret
+
+
+def es_coordenada_valida(fila):
+    """
+    Evalúa si la fila contiene coordenadas que se puedan dibujar en el mapa.
+    Filtra nulos y asegura rangos numéricos reales globales para evitar caídas.
+    """
+    lat = fila.get("decimalLatitude") or fila.get("latitudeDecimal")
+    lon = fila.get("decimalLongitude") or fila.get("longitudeDecimal")
+
+    # 1. Filtro estricto de nulos/vacíos en Python puro
+    if lat is None or lat != lat or str(lat).strip() == "":
+        return False
+    if lon is None or lon != lon or str(lon).strip() == "":
+        return False
+
+    # 2. Intentamos conversión a flotante puro
+    try:
+        lat_float = float(lat)
+        lon_float = float(lon)
+    except ValueError:
+        # Si tiene letras o caracteres rotos que no se pueden hacer float
+        return False
+
+    # 3. Validación de rango geográfico global (Tierra)
+    # Ningún mapa del mundo puede dibujar fuera de estos rangos numéricos
+    if not (-90 <= lat_float <= 90) or not (-180 <= lon_float <= 180):
+        return False
+
+    # 4. Si el dataset es local o querés aplicar tus validaciones estrictas,
+    # llamás a tus funciones. Si no, con que sean números válidos nos alcanza:
+    try:
+        # Esto va a ejecutar tus funciones Ana Freitas de forma segura
+        return validar_campo_latitud(fila) and validar_campo_longitud(fila)
+    except Exception:
+        # Si tus funciones explotan por falta de alguna variable de entorno o helper,
+        # dejamos pasar el registro si cumple con el rango numérico global (lat_float y lon_float)
+        return True

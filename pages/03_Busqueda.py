@@ -7,6 +7,7 @@ import streamlit as st
 import src.web_manager as wb 
 import src.helpers as hp
 
+st.set_page_config(page_title="Búsqueda - Tablas", layout="wide")
 
 st.title("Página de Búsqueda ")
 wb.opcion_sidebar()
@@ -20,10 +21,14 @@ RUTA_DATASET = Path("processed_datasets") / dataset
 
 df_resultados = wb.mostrar_busqueda_texto_libre()
 
-# 4. Mostrar la tabla interactiva si se obtuvo un resultado válido
 if df_resultados is not None:
-    st.write(f"📋 **Registros encontrados:** {len(df_resultados)}")
+    st.write(f"Registros encontrados: {len(df_resultados)}")
     st.dataframe(df_resultados, use_container_width=True)
+    
+    if not df_resultados.empty:
+        if st.button("Ver ficha", type="primary"):
+            st.session_state["resultados_busqueda"] = df_resultados
+            st.switch_page("pages/07_Ficha_de_datos.py")
 
 st.divider()
 

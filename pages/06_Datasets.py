@@ -2,7 +2,7 @@
 import streamlit as st
 from src.exploraciones import generar_tabla_comparativa
 
-st.set_page_config(page_title="Exploración de Datasets", layout="wide")
+st.set_page_config(page_title="Exploración - Datasets", layout="wide")
 
 st.title("Exploración de Datasets")
 st.markdown("Vista general y comparativa de todos los datasets disponibles en el sistema.")
