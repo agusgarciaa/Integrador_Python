@@ -12,16 +12,16 @@ import src.lecturas as le
 # Ejercicio 5.A - Lucía Cipolla
 def registrar_filtro (path,c_delimiter=',',c_encoding='utf-8',**kwargs):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve una lista de listas con las filas que pasan el filtro. Se filtra con una lógica AND. Si un parámetro es inválido se ignora.
-        Si ninguna fila cumple se devuelve el diccionario vacío.
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
-            **kwargs: un diccionario con una cantidad indeterminada de parámetros.
-            
-        se usan las librerias: csv
+    Recibe el path de un archivo en formato csv y lo lee.
+    Devuelve una lista de listas con las filas que pasan el filtro. Se filtra con una lógica AND. Si un parámetro es inválido se ignora.
+    Si ninguna fila cumple se devuelve el diccionario vacío.
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+        **kwargs: un diccionario con una cantidad indeterminada de parámetros.
+        
+    se usan las librerias: csv
     """
     col_index = le.column_index(path,c_delimiter,c_encoding)
 

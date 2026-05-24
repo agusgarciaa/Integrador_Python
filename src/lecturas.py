@@ -9,7 +9,9 @@ import src.helpers as hp
    
 #funcion 2a sofia martins
 def recorrer_diez_filas(ruta,delimiterr):
-    """abre un dataset y imprime las primeras 10 filas"""
+    """
+    Abre un dataset y imprime las primeras 10 filas.
+    """
     with open(ruta, mode='r', encoding='utf-8') as archivo:
         next(archivo)
         modo = csv.reader(archivo, delimiter=delimiterr)
@@ -22,25 +24,26 @@ def recorrer_diez_filas(ruta,delimiterr):
 
 #funcion 2b sofia martins
 def imprimir_encabezados(ruta, delimiter=','):
-    """retorna el encabezado del dataset"""
-    archivo = open(ruta, 'r', encoding='utf-8')
-    modo = csv.reader(archivo, delimiter=delimiter)
-    encabezado=next(modo)
-    archivo.close()
+    """
+    Retorna el encabezado del dataset.
+    """
+    with open(ruta, 'r', encoding='utf-8') as archivo:
+        modo = csv.reader(archivo, delimiter=delimiter)
+        encabezado=next(modo)
     return encabezado
 
 
 # Ejercicio 2.C - Lucia Cipolla
 def column_index (path,c_delimiter=',',c_encoding='utf-8'):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Devuelve un diccionario que tiene como clave el nombre de la columna y como valor el indice(desde 0).
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+    Recibe el path de un archivo en formato csv y lo lee.
+    Devuelve un diccionario que tiene como clave el nombre de la columna y como valor el indice(desde 0).
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
 
-        se usan las librerias: csv
+    se usan las librerias: csv
     """
     dict_index = {}
     try:
@@ -57,10 +60,9 @@ def column_index (path,c_delimiter=',',c_encoding='utf-8'):
 # Ejercicio 2.D - Agustin Garcia
 def total_registros (ruta, separador=",", encoding="utf-8"):
     """
-    Abre un dataset en formato CSV y cuenta la cantidad de registros, retornando el total. 
+    Abre un dataset en formato CSV y cuenta la cantidad de registros, retornando el total.
     """
     total = 0
-
     with open(ruta, newline='', encoding=encoding) as archivo_dataset:
         lector = csv.reader(archivo_dataset, delimiter=separador)
         next(lector)
@@ -140,17 +142,17 @@ def contar_valores_distintos(nombre_columna, ruta, separador=",", encoding="utf-
 # Ejercicio 2.H - Lucia Cipolla
 def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
     """
-        Recibe el path de un archivo en formato csv y lo lee.
-        Recibe en nombre el nombre o posición de una columna.
-        Devuelve un diccionario que tiene como clave el nombre del valor de la columna y como valor la
-        cantidad de veces que aparece repetido.
-        Parametros:
-            path: un path (mejor si es un r-string)
-            c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
-            c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
-            nombre: nombre o índice de la columna a analizar.
+    Recibe el path de un archivo en formato csv y lo lee.
+    Recibe en nombre el nombre o posición de una columna.
+    Devuelve un diccionario que tiene como clave el nombre del valor de la columna y como valor la
+    cantidad de veces que aparece repetido.
+    Parametros:
+        path: un path (mejor si es un r-string)
+        c_delimeter: por defecto seteado en ',' indica el delimeter al leer el archivo con csv.reader()
+        c_encoding: por defecto seteado en 'utf-8' indica el encoding al abrir el archivo con open()
+        nombre: nombre o índice de la columna a analizar.
 
-        se usan las librerias: csv, collections(Counter)
+    se usan las librerias: csv, collections(Counter)
     """
     freq = Counter()
     nombre = str(nombre)
@@ -183,8 +185,8 @@ def frecuencia_de_valores (path,nombre,c_delimiter=',',c_encoding='utf-8'):
 # Ejercicio 2.I - Ana Freitas 
 def verificar_tipo(ruta, separador, columna, tipo_dato):
     """
-    Coordina la lectura del archivo fila por fila (eficiente en memoria)
-    y delega el cálculo de métricas según el tipo de dato (numérico, texto o coordenadas).
+    Coordina la lectura del archivo fila por fila (eficiente en memoria) y 
+    delega el cálculo de métricas según el tipo de dato (numérico, texto o coordenadas).
     """
     try:
         with open(ruta, mode='r', encoding="utf-8") as archivo:
@@ -220,8 +222,7 @@ def verificar_tipo(ruta, separador, columna, tipo_dato):
 # Ejercicio 2.J - Ana Freitas
 def identificar_columnas_nulas(ruta, separador):
     """
-    Identifica qué columnas del dataset no tienen ningún dato cargado 
-    en ninguno de los registros (están 100% vacías).
+    Identifica qué columnas del dataset no tienen ningún dato cargado en ninguno de los registros (están 100% vacías).
     Devuelve una lista con los nombres de las columnas vacías.
     """
     try:

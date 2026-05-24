@@ -188,8 +188,9 @@ def obtener_ultimo_id(ruta, separador, columna_id, es_xeno=False):
 
 # Helper para la funcion cumple condicion - Fe Cordoba
 def es_numero(valor):
-    """Determina si un valor es numérico (incluye negativos y decimales)."""
-
+    """
+    Determina si un valor es numérico (incluye negativos y decimales).
+    """
     if valor == "" or valor == "N/A":
         return False
 
@@ -205,8 +206,9 @@ def es_numero(valor):
 
 # Helper para la funcion del 6.C - Fe Cordoba
 def cumple_condicion(dato, condicion, valor):
-    """Evalúa si un dato cumple una condición."""
-
+    """
+    Evalúa si un dato cumple una condición.
+    """
     if dato == "" or dato == "N/A":
         return False
 
@@ -282,7 +284,9 @@ def obtener_nombres_datasets():
 # para 2.b Fe Cordoba
 # obtener valores de una columna 
 def obtener_opciones(df, columna):
-    """Obtiene los valores únicos, no nulos y como texto de una columna."""
+    """
+    Obtiene los valores únicos, no nulos y como texto de una columna.
+    """
     valores = df[columna]
     return sorted(
         valores
@@ -294,7 +298,9 @@ def obtener_opciones(df, columna):
 
 # obtiene los country code del dataframe
 def obtener_paises_validos(df):
-    """Filtra y obtiene los country codes válidos del dataframe."""
+    """
+    Filtra y obtiene los country codes válidos del dataframe.
+    """
     codigos = (
         df["countryCode"]
         .dropna()

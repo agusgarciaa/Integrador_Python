@@ -8,7 +8,7 @@ wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
 
 # --- TÍTULO DE LA APLICACIÓN ---
-st.title(" BioData Explorer: Gestión de Biodiversidad")
+st.title("BioData Explorer: Gestión de Biodiversidad")
 
 # --- PROPÓSITO E IMPORTANCIA ---
 st.header("Propósito de la aplicación")
@@ -32,8 +32,15 @@ Permite que datos de distintas instituciones puedan integrarse y compararse sin 
 
 # --- INSTRUCCIONES DE USO ---
 st.header("Instrucciones básicas de uso")
-st.markdown("""P ara explorar la aplicación, utilice el **menú lateral**:
-1.  **Inicio**: Información general y contexto del proyecto.
-2.  **Estado del sistema**: Resumen estadístico de los datos cargados.
-3.  **Búsqueda**:
-4.  **Visualización**: """)
+st.markdown("""
+Para explorar la aplicación, utilice el **menú lateral**:
+
+1. **Inicio (P1)**: Información general, integrantes y contexto del proyecto.
+2. **Estado del sistema (P2)**: Resumen estadístico, calidad y estado de los datos cargados.
+3. **Búsqueda (P3)**: Permite localizar registros específicos dentro del dataset aplicando múltiples filtros combinables y visualizar tablas de resultados.
+4. **Visualización (P4)**: Presentación gráfica de la biodiversidad mediante gráficos estadísticos interactivos y mapas de distribución general.
+5. **Gestión de registros (P5)**: Panel interactivo para insertar, actualizar y eliminar registros del sistema de forma segura, con auditoría en el log de operaciones.
+6. **Exploración de datasets (P6)**: Vista global e independiente para comparar y explorar todos los archivos de datos disponibles en el sistema.
+
+*Nota: Al seleccionar un registro específico en la página de **Búsqueda (P3)** y presionar el botón de acción, el sistema lo redirigirá automáticamente a la **Ficha de datos (P7)** para analizar su mapa de ocurrencia detallado y sus archivos multimedia asociados.*
+""")

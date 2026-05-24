@@ -8,6 +8,8 @@ import src.web_manager as wb
 import src.graficos as gr
 import src.lecturas as lec
 
+st.set_page_config(page_title="Visualización - Gráficos", layout="wide")
+
 wb.opcion_sidebar()
 
 # 2. Título principal de la página P4

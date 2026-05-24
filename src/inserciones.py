@@ -5,6 +5,7 @@ import src.file_manager as fm
 import src.helpers as hp
 import src.validaciones as va
 import src.registros as re
+
 # --------------------------------------------------------------- Ejercicios 4 - Inserción de registros en datasets --------------------------------------------------------------
 
 #  Ejercicio 4.A/B - Fe Cordoba
@@ -66,7 +67,6 @@ def preparar_registro(registro, dataset, ruta, separador=","):
     Recibe un registro sin ID y devuelve uno listo para insertar,
     agregando el ID correspondiente.
     """
-    
     registro_final = registro.copy()
 
     if dataset == "iadiza":
@@ -95,22 +95,24 @@ def preparar_registro(registro, dataset, ruta, separador=","):
     return registro_final
 
 
-#funcion 4f sofia martins
+# Funcion 4.F - Sofia Martins
 def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
-    """agrega un registro al dataset pidiendo los valores al usuario,
-       si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
-       usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
+    """
+    Agrega un registro al dataset pidiendo los valores al usuario,
+    si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
+    usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato.
+    """
     datos = []
     agregados=0
      
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
-    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
-        muestra = f.read(512)
+    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as archivo:
+        muestra = archivo.read(2048)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
-        f.seek(0)
-        lector = csv.DictReader(f, dialect=codificacion)
+        archivo.seek(0)
+        lector = csv.DictReader(archivo, dialect=codificacion)
         header = lector.fieldnames
         for fila in lector:
             if fila and any(fila.values()):
@@ -129,8 +131,8 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     agregados +=1
     
     fm.asegurar_directorio(ruta_processed)
-    with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
-        escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
+    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo_salida:
+        escribir = csv.DictWriter(archivo_salida, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
            escribir.writeheader()
         escribir.writerows(datos)
@@ -141,23 +143,24 @@ def agregar_registro(ruta_raw, ruta_processed, ruta_operations):
     re.registro_cambio_operations(ruta_operations,ruta_raw,operacion,agregados,serealizo)
 
 
-#funcion4g sofia martins
+# Funcion 4.G - Sofia Martins
 def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):  
-    """agregan varios registros al dataset pidiendo los valores al usuario,
-       si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
-       usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato"""
+    """
+    Agregan varios registros al dataset pidiendo los valores al usuario,
+    si existe el archivo processed trabajo  sobre ese,sino con raw y guarda el resultado en processed
+    usamos sniffer para imitar las caracteristicas del archivo original y guardar en el mismo formato.
+    """
     datos = []
     agregados=0
     
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
-
      
-    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as f:
-        muestra = f.read(512)
+    with open(ruta_entrada, 'r', newline='', encoding='utf-8') as archivo:
+        muestra = archivo.read(2048)
         codificacion = csv.Sniffer().sniff(muestra)
         terminator = codificacion.lineterminator
-        f.seek(0)
-        lector = csv.DictReader(f, dialect=codificacion)
+        archivo.seek(0)
+        lector = csv.DictReader(archivo, dialect=codificacion)
         header = lector.fieldnames
         for fila in lector:
             if fila and any(fila.values()):
@@ -165,7 +168,7 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
   
     opcion=1
     while(opcion!=0):
-        opcion=int(input('quieres agregar un registro?1=si,0=no: '))
+        opcion=int(input('Quieres agregar un registro? 1=si, 0=no: '))
 
         if(opcion==0):
             break
@@ -187,8 +190,8 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
           agregados += 1
   
     fm.asegurar_directorio(ruta_processed)
-    with open(ruta_processed, 'a', newline='', encoding='utf-8') as archivo2:
-        escribir = csv.DictWriter(archivo2, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
+    with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo_salida:
+        escribir = csv.DictWriter(archivo_salida, fieldnames=header, lineterminator=terminator,extrasaction='ignore')
         if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
            escribir.writeheader()
         escribir.writerows(datos)
@@ -197,5 +200,3 @@ def agregar_varios_registros(ruta_raw,ruta_processed,ruta_operations):
     operacion="INSERT"
     serealizo="SI"
     re.registro_cambio_operations(ruta_operations,ruta_raw,operacion,agregados,serealizo)
-
-    
