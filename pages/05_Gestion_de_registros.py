@@ -11,3 +11,4 @@ wb.opcion_sidebar()
 
 # Función del Ejercicio 4.A
 form.insertar_nuevo_registro()
+form.modalidades_eliminacion()
