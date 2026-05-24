@@ -11,7 +11,7 @@ import src.registros as re
 # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
     
 # Función 6.A - Sofia Martins
-def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
+def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations,identificador):
     """Elimina un registro del dataset pidiendo los valores al usuario, si existe el archivo processed trabajo sobre ese,
     sino con raw y guarda el resultado en processed usamos sniffer para imitar las caracteristicas del archivo  original y guardar en el mismo formato.
     """
@@ -35,8 +35,6 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
             if fila and any(fila.values()):
                 datos.append(fila)
 
-        identificador = input("ingrese el identificador del registro a eliminar: ")
-
         for fila in datos:
             if (
                 fila.get('gbifID') == identificador
@@ -57,8 +55,7 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations):
         with open(ruta_processed, 'w', newline='', encoding='utf-8') as archivo_salida:
             escribir = csv.DictWriter(
                 archivo_salida, fieldnames=header, lineterminator=terminator, extrasaction='ignore')
-            if not os.path.isfile(ruta_processed) and os.path.getsize(ruta_processed) == 0:
-                escribir.writeheader()
+            escribir.writeheader()
             escribir.writerows(datos)
 
         print(f"Archivo guardado en: {ruta_processed}")

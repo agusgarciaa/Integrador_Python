@@ -121,7 +121,10 @@ def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,
   st.subheader("seccion para eliminacion de registros")
   modalidad=st.selectbox("selecione la modalidad de eliminacion",["por identificador unico","por valor de una columna","por condicion sobre una columna"])
   if modalidad=="por identificador unico":
+      if "id_a_eliminar" not in st.session_state:
+         st.session_state.id_a_eliminar = ""
       id_unico=st.text_input("ingrese el identificador del registro a eliminar")
+      st.session_state.id_a_eliminar = id_unico
       if id_unico:
           posibles_id=df.filter(items=["id","gbifID","ocurrenceID"])
           filtro=(posibles_id.astype(str)==id_unico).any(axis=1)
@@ -162,3 +165,4 @@ def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,
           elif modalidad=="por condicion sobre una columna":
               e.eliminar_por_condicion(ruta_raw, ruta_processed, ruta_operations, columna, condicion,valor,delimiter)
           st.success("se eliminaron los registros")
+          st.rerun()
