@@ -36,7 +36,7 @@ def verificar_coordenada(ruta_raw, separador,ruta_operations):
         return [],0
 
 
-#funcion 3b sofia martins
+# Función 3.B - Sofia Martins
 def cordenadas_faltantes(fila):
     """
     Verifica si en una fila falta una de las cordenadas decimallatitude o decimallongitude, si falta una devuelve un booleano.
@@ -50,7 +50,7 @@ def cordenadas_faltantes(fila):
     if (lon != "" and lon is not None) and (lat == "" or lat is None):
         return "FALTA_LATITUD"
     
-    return "Existe las dos coordenadas"
+    return True
 
 
 # Funcion para el ejercicio 3.C - Fe Cordoba
@@ -300,26 +300,34 @@ def validar_campo_latitud(fila):
     Agrupa todas las validaciones específicas para el campo de latitud.
     Verifica rango global, pertenencia a Sudamérica e integridad de datos.
     """
-    lat = fila.get('decimalLatitude') or fila.get('latitudeDecimal')
+    lat = fila.get("decimalLatitude") or fila.get("latitudeDecimal")
 
-    if lat is None or lat == "":
-        return True 
-   
-    return hp.verificar_latitud(lat) and hp.check_coordenadas(lat, hp.MAX_LAT, hp.MIN_LAT)
+    if lat is None or lat != lat or str(lat).strip() == "":
+        return True
+
+    lat_str = str(lat).strip()
+
+    return hp.verificar_latitud(lat_str) and hp.check_coordenadas(
+        lat_str, hp.MAX_LAT, hp.MIN_LAT
+    )
 
 
-# Funcion 3.I - Ana Freitas
+# Funcion 3.I - Ana Freitas 
 def validar_campo_longitud(fila):
     """
     Agrupa todas las validaciones específicas para el campo de longitud.
     Verifica rango global, pertenencia a Sudamérica e integridad de datos.
     """
-    lon = fila.get('decimalLongitude') or fila.get('longitudeDecimal')
+    lon = fila.get("decimalLongitude") or fila.get("longitudeDecimal")
 
-    if lon is None or lon == "":
+    if lon is None or lon != lon or str(lon).strip() == "":
         return True
-    
-    return hp.verificar_longitud(lon) and hp.check_coordenadas(lon, hp.MAX_LONG, hp.MIN_LONG)
+
+    lon_str = str(lon).strip()
+
+    return hp.verificar_longitud(lon_str) and hp.check_coordenadas(
+        lon_str, hp.MAX_LONG, hp.MIN_LONG
+    )
 
 
 # Funcion de apoyo para el ejercicio 6.E - Ana Freitas

@@ -448,8 +448,6 @@
 2026-05-06 16:27:29 | iadiza | DELETE | 1 registros
 2026-05-06 16:40:01 | iadiza | DELETE | 1 registros
 2026-05-06 16:41:06 | iadiza | DELETE | 4 registros
-<<<<<<< HEAD
->>>>>>> 2e6aee4e02ddd47f449a6cdacbb3e9a8d5f4e615
 2026-05-18 18:50:18 | iadiza | INSERT | 1 registros
 2026-05-18 19:05:56 | inaturalist | DELETE | 0 registros |ERROR
 2026-05-18 19:06:24 | inaturalist | DELETE | 0 registros
@@ -492,7 +490,6 @@
 2026-05-20 15:17:07 | xenocanto | DELETE | 0 registros |ERROR
 2026-05-20 15:17:07 | xenocanto | VALIDATION | 0 registros |ERROR
 2026-05-20 15:20:50 | xenocanto | INSERT | 1 registros
-=======
 2026-05-21 09:35:07 | iadiza | VALIDATION | 0 registros |ERROR
 2026-05-21 09:35:07 | iadiza | VALIDATION | 3 registros |ERROR
 2026-05-21 09:35:07 | iadiza | VALIDATION | 0 registros |ERROR
@@ -643,7 +640,6 @@
 2026-05-21 23:15:58 | inaturalist | DELETE | 0 registros
 2026-05-21 23:16:13 | inaturalist | DELETE | 1192138 registros
 2026-05-21 23:16:16 | inaturalist | DELETE | 14315 registros
->>>>>>> 99fc4ab1fe6e1af091f8042a503578d18ce33824
 2026-05-23 13:23:12 | iadiza | VALIDATION | 0 registros |ERROR
 2026-05-23 13:23:12 | iadiza | VALIDATION | 3 registros |ERROR
 2026-05-23 13:23:13 | iadiza | VALIDATION | 0 registros |ERROR
@@ -662,3 +658,11 @@
 2026-05-23 13:24:37 | iadiza | DELETE | 4 registros
 2026-05-23 13:24:37 | iadiza | DELETE | 0 registros
 2026-05-23 13:24:37 | iadiza | DELETE | 1 registros
+2026-05-23 13:53:57 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-23 13:53:57 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-23 13:53:57 | xenocanto | VALIDATION | 0 registros |ERROR
+2026-05-23 13:53:58 | xenocanto | VALIDATION | 1710 registros |ERROR
+2026-05-23 13:54:03 | xenocanto | UPDATE | 1 registros
+2026-05-23 13:54:04 | xenocanto | UPDATE | 1 registros
+2026-05-23 13:54:06 | xenocanto | DELETE | 1 registros
+2026-05-23 13:54:06 | xenocanto | DELETE | 7 registros
