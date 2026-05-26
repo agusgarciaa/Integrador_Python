@@ -206,12 +206,10 @@ def aplicar_filtros(
             patron_paises = "|".join(paises)
             df_filtrado = df_filtrado[df_filtrado['country'].str.contains(patron_paises, case=False, na=False)]
 
-    # Fechas
+    # Fechas 
     if "eventDate" in df_filtrado.columns:
-        # Convertimos fila por fila a UTC de forma aislada
-        df_filtrado["eventDate"] = df_filtrado["eventDate"].apply(
-            lambda x: pd.to_datetime(x, errors="coerce", utc=True) if pd.notna(x) else pd.NaT
-        )
+        # Convertimos la columna completa de forma vectorizada
+        df_filtrado["eventDate"] = pd.to_datetime(df_filtrado["eventDate"], errors="coerce", utc=True)
 
         if fecha_inicio and fecha_fin:
             df_filtrado = df_filtrado[
