@@ -120,6 +120,11 @@ def porcentaje_nulos(ruta, separador=","):
 
 # Ejercicio 2.G - Agustin Garcia
 def contar_valores_distintos(nombre_columna, ruta, separador=",", encoding="utf-8"):
+    """
+    Lee la columna pasada como párametro, añadiendo a una lista si el valor leido no se encuentra
+    en esta.
+    Devuelve la cantidad de valores distintos encontrados en la columna utilizando len() de la lista.
+    """
     valores = set() # Colección de elementos únicos.
 
     with open(ruta, newline='', encoding=encoding) as archivo_dataset:

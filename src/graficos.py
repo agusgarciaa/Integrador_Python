@@ -116,3 +116,49 @@ def graficar_registros_por_ubicacion():
         plt.close(figura)
 
 
+# Función 3.C - Agustin Garcia
+def grafico_distribucion_taxonomica(df, nombre_dataset):
+    """
+    Muestra un gráfico de barras con la distribución de registros
+    por nivel taxonómico (clase, orden o familia).
+    """
+
+    COLUMNAS_TAXONOMICAS = {
+        "iadiza":      {"Clase": "class", "Orden": "order", "Familia": "family"},
+        "inaturalist": {"Clase": "class", "Orden": "order", "Familia": "family"},
+        "xenocanto":   {"Familia": "family"},  # xenocanto no tiene class ni order
+    }
+    
+    columnas = COLUMNAS_TAXONOMICAS.get(nombre_dataset, {})
+    if not columnas:
+        st.info("El dataset no cuenta con columnas taxonómicas disponibles.")
+        return
+
+    nivel = st.selectbox("Nivel taxonómico:", list(columnas.keys()), key="selector_taxonomia")
+    columna = columnas[nivel]
+
+    if columna not in df.columns:
+        st.warning(f"El dataset no contiene la columna '{columna}'.")
+        return
+
+    # Contar registros por nivel, ignorando vacíos
+    conteo = df[columna].replace("", pd.NA).dropna().value_counts().head(20)  # se limita a los 20 más frecuentes y descarta filas con valor vacío
+
+    if conteo.empty:
+        st.info("No hay datos disponibles para el nivel seleccionado.")
+        return
+    
+    if nombre_dataset == 'xenocanto':
+        st.info("Xenocanto solo posee el nivel taxonómico 'Familia'")
+
+    # Grafico
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.bar(conteo.index, conteo.values, color="steelblue")
+    ax.set_title(f"Distribución por {nivel} — Top {len(conteo)}")
+    ax.set_xlabel(nivel)
+    ax.set_ylabel("Cantidad de registros")
+    plt.xticks(rotation=45, ha="right")  # rotado a 45 grados para no pisar los valores al mostrar la información. 
+    plt.tight_layout()
+
+    st.pyplot(fig)
+    plt.close(fig)  # libera memoria

@@ -331,7 +331,7 @@ def mostrar_resultados(df_resultados, nombre_dataset):
     # Detalle de registro
     st.markdown("---")
 
-    opciones = {f"Registro #{inicio + i + 1}": df_pagina.iloc[i]["_index_original"] for i in range(len(df_pagina))}
+    opciones = {f"Registro #{inicio + i + 1}": idx for i, idx in enumerate(df_pagina["_index_original"])}
     seleccion = st.selectbox("Ver detalle de un registro:", list(opciones.keys()), key="detalle_sel")
 
     index_original = opciones[seleccion]

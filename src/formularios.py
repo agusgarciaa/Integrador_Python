@@ -114,13 +114,55 @@ def insertar_nuevo_registro():
                 # Si algo falla en la escritura o procesamiento, informamos el error y lo registramos en el log
                 st.error(f"Error crítico al insertar el registro: {un_error}")
                 # ut.registrar_operacion("ERROR", dataset_nombre, f"Fallo en INSERT: {un_error}")
-                
-                
+
+
+# Ejercicio 4.B - Agustin Garcia
+def buscar_registro(df, nombre_dataset):
+    """
+    Permite buscar un registro por identificador y mostrarlo.
+    El resultado queda guardado en session_state para que 4.C lo use.
+    """
+
+    IDS = {
+        "iadiza":      "gbifID",
+        "inaturalist": "id",
+        "xenocanto":   "id",
+    }
+
+    columna_id = IDS.get(nombre_dataset)
+    print(df.columns.tolist())
+    if not columna_id or columna_id not in df.columns:
+        st.error("No se encontró columna identificadora para este dataset.")
+        return
+
+    st.markdown("#### Buscar registro por identificador")
+    valor_id = st.text_input(f"Ingresá el ID (Ubicado en {columna_id}):", key="buscar_id")
+
+    if not valor_id:
+        return
+
+    coincidencias = df[df[columna_id].astype(str) == valor_id.strip()]
+
+    if coincidencias.empty:
+        st.warning(f"No se encontró ningún registro con {columna_id} = '{valor_id}'.")
+        st.session_state.registro_encontrado = None
+        return
+
+    registro = coincidencias.iloc[0]
+    indice = coincidencias.index[0]
+
+    # Guardar en session_state para que 4.C lo pueda usar
+    st.session_state.registro_encontrado = {"indice": indice, "datos": registro.to_dict()}  # ---> USAR
+
+    st.success("Registro encontrado:")
+    st.dataframe(registro.to_frame().T, use_container_width=True, hide_index=True)  # Mostrar el registro encontrado
+
+
 def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,df): 
   df_vistaprevia=pd.DataFrame()
-  st.subheader("seccion para eliminacion de registros")
-  modalidad=st.selectbox("selecione la modalidad de eliminacion",["por identificador unico","por valor de una columna","por condicion sobre una columna"])
-  if modalidad=="por identificador unico":
+  st.subheader("Seccion para eliminacion de registros")
+  modalidad=st.selectbox("Selecione la modalidad de eliminacion",["por identificador unico","por valor de una columna","por condicion sobre una columna"])
+  if modalidad=="Por identificador unico":
       if "id_a_eliminar" not in st.session_state:
          st.session_state.id_a_eliminar = ""
       id_unico=st.text_input("ingrese el identificador del registro a eliminar")

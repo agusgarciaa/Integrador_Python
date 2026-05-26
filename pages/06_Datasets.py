@@ -24,7 +24,7 @@ ruta_dataset1=ruta / "documentation" / "dataset_a1.md"
 ruta_dataset2=ruta / "documentation" / "dataset_a2.md"
 ruta_dataset3=ruta / "documentation" / "dataset_a3.md"
 
-documento=st.selectbox("seleccione el documento markdown que quiere visualizar",["dataset1","dataset2","dataset3"])
+documento=st.selectbox("Seleccione el documento markdown que quiere visualizar",["dataset1","dataset2","dataset3"])
 if documento:
     if documento=="dataset1":
         ruta=ruta_dataset1

@@ -20,6 +20,11 @@ gr.graficar_registros_por_ubicacion()
 
 st.title("Gráficos")
 dataset = st.session_state.dataset_actual
+
+if not dataset:
+    st.warning("Por favor seleccioná un dataset desde el menú lateral antes de continuar.")
+    st.stop()  # Detiene la ejecución del resto de la página
+
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 archivo = next(RUTA_DATASET.iterdir(), None)
@@ -28,6 +33,11 @@ if dataset == "iadiza":
     df = pd.read_csv(archivo, sep="\t")
 else:
     df = pd.read_csv(archivo)
+
+
+# Llamar al ejercicio 3.C - Agustin Garcia
+gr.grafico_distribucion_taxonomica(df, dataset)
+
 
 #3.D Fe Cordoba
 """Calcula y grafica el porcentaje de datos no nulos por columna."""
