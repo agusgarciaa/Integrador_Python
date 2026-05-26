@@ -69,7 +69,7 @@ if datasets:
             total_registros = lc.total_registros(archivo_dataset, separador)
             
             # me quedo con los % de nulos por cols
-            diccionario_nulos = lc.porcentaje_nulos(archivo_dataset) 
+            diccionario_nulos = lc.porcentaje_nulos(archivo_dataset, separador) 
 
             # Mostrar la información
             st.subheader(f"Ficha técnica del dataset: {dataset_elegido.capitalize()}")
