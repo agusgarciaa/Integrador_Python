@@ -1,13 +1,17 @@
-import streamlit as st
-import src.webmanager as wb 
-import src.helpers as hp
-import pandas as pd
 from pathlib import Path
 from datetime import datetime
 
-st.title("Página de Búsqueda (P3)")
+import pandas as pd
+import streamlit as st
 
+import src.web_manager as wb 
+import src.helpers as hp
+
+st.set_page_config(page_title="Búsqueda - Tablas", layout="wide")
+
+st.title("Página de Búsqueda ")
 wb.opcion_sidebar()
+
 dataset = st.session_state.dataset_actual
 if not dataset:
     st.warning("Por favor seleccioná un dataset desde el menú lateral.")
@@ -15,23 +19,20 @@ if not dataset:
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 
-# Llamamos a la función del Ejercicio 2.A que acabamos de crear 
 df_resultados = wb.mostrar_busqueda_texto_libre()
 
-# Mostrar la tabla interactiva 
 if df_resultados is not None:
     st.write(f"Registros encontrados: {len(df_resultados)}")
-    st.dataframe(df_resultados)
+    st.dataframe(df_resultados, use_container_width=True)
+    
+    if not df_resultados.empty:
+        if st.button("Ver ficha", type="primary"):
+            st.session_state["resultados_busqueda"] = df_resultados
+            st.switch_page("pages/07_Ficha_de_datos.py")
 
+st.divider()
 
 # 2.b Fe Cordoba
-"""
-    Renderiza la interfaz de usuario para la búsqueda de ocurrencias.
-    
-    Carga el dataset activo aplicando los separadores correspondientes, extrae 
-    las opciones únicas para los componentes de selección mutiple, 
-    y muestra los resultados filtrados en una tabla interactiva de Streamlit.
-    """
 # Cargar dataset
 archivo = next(RUTA_DATASET.iterdir(), None)
 if archivo is None:
@@ -77,6 +78,8 @@ df_filtrado = wb.aplicar_filtros(
     fecha_inicio=fecha_inicio,
     fecha_fin=fecha_fin
 )
+
+st.divider() 
 
 # 2.C
 wb.mostrar_resultados(df_filtrado, st.session_state.dataset_actual)

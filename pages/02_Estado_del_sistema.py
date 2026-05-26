@@ -1,13 +1,21 @@
 from pathlib import Path
+
 import os
 import csv
+
 import streamlit as st 
-import src.utils as ut
-import src.webmanager as wb 
 import pandas as pd
 
+import src.web_manager as wb 
+import src.rutas as rut
+
+st.set_page_config(page_title="EStado del Sistema- Logs", layout="wide")
+
 st.title("Logs generados.")
-ruta = ut.obtener_ruta_log("logs", "operations.log")
+
+wb.opcion_sidebar()
+
+ruta = rut.obtener_ruta_log("logs", "operations.log")
 
 # 4.E Fe Cordoba
 """Muestra la interfaz de filtrado y métricas para el archivo de logs."""

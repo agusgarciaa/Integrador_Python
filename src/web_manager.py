@@ -1,22 +1,26 @@
 from pathlib import Path
 from datetime import datetime
 
-import streamlit as st 
 import pandas as pd
+import streamlit as st 
+import matplotlib.pyplot as plt
 
-import src.utils as ut
 import src.helpers as hp
 import src.validaciones as va
+import src.lecturas as lec
+import src.actualizaciones as act
 
 
 #funcion 1.a sofia martins
-def Dataframe_dataset(nombre,separador=','):
+def dataframe_dataset(nombre,separador=','):
     dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
     return dataframe
 
 #Funcion 1.b y C - Fe Cordoba, Agustin Garcia
 def opcion_sidebar(separador=','):
-    """Configura la barra lateral de Streamlit para la selección del dataset."""
+    """
+    Configura la barra lateral de Streamlit para la selección del dataset.
+    """
     datasets = hp.obtener_nombres_datasets()
     if not datasets:
         st.sidebar.error("No hay datasets disponibles")
@@ -65,7 +69,7 @@ def opcion_sidebar(separador=','):
             archivo_dataset = archivo
 
     nombre_dataset = st.session_state.dataset_actual.capitalize()
-    cantidad_registros = ut.total_registros(archivo_dataset, separador)
+    cantidad_registros = lec.total_registros(archivo_dataset, separador)
 
     st.sidebar.success("### Dataset seleccionado")
     st.sidebar.info(f"""
@@ -76,67 +80,77 @@ def opcion_sidebar(separador=','):
                     """)
     
 
-
 # Función 2.A - Ana Freitas
 def mostrar_busqueda_texto_libre():
     """
     Se encarga de la interfaz de búsqueda por texto libre.
-    Lee el dataset activo en la sesión y aplica el filtro case-insensitive.
+    Lee el dataset activo en la sesión y aplica el filtro reutilizando la función registrar_filtro (5.A) de la primera etapa.
     """
-
     # Verificamos que exista un dataset seleccionado en la sesión
-    if "dataset_actual" not in st.session_state:
-        st.warning("Por favor, seleccione un dataset en el menú lateral.")
+    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
+        st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
         return
 
     nombre_dataset = st.session_state.dataset_actual
     
     # Determinamos el separador 
-    separador = "\t" if  nombre_dataset == "iadiza" else ","
+    separador_caracter = "\t" if nombre_dataset == "iadiza" else ","
     
     # Buscamos el archivo físico dentro de processed_datasets
-    ruta_carpeta = Path("processed_datasets") /  nombre_dataset
-    archivo = None
+    ruta_carpeta = Path("processed_datasets") / nombre_dataset
+    archivo_encontrado = None
     
     if ruta_carpeta.exists():
-        for archivo in ruta_carpeta.iterdir():
-            if archivo.is_file():
-                archivo = archivo
+        for elemento_archivo in ruta_carpeta.iterdir():
+            if elemento_archivo.is_file():
+                archivo_encontrado = elemento_archivo
                 break
 
-    if not archivo:
+    if not archivo_encontrado:
         st.error("No se encontró el archivo de datos para este dataset.")
         return
 
     # Cargamos el DataFrame completo en memoria usando la función de la Etapa 1
-    df = Dataframe_dataset(archivo, separador=separador)
+    dataframe_completo = dataframe_dataset(archivo_encontrado, separador=separador_caracter)
 
     st.subheader("Búsqueda por texto libre")
     
     # 1. El usuario selecciona la columna  
-    columnas_disponibles = df.columns.tolist()
+    columnas_disponibles = dataframe_completo.columns.tolist()
     columna_seleccionada = st.selectbox(
         "Seleccione la columna por la que desea buscar:",
         options=columnas_disponibles
     )
     
     # 2. El usuario ingresa el valor que pretende encontrar 
-    termino_busqueda = st.text_input(f"Ingrese el valor que pretende encontrar en '{columna_seleccionada}':")
+    termino_busqueda = st.text_input(f"Ingrese el valor que pretende encontrar en '{columna_seleccionada}':").strip()
     
-    # Aplicamos el filtro solo si el usuario escribió algo
-    if termino_busqueda:
-         # astype(str) evita errores si la columna tiene números o nulos
-        mascara = df[columna_seleccionada].astype(str).str.contains(
-            termino_busqueda, 
-            case=False,   # case=False maneja case-insensitive
-            na=False  # na=False descarta las filas vacías (NaN)
-        )
-        df_filtrado = df[mascara]
-    else:
-        df_filtrado = df.copy()
+    # Si el usuario no escribió nada, mostramos el DataFrame completo tal como estaba originalmente
+    if not termino_busqueda:
+        return dataframe_completo
 
-    # Retornamos el dataframe filtrado para que pueda ser usado en los siguientes ejercicios
-    return df_filtrado
+    # --- INTEGRACIÓN DEL EJERCICIO 5.A ---
+    # Llamamos a registrar_filtro pasándole la ruta y los argumentos mediante **kwargs
+    filas_filtradas_lista = act.registrar_filtro(
+        path=str(archivo_encontrado), 
+        c_delimiter=separador_caracter, 
+        **{columna_seleccionada: termino_busqueda}
+    )
+    
+    # Si la función encontró coincidencias, convertimos la lista de listas en DataFrame
+    if filas_filtradas_lista:
+        dataframe_filtrado = pd.DataFrame(filas_filtradas_lista, columns=columnas_disponibles)
+        
+        # Aplicamos la máscara case-insensitive y de subcadena requerida por el Ejercicio 2.A (Etapa 2)
+        mascara_busqueda = dataframe_filtrado[columna_seleccionada].astype(str).str.contains(
+            termino_busqueda, 
+            case=False,   # Controla que sea case-insensitive
+            na=False      # Descarta las celdas vacías
+        )
+        return dataframe_filtrado[mascara_busqueda]
+    else:
+        # Si no hubo ninguna coincidencia en el filtro, devolvemos un DataFrame vacío estructurado
+        return pd.DataFrame(columns=columnas_disponibles)
 
 
 # 2.b Fe Cordoba
@@ -314,7 +328,7 @@ def mostrar_resultados(df_resultados, nombre_dataset):
     # Detalle de registro
     st.markdown("---")
 
-    opciones = {f"Registro #{inicio + i + 1}": df_pagina.iloc[i]["_index_original"] for i in range(len(df_pagina))}
+    opciones = {f"Registro #{inicio + i + 1}": idx for i, idx in enumerate(df_pagina["_index_original"])}
     seleccion = st.selectbox("Ver detalle de un registro:", list(opciones.keys()), key="detalle_sel")
 
     index_original = opciones[seleccion]
@@ -337,3 +351,5 @@ def exportar_resultados (reg=None):
             return reg.to_csv(index=False).encode('utf-8')
         else:
             st.warning('Ocurrió un problema inesperado')
+
+

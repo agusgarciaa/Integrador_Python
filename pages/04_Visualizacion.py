@@ -1,14 +1,30 @@
-import src.webmanager as wb 
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
-import src.utils as ut
-from pathlib import Path
 import matplotlib.pyplot as plt
 
+import src.web_manager as wb 
+import src.graficos as gr
+import src.lecturas as lec
+
+st.set_page_config(page_title="Visualización - Gráficos", layout="wide")
+
+wb.opcion_sidebar()
+
+# 2. Título principal de la página P4
+st.title("Página de Visualización")
+
+# Llamar al ejercicio 3.A - Ana Freitas
+gr.graficar_registros_por_ubicacion()
 
 st.title("Gráficos")
-wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
+
+if not dataset:
+    st.warning("Por favor seleccioná un dataset desde el menú lateral antes de continuar.")
+    st.stop()  # Detiene la ejecución del resto de la página
+
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 archivo = next(RUTA_DATASET.iterdir(), None)
@@ -18,9 +34,14 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
 
+
+# Llamar al ejercicio 3.C - Agustin Garcia
+gr.grafico_distribucion_taxonomica(df, dataset)
+
+
 #3.D Fe Cordoba
 """Calcula y grafica el porcentaje de datos no nulos por columna."""
-diccionario_nulos = ut.porcentaje_nulos(archivo)
+diccionario_nulos = lec.porcentaje_nulos(archivo)
 
 # Creamos una Serie de Pandas con ese diccionario
 serie_nulos = pd.Series(diccionario_nulos)
@@ -55,3 +76,19 @@ fig = ax.get_figure()
 
 st.pyplot(fig)
 
+st.subheader("cantidad de registros por año")
+if "eventDate" in df.columns:
+    df_temporal=df.copy()
+    df_temporal["eventDate"] = pd.to_datetime(df_temporal["eventDate"],errors='coerce',format='mixed',utc=True).dt.tz_localize(None)
+    excluidos=len(df)-df_temporal["eventDate"].notna().sum()
+    
+    if df_temporal["eventDate"].notna().sum()>0:
+        df_definitivo=df_temporal[["eventDate"]].dropna().copy()
+        df_definitivo["año"]=df_definitivo["eventDate"].dt.year
+        años=df_definitivo.groupby("año").size()
+        st.line_chart(años)
+        st.write(f"registros excluidos: {excluidos}")
+    else:
+        st.warning("no hay registros con fechas validas para el grafico")
+else:
+    st.warning("no existe la columna eventDate en el dataset")
