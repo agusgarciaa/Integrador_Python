@@ -92,3 +92,17 @@ if "eventDate" in df.columns:
         st.warning("no hay registros con fechas validas para el grafico")
 else:
     st.warning("no existe la columna eventDate en el dataset")
+
+
+#Ejercicio 3.E - Lucía Cipolla
+st.subheader('Tabla comparativa')
+datos_raw = wb.tabla_comparativa_datasets()
+dataframe_tabla = pd.DataFrame(datos_raw).T
+if not dataframe_tabla.empty:
+    tabla_formateada = dataframe_tabla.style.format({
+        'Registros Totales':'{:.0f}',
+        'Coordenadas Validas':'{:.0f}',
+        'Fechas Validas':'{:.0f}',
+        'Registros Completos':'{:.0f}'
+    }).set_properties(**{'text-align':'center'})
+st.table(tabla_formateada)
