@@ -41,7 +41,11 @@ gr.grafico_distribucion_taxonomica(df, dataset)
 
 #3.D Fe Cordoba
 st.subheader("Grafico sobre el porcentaje de datos no nulos por columna")
-diccionario_nulos = lec.porcentaje_nulos(archivo)
+if(dataset == "iadiza"):
+    separador = "\t"
+else:
+    separador = ","
+diccionario_nulos = lec.porcentaje_nulos(archivo,separador)
 
 # Creamos una Serie de Pandas con ese diccionario
 serie_nulos = pd.Series(diccionario_nulos)
@@ -55,7 +59,7 @@ serie_ordenada = serie_no_nulos.sort_values(ascending=True)
 # Creamos gráfico
 ax = serie_ordenada.plot(
     kind='barh',
-    figsize=(12, 18)
+    figsize=(12, 30)
 )
 
 # Título
@@ -66,7 +70,7 @@ ax.set_xlabel("Porcentaje")
 ax.set_ylabel("Columnas")
 
 # Tamaño de texto del eje Y
-ax.tick_params(axis='y', labelsize=11)
+ax.tick_params(axis='y', labelsize=6)
 
 # Ajuste automático
 plt.tight_layout()
