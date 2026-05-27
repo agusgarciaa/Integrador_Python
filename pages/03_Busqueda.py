@@ -61,8 +61,12 @@ if (dataset == 'xenocanto'):
     filtro_provincia = []
 else:
     filtro_provincia = st.multiselect("Provincia", provincias)
-fecha_inicio = st.date_input("Fecha inicio")
-fecha_fin = st.date_input("Fecha fin")
+if(dataset != "iadiza"):
+    fecha_inicio = st.date_input("Fecha inicio")
+    fecha_fin = st.date_input("Fecha fin")
+else:
+    fecha_fin = None
+    fecha_inicio = None
 
 #st.write(df['recordedBy']) # era para ver q valores tenia esa columna y probar que ande
 
