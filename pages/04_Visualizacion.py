@@ -13,12 +13,12 @@ st.set_page_config(page_title="Visualización - Gráficos", layout="wide")
 wb.opcion_sidebar()
 
 # 2. Título principal de la página P4
-st.title("Página de Visualización")
+st.title("Página de Visualización - Gráficos")
 
 # Llamar al ejercicio 3.A - Ana Freitas
 gr.graficar_registros_por_ubicacion()
 
-st.title("Gráficos")
+
 dataset = st.session_state.dataset_actual
 
 if not dataset:
@@ -40,7 +40,7 @@ gr.grafico_distribucion_taxonomica(df, dataset)
 
 
 #3.D Fe Cordoba
-"""Calcula y grafica el porcentaje de datos no nulos por columna."""
+st.subheader("Grafico sobre el porcentaje de datos no nulos por columna")
 diccionario_nulos = lec.porcentaje_nulos(archivo)
 
 # Creamos una Serie de Pandas con ese diccionario
