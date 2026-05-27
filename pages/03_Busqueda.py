@@ -44,8 +44,6 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
     
-# st.write(df.columns) # en iadiza con y sin tab muestra todo en una columna y anda mal 
-
 # Opciones sacadas del dataframe
 nombres_cientificos = hp.obtener_opciones(df, "scientificName")
 if (dataset != 'xenocanto'):
