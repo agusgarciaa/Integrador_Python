@@ -95,4 +95,6 @@ if not dataframe_tabla.empty:
         'Fechas Validas':'{:.0f}',
         'Registros Completos':'{:.0f}'
     }).set_properties(**{'text-align':'center'})
-st.table(tabla_formateada)
+    st.table(tabla_formateada)
+else:
+    st.info('La tabla está vacía')
