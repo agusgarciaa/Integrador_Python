@@ -28,10 +28,15 @@ if st.session_state.get('dataset_actual') is not None:
         ruta_processed = rut.obtener_ruta_de_datos("processed_datasets", dataset, archivo)
         ruta_log = rut.obtener_ruta_log("logs", "operations.log")
 
+        df_actual = wb.dataframe_dataset(ruta_processed, delimiter)
+
         # Recargar si cambia el dataset o si se presiona el botón
         if st.session_state.get("_dataset_cargado") != dataset or st.sidebar.button("Recargar Datos"):
-            st.session_state.df_actual = wb.dataframe_dataset(ruta_processed, delimiter)
             st.session_state._dataset_cargado = dataset
-
-        form.buscar_registro(st.session_state.df_actual, dataset)
-        form.modalidades_eliminacion(ruta_raw, ruta_processed, ruta_log, delimiter, st.session_state.df_actual)
+            st.session_state.pop('registro_encontrado', None)
+            st.cache_data.clear()
+        
+        form.buscar_registro(df_actual, dataset)
+        if 'registro_encontrado' in st.session_state:
+            form.editar_registro()
+        form.modalidades_eliminacion(ruta_raw, ruta_processed, ruta_log, delimiter, df_actual)
