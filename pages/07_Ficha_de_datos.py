@@ -1,6 +1,7 @@
 # pages/07_Ficha_de_Datos.py
 import streamlit as st
 from src.mapas import mostrar_mapa_interactivo
+from src.mapas import mostrar_ficha_registro
 
 st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
 
@@ -19,3 +20,4 @@ if "resultados_busqueda" not in st.session_state:
 # Llamada de la fúncion y pasamos el DataFrame guardado en la sesión
 df_busqueda = st.session_state["resultados_busqueda"]
 mostrar_mapa_interactivo(df_busqueda) 
+mostrar_ficha_registro(df_busqueda, st.session_state.dataset_actual)
