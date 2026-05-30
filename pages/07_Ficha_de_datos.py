@@ -1,5 +1,7 @@
 # pages/07_Ficha_de_Datos.py
 import streamlit as st
+
+import src.web_manager as wb 
 from src.mapas import mostrar_mapa_interactivo
 
 st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
@@ -7,15 +9,35 @@ st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
 st.title("Ficha de Datos")
 st.markdown("Visualización geográfica de las ocurrencias seleccionadas.")
 
-# Validamos que existan datos cargados en la sesión
-if "resultados_busqueda" not in st.session_state:
+if "dataset_path" not in st.session_state:
     st.warning(
-        "⚠️ No se encontraron resultados de búsqueda. Por favor, realice una consulta en la página de búsqueda primero."
+        "⚠️ No se encontraron parámetros de búsqueda activos. Por favor, realice una consulta en la página de búsqueda primero."
     )
     if st.button("Ir a la Página de Búsqueda"):
         st.switch_page("pages/03_Busqueda.py")
     st.stop()
 
-# Llamada de la fúncion y pasamos el DataFrame guardado en la sesión
-df_busqueda = st.session_state["resultados_busqueda"]
-mostrar_mapa_interactivo(df_busqueda) 
+# Levantamos las 3 variables guardadas
+path_archivo = st.session_state["dataset_path"]
+columna = st.session_state["columna_busqueda"]
+texto = st.session_state["texto_busqueda"]
+
+try:
+    separador_caracter = "\t" if "iadiza" in path_archivo.lower() else ","
+    
+    df_original = wb.dataframe_dataset(path_archivo, separador=separador_caracter)
+    
+    if texto:
+        mascara = df_original[columna].astype(str).str.contains(
+            texto, 
+            case=False, 
+            na=False
+        )
+        df_busqueda = df_original[mascara].copy()
+    else:
+        df_busqueda = df_original.copy()
+
+    mostrar_mapa_interactivo(df_busqueda)
+
+except Exception as e:
+    st.error(f"Error al reconstruir los datos para el mapa: {e}")

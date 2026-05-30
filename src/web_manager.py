@@ -129,31 +129,33 @@ def mostrar_busqueda_texto_libre():
     termino_busqueda = st.text_input(f"Ingrese el valor que pretende encontrar en '{columna_seleccionada}':").strip()
     
     # Si el usuario no escribió nada, mostramos el DataFrame completo tal como estaba originalmente
+    # ... (Todo el código de tu función queda exactamente igual arriba)
+
+    # Si el usuario no escribió nada, devolvemos el completo y los datos base
     if not termino_busqueda:
-        return dataframe_completo
+        return dataframe_completo, archivo_encontrado, columna_seleccionada, termino_busqueda
 
     # --- INTEGRACIÓN DEL EJERCICIO 5.A ---
-    # Llamamos a registrar_filtro pasándole la ruta y los argumentos mediante **kwargs
     filas_filtradas_lista = act.registrar_filtro(
         path=str(archivo_encontrado), 
         c_delimiter=separador_caracter, 
         **{columna_seleccionada: termino_busqueda}
     )
     
-    # Si la función encontró coincidencias, convertimos la lista de listas en DataFrame
     if filas_filtradas_lista:
         dataframe_filtrado = pd.DataFrame(filas_filtradas_lista, columns=columnas_disponibles)
         
-        # Aplicamos la máscara case-insensitive y de subcadena requerida por el Ejercicio 2.A (Etapa 2)
         mascara_busqueda = dataframe_filtrado[columna_seleccionada].astype(str).str.contains(
             termino_busqueda, 
-            case=False,   # Controla que sea case-insensitive
-            na=False      # Descarta las celdas vacías
+            case=False,   
+            na=False      
         )
-        return dataframe_filtrado[mascara_busqueda]
+        # RETORNO CUANDO HAY FILTRO CON ÉXITO
+        return dataframe_filtrado[mascara_busqueda], archivo_encontrado, columna_seleccionada, termino_busqueda
     else:
-        # Si no hubo ninguna coincidencia en el filtro, devolvemos un DataFrame vacío estructurado
-        return pd.DataFrame(columns=columnas_disponibles)
+        # RETORNO CUANDO EL FILTRO DA VACÍO
+        df_vacio = pd.DataFrame(columns=columnas_disponibles)
+        return df_vacio, archivo_encontrado, columna_seleccionada, termino_busqueda
 
 
 # 2.b Fe Cordoba

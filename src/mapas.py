@@ -26,7 +26,6 @@ def mostrar_mapa_interactivo(df_busqueda):
 
     st.subheader("Mapa Interactivo")
     
-
     # Mapeamos las opciones legibles con los nombres reales de las columnas, adaptado a los encabezados de los 3 datasets
     columnas_posibles = {
         'Especie': ['scientificName', 'species', 'genus'],
@@ -49,7 +48,8 @@ def mostrar_mapa_interactivo(df_busqueda):
         columna_color = opciones_criterio[criterio_elegido]
 
     # Lista de colores estables que soporta Folium nativamente
-    colores_disponibles = ['blue', 'green', 'red', 'purple', 'orange', 'darkred', 'lightred', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'pink', 'lightblue', 'lightgreen', 'gray', 'black']
+    colores_disponibles = ['blue', 'green', 'red', 'purple', 'orange', 'darkred', 'lightred', 'darkblue', 'darkgreen', 'cadetblue', 
+                           'darkpurple', 'pink', 'lightblue', 'lightgreen', 'gray', 'black']
 
     # Identificamos los nombres reales de las columnas en el dataset
     col_lat = 'decimalLatitude' if 'decimalLatitude' in df_mapa.columns else 'latitudeDecimal'
@@ -67,7 +67,7 @@ def mostrar_mapa_interactivo(df_busqueda):
             st.info(f"💡 Mostrando los primeros {MAX_PUNTOS} registros.")
             df_render = df_mapa.head(MAX_PUNTOS)
         else:
-            df_render = df_mapa
+            df_render = df_mapa 
         
         # Creamos el mapa centrado en el promedio geográfico de los puntos a mostrar
         centro_lat = df_render[col_lat].mean()
