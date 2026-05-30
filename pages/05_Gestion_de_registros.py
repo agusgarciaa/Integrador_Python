@@ -1,7 +1,7 @@
 import streamlit as st
-import src.rutas as rut
-import src.web_manager as wb
-import src.formularios as form
+import src.utils.rutas as rut
+import src.utils.web_manager as wb
+import src.visuals.formularios as form
 
 st.set_page_config(page_title="Gestión de Registro - Formulário", layout="wide")
 

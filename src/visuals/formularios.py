@@ -4,11 +4,11 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import src.web_manager as wm
-import src.validaciones as va
-import src.eliminaciones as e
-import src.actualizaciones as act
-import src.rutas as rt
+import src.utils.web_manager as wm
+import src.operaciones.validaciones as va
+import src.operaciones.eliminaciones as e
+import src.operaciones.actualizaciones as act
+import src.utils.rutas as rt
 
 # Función 4.A (segunda parte)- Ana Freitas
 def insertar_nuevo_registro():

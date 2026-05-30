@@ -4,9 +4,9 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
-import src.web_manager as wb 
-import src.graficos as gr
-import src.lecturas as lec
+import src.utils.web_manager as wb 
+import src.visuals.graficos as gr
+import src.operaciones.lecturas as lec
 
 st.set_page_config(page_title="Visualización - Gráficos", layout="wide")
 

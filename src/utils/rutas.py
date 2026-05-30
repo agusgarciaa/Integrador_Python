@@ -1,4 +1,4 @@
-import src.file_manager as fm
+import src.utils.file_manager as fm
 
 # Funcion para encontrar la ruta de los datasets - Ana Freitas 
 def obtener_ruta_de_datos(carpeta, dataset, archivo):
@@ -19,4 +19,4 @@ def obtener_ruta_log(carpeta, archivo):
     ruta = fm.obtener_raiz_proyecto()
     ruta_completa = ruta / carpeta / archivo
     
-    return str(ruta_completa)
+    return str(ruta_completa) 
