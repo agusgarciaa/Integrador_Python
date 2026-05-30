@@ -3,9 +3,9 @@ import os
 
 from datetime import datetime
 
-import src.helpers as hp
-import src.registros as re
-import src.lecturas as le
+import src.utils.helpers as hp
+import src.operaciones.registros as re
+import src.operaciones.lecturas as le
 
 # --------------------------------------------------------------- Ejercicios 3 - Validación y calidad de datos --------------------------------------------------------------
 #funcion 3a sofia martins

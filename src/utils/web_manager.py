@@ -7,11 +7,11 @@ import pandas as pd
 import streamlit as st 
 import matplotlib.pyplot as plt
 
-import src.helpers as hp
-import src.validaciones as va
-import src.lecturas as lec
-import src.actualizaciones as act
-import src.file_manager as fm
+import src.utils.helpers as hp
+import src.operaciones.validaciones as va
+import src.operaciones.lecturas as lec
+import src.operaciones.actualizaciones as act
+import src.utils.file_manager as fm
 
 
 #funcion 1.a sofia martins

@@ -4,8 +4,8 @@ from datetime import datetime
 import pandas as pd
 import streamlit as st
 
-import src.web_manager as wb 
-import src.helpers as hp
+import src.utils.web_manager as wb 
+import src.utils.helpers as hp
 
 st.set_page_config(page_title="Búsqueda - Tablas", layout="wide")
 

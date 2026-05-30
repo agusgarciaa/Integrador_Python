@@ -20,6 +20,6 @@ def obtener_raiz_proyecto():
     Usa la ubicación de este archivo como referencia para subir niveles 
     hasta la raíz y funciona en cualquier computadora.
     """
-    return Path(__file__).parent.parent.absolute()
+    return Path(__file__).parent.parent.parent.absolute()
 
 

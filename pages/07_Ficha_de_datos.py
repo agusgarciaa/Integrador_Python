@@ -1,8 +1,8 @@
-# pages/07_Ficha_de_Datos.py
 import streamlit as st
 
-import src.web_manager as wb 
-from src.mapas import mostrar_mapa_interactivo
+import src.utils.web_manager as wb 
+from src.visuals.mapas import mostrar_mapa_interactivo
+from src.visuals.mapas import mostrar_ficha_registro
 
 st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
 
@@ -38,6 +38,7 @@ try:
         df_busqueda = df_original.copy()
 
     mostrar_mapa_interactivo(df_busqueda)
+    mostrar_ficha_registro(df_busqueda, st.session_state.dataset_actual)
 
 except Exception as e:
     st.error(f"Error al reconstruir los datos para el mapa: {e}")
