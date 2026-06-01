@@ -34,4 +34,4 @@ if st.session_state.get('dataset_actual') is not None:
             st.session_state._dataset_cargado = dataset
 
         form.buscar_registro(st.session_state.df_actual, dataset)
-        form.modalidades_eliminacion(ruta_raw, ruta_processed, ruta_log, delimiter, st.session_state.df_actual)
+        form.modalidades_eliminacion(ruta_raw, ruta_processed, ruta_log, st.session_state.df_actual, delimiter)

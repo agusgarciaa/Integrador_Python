@@ -158,15 +158,12 @@ def buscar_registro(df, nombre_dataset):
     st.dataframe(registro.to_frame().T, use_container_width=True, hide_index=True)  # Mostrar el registro encontrado
 
 
-def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,df): 
+def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations, df, delimiter=','): 
   df_vistaprevia=pd.DataFrame()
   st.subheader("Seccion para eliminacion de registros")
   modalidad=st.selectbox("Selecione la modalidad de eliminacion",["por identificador unico","por valor de una columna","por condicion sobre una columna"])
-  if modalidad=="Por identificador unico":
-      if "id_a_eliminar" not in st.session_state:
-         st.session_state.id_a_eliminar = ""
+  if modalidad=="por identificador unico":
       id_unico=st.text_input("ingrese el identificador del registro a eliminar")
-      st.session_state.id_a_eliminar = id_unico
       if id_unico:
           posibles_id=df.filter(items=["id","gbifID","ocurrenceID"])
           filtro=(posibles_id.astype(str)==id_unico).any(axis=1)
@@ -197,7 +194,7 @@ def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,
           else: st.error("condicion no valida para valores no numericos")
         
   if not df_vistaprevia.empty:
-      st.subheader("vist previa de los registros que seran eliminados")
+      st.subheader("vista previa de los registros que seran eliminados")
       st.dataframe(df_vistaprevia)
       if st.button("confirmar la eliminacion"):
           if modalidad=="por identificador unico":
