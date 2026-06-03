@@ -4,9 +4,11 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import src.web_manager as wm
-import src.validaciones as va
-import src.eliminaciones as e
+import src.utils.web_manager as wm
+import src.operaciones.validaciones as va
+import src.operaciones.eliminaciones as e
+import src.operaciones.actualizaciones as act
+import src.utils.rutas as rt
 
 # Función 4.A (segunda parte)- Ana Freitas
 def insertar_nuevo_registro():
@@ -121,6 +123,7 @@ def buscar_registro(df, nombre_dataset):
     """
     Permite buscar un registro por identificador y mostrarlo.
     El resultado queda guardado en session_state para que 4.C lo use.
+    Si se ingresa algo vacío o no válido devuelve None
     """
 
     IDS = {
@@ -130,7 +133,7 @@ def buscar_registro(df, nombre_dataset):
     }
 
     columna_id = IDS.get(nombre_dataset)
-    print(df.columns.tolist())
+    #print(df.columns.tolist())
     if not columna_id or columna_id not in df.columns:
         st.error("No se encontró columna identificadora para este dataset.")
         return
@@ -139,13 +142,14 @@ def buscar_registro(df, nombre_dataset):
     valor_id = st.text_input(f"Ingresá el ID (Ubicado en {columna_id}):", key="buscar_id")
 
     if not valor_id:
+        st.session_state.registro_encontrado = None # ---> NO ENCONTRÓ
         return
 
     coincidencias = df[df[columna_id].astype(str) == valor_id.strip()]
 
     if coincidencias.empty:
         st.warning(f"No se encontró ningún registro con {columna_id} = '{valor_id}'.")
-        st.session_state.registro_encontrado = None
+        st.session_state.registro_encontrado = None # ---> NO EXISTE
         return
 
     registro = coincidencias.iloc[0]
@@ -158,7 +162,81 @@ def buscar_registro(df, nombre_dataset):
     st.dataframe(registro.to_frame().T, use_container_width=True, hide_index=True)  # Mostrar el registro encontrado
 
 
-def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations, df, delimiter=','): 
+#Ejercicio 4.C - Lucía Cipolla
+@st.fragment
+def editar_registro ():
+    """
+        Muestra los valores del registro que encontró buscar_registro y permite editarlos
+        registro_dicc = st.session_state.registro_encontrado = {"indice": indice, "datos": registro.to_dict()}
+        indice es la fila del registro, datos es el registro en formato diccionario con las key siendo los nombres
+        de las columnas y los valores siendo la celda de y fila en x columna.
+        El session_state.registro_encontrado se actualiza con los datos nuevos
+        Se utiliza la función 5.C para aplicar los cambios (como solicita la consigna)
+    """
+    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
+        st.warning('Seleccione un dataset para modificar')
+        return
+    archivos = {'iadiza':'occurrence.txt',
+                'inaturalist':'observations.csv',
+                'xenocanto':'Occurrence.txt'}
+    nombre_dataset = st.session_state.dataset_actual
+    separador = "\t" if nombre_dataset.lower() == "iadiza" else "," 
+    
+    nombre_archivo = archivos.get(nombre_dataset.lower())
+    ruta_raw = Path('raw_datasets') / nombre_dataset / nombre_archivo
+    ruta_processed = Path('processed_datasets') / nombre_dataset / nombre_archivo
+    ruta_operations = Path('logs') / 'operations.log'
+
+    if not ruta_processed.is_file():
+        st.warning(f'No se encontró el archivo {nombre_archivo}')
+        return
+
+    if (st.session_state.registro_encontrado is None):
+        st.markdown(""" :blue-background[Seleccione un registro para modificar]""")
+        return
+    
+    registro_dicc = st.session_state.registro_encontrado
+    datos_viejos = registro_dicc['datos']
+    identificador = str(datos_viejos.get('id','') or datos_viejos.get('gbifID','') or datos_viejos.get('occurrenceID', '')).strip()
+    claves = list(datos_viejos.keys())
+    st.subheader('Seleccione campos a editar')
+    filtro_registros = st.multiselect(label='Campos',options=claves)
+
+    campo = {}
+
+    if (len(filtro_registros)>0):
+        if 'tabla_actualizada' in st.session_state:
+            st.dataframe(st.session_state.tabla_actualizada, hide_index=True)
+            st.success('El archivo se actualizó correctamente')
+            del st.session_state['tabla_actualizada']
+
+        with st.form(key='formulario_modificacion'):
+            st.subheader('Editar Registro')
+
+            for celda in filtro_registros:
+                val = datos_viejos.get(celda)
+                valor_seguro = "" if pd.isna(val) else str(val)
+                campo[celda] = st.text_input(label=celda, value=valor_seguro, key=f"input_{celda}_{valor_seguro}")
+
+            boton_enviar = st.form_submit_button(label='Enviar',type='primary')
+
+        if (boton_enviar):
+            try:
+                act.actualizar_multiples_campos(ruta_raw,ruta_processed,ruta_operations,separador,identificador,campo)
+                for dato, n_valor in campo.items():
+                    registro_dicc['datos'][dato] = n_valor
+                st.session_state.registro_encontrado = registro_dicc    # ---> MODIFICADO
+                st.cache_data.clear()
+                st.session_state.tabla_actualizada = pd.DataFrame([campo])
+                for clave_id in ['id', 'gbifID', 'occurrenceID']:
+                    if clave_id in campo:
+                        st.session_state['buscar_id'] = campo[clave_id]
+                st.rerun()
+            except Exception as e:
+                st.error(f'Error al actualizar {e}')
+
+
+def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,df): 
   df_vistaprevia=pd.DataFrame()
   st.subheader("Seccion para eliminacion de registros")
   modalidad=st.selectbox("Selecione la modalidad de eliminacion",["por identificador unico","por valor de una columna","por condicion sobre una columna"])

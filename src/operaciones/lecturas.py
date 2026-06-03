@@ -2,7 +2,7 @@ import csv
 
 from collections import Counter
 
-import src.helpers as hp
+import src.utils.helpers as hp
 
 
 # --------------------------------------------------------------- Ejercicios 2 - Lectura del dataset --------------------------------------------------------------

@@ -4,8 +4,8 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-import src.validaciones as va
-import src.web_manager as wm  
+import src.operaciones.validaciones as va
+import src.utils.web_manager as wm  
 
 
 def generar_tabla_comparativa():

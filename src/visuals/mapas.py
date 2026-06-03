@@ -4,7 +4,8 @@ import folium
 import pandas as pd
 import streamlit as st
 
-import src.validaciones as va
+import src.operaciones.validaciones as va
+from src.utils.web_manager import COLUMNAS_RELEVANTES
 
 def mostrar_mapa_interactivo(df_busqueda):
     total_inicial = len(df_busqueda)
@@ -26,7 +27,6 @@ def mostrar_mapa_interactivo(df_busqueda):
 
     st.subheader("Mapa Interactivo")
     
-
     # Mapeamos las opciones legibles con los nombres reales de las columnas, adaptado a los encabezados de los 3 datasets
     columnas_posibles = {
         'Especie': ['scientificName', 'species', 'genus'],
@@ -49,7 +49,8 @@ def mostrar_mapa_interactivo(df_busqueda):
         columna_color = opciones_criterio[criterio_elegido]
 
     # Lista de colores estables que soporta Folium nativamente
-    colores_disponibles = ['blue', 'green', 'red', 'purple', 'orange', 'darkred', 'lightred', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'pink', 'lightblue', 'lightgreen', 'gray', 'black']
+    colores_disponibles = ['blue', 'green', 'red', 'purple', 'orange', 'darkred', 'lightred', 'darkblue', 'darkgreen', 'cadetblue', 
+                           'darkpurple', 'pink', 'lightblue', 'lightgreen', 'gray', 'black']
 
     # Identificamos los nombres reales de las columnas en el dataset
     col_lat = 'decimalLatitude' if 'decimalLatitude' in df_mapa.columns else 'latitudeDecimal'
@@ -67,7 +68,7 @@ def mostrar_mapa_interactivo(df_busqueda):
             st.info(f"💡 Mostrando los primeros {MAX_PUNTOS} registros.")
             df_render = df_mapa.head(MAX_PUNTOS)
         else:
-            df_render = df_mapa
+            df_render = df_mapa 
         
         # Creamos el mapa centrado en el promedio geográfico de los puntos a mostrar
         centro_lat = df_render[col_lat].mean()
@@ -106,6 +107,75 @@ def mostrar_mapa_interactivo(df_busqueda):
                 icon=folium.Icon(color=color_marcador, icon="info-sign")  # <--- Usamos la variable dinámica
             ).add_to(mapa)
             
-        st_folium(mapa, width=1100, height=500, returned_objects=[])
-    else:
-        st.error("No quedan registros con coordenadas válidas para graficar.")
+        mapa_data = st_folium(mapa, width=1100, height=500)
+
+        if mapa_data and mapa_data.get("last_object_clicked"):
+            st.session_state.punto_seleccionado = mapa_data["last_object_clicked"]
+
+
+# Ejercicio 6.C - Agustin Garcia
+
+TRADUCCION_COLUMNAS = {
+    "scientificName":   "Nombre científico",
+    "recordedBy":       "Observador",
+    "eventDate":        "Fecha",
+    "stateProvince":    "Provincia",
+    "countryCode":      "País",
+    "country":          "País",
+    "decimalLatitude":  "Latitud",
+    "decimalLongitude": "Longitud",
+    "latitudeDecimal":  "Latitud",
+    "longitudeDecimal": "Longitud",
+    "species":          "Especie",
+    "family":           "Familia",
+    "basisOfRecord":    "Tipo de registro",
+    "inaturalistLogin": "Usuario iNaturalist",
+    "taxonRank":        "Rango taxonómico",
+    "captive":          "¿Cautivo?",
+    "vernacularName":   "Nombre común",
+    "locality":         "Localidad",
+    "behavior":         "Comportamiento",
+    "sex":              "Sexo",
+}
+
+def mostrar_ficha_registro(df_busqueda, nombre_dataset):
+    """
+    Muestra una ficha con la información taxonómica, lugar y fecha
+    del registro seleccionado en el mapa.
+    """
+
+    punto = st.session_state.get("punto_seleccionado")
+
+    if not punto:
+        st.info("Seleccioná un punto en el mapa para ver su ficha.")
+        return
+
+    col_lat = "decimalLatitude" if "decimalLatitude" in df_busqueda.columns else "latitudeDecimal"
+    col_lon = "decimalLongitude" if "decimalLongitude" in df_busqueda.columns else "longitudeDecimal"
+
+    lat = punto.get("lat")
+    lon = punto.get("lng")
+
+    coincidencias = df_busqueda[
+        (df_busqueda[col_lat].astype(float) == lat) &
+        (df_busqueda[col_lon].astype(float) == lon)
+    ]
+
+    if coincidencias.empty:
+        st.warning("No se encontró el registro seleccionado.")
+        return
+
+    registro = coincidencias.iloc[0]
+    columnas_ficha = COLUMNAS_RELEVANTES.get(nombre_dataset, [])
+
+    st.markdown("---")
+    st.subheader("Ficha del registro")
+
+    ficha = {
+        TRADUCCION_COLUMNAS.get(campo, campo): registro[campo]
+        for campo in columnas_ficha
+        if campo in registro.index and pd.notna(registro[campo]) and str(registro[campo]).strip() != ""
+    }
+
+    df_ficha = pd.DataFrame(ficha.items(), columns=["Campo", "Valor en el registro"])
+    st.table(df_ficha)
