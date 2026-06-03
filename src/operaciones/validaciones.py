@@ -24,10 +24,10 @@ def verificar_coordenada(ruta_raw, separador,ruta_operations):
               latitud=fila.get('decimalLatitude')
               longitud=fila.get('decimalLongitude')
         
-              aux1=hp.verificar_latitud(latitud)
-              aux2=hp.verificar_longitud(longitud)
+              cumplelat=hp.verificar_latitud(latitud)
+              cumplelon=hp.verificar_longitud(longitud)
 
-              if not aux1 or not aux2:
+              if not cumplelat or not cumplelon:
                   nocumplen.append(fila)
                
       return nocumplen,len(nocumplen)
