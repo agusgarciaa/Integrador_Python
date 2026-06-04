@@ -15,10 +15,6 @@ wb.opcion_sidebar()
 # 2. Título principal de la página P4
 st.title("Página de Visualización - Gráficos")
 
-# Llamar al ejercicio 3.A - Ana Freitas
-gr.graficar_registros_por_ubicacion()
-
-
 dataset = st.session_state.dataset_actual
 
 if not dataset:
@@ -33,52 +29,19 @@ if dataset == "iadiza":
     df = pd.read_csv(archivo, sep="\t")
 else:
     df = pd.read_csv(archivo)
+    
+
+# Llamar al ejercicio 3.A - Ana Freitas
+gr.graficar_registros_por_ubicacion()
 
 
 # Llamar al ejercicio 3.C - Agustin Garcia
 gr.grafico_distribucion_taxonomica(df, dataset)
 
 
-#3.D Fe Cordoba
-st.subheader("Grafico sobre el porcentaje de datos no nulos por columna")
-if(dataset == "iadiza"):
-    separador = "\t"
-else:
-    separador = ","
-diccionario_nulos = lec.porcentaje_nulos(archivo,separador)
+# Llamar al ejercicio 3.D - Fe Cordoba
+gr.gr_porcentaje_nulos(dataset,archivo)
 
-# Creamos una Serie de Pandas con ese diccionario
-serie_nulos = pd.Series(diccionario_nulos)
-
-# Restamos a cada valor
-serie_no_nulos = 100.0 - serie_nulos
-
-# Ordenamos de menor a mayor por que el grafico se construye de abajo hacia arriba
-serie_ordenada = serie_no_nulos.sort_values(ascending=True)
-
-# Creamos gráfico
-ax = serie_ordenada.plot(
-    kind='barh',
-    figsize=(12, 30)
-)
-
-# Título
-ax.set_title("Porcentaje de valores no nulos por columna")
-
-# Etiquetas de ejes
-ax.set_xlabel("Porcentaje")
-ax.set_ylabel("Columnas")
-
-# Tamaño de texto del eje Y
-ax.tick_params(axis='y', labelsize=6)
-
-# Ajuste automático
-plt.tight_layout()
-
-# Obtener figura
-fig = ax.get_figure()
-
-st.pyplot(fig)
 
 st.subheader("cantidad de registros por año")
 if "eventDate" in df.columns:
