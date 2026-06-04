@@ -394,8 +394,6 @@ def validar(**kwargs):
     paises_permitidos = ['AR', 'BO', 'BR', 'PY', 'UY', 'CH']
 
     for columna, valor in kwargs.items():
-        # Por defecto, si no conocemos la columna, la consideramos válida
-        # para no bloquear la edición de campos simples (ej. nombres, notas).
         ret[columna] = True 
 
         match columna:
@@ -406,22 +404,16 @@ def validar(**kwargs):
             case 'decimalLongitude' | 'longitudeDecimal':
                 ret[columna] = hp.check_coordenadas(valor, hp.MAX_LONG, hp.MIN_LONG)
 
-            # Validación de Fechas
             case 'eventdate' | 'verbatimeventdate':
-                # Asumimos que chequear_fecha devuelve un objeto fecha o None
                 aux = chequear_fecha(valor)
                 ret[columna] = (aux is not None)
 
-            # Validación de Código de País
             case 'countryCode':
-                # Según tu lógica: retorna "nulo" o "código inválido" si falla
                 aux = validar_country_code_registro(valor, paises_permitidos)
                 if aux in ["nulo", "código inválido"]:
                     ret[columna] = False
                 else:
                     ret[columna] = True
-
-            # Caso por defecto (opcional si ya inicializaste en True arriba)
             case _:
                 ret[columna] = True
 

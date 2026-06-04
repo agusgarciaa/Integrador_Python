@@ -5,8 +5,6 @@ import src.utils.web_manager as wb
 import src.visuals.mapas as ma
 import src.visuals.multimedia as mult
 
-st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
-
 st.title("Ficha de Datos")
 st.markdown("Visualización geográfica de las ocurrencias seleccionadas.")
 

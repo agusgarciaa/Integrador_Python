@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 import pandas as pd
 import streamlit as st
@@ -8,60 +9,73 @@ import src.utils.web_manager as wb
 import src.visuals.graficos as gr
 import src.operaciones.lecturas as lec
 
-st.set_page_config(page_title="Visualización - Gráficos", layout="wide")
 
+st.title("Página de Visualización")
 wb.opcion_sidebar()
-
-# 2. Título principal de la página P4
-st.title("Página de Visualización - Gráficos")
 
 dataset = st.session_state.dataset_actual
 
 if not dataset:
     st.warning("Por favor seleccioná un dataset desde el menú lateral antes de continuar.")
-    st.stop()  # Detiene la ejecución del resto de la página
+    st.stop() 
 
 RUTA_DATASET = Path("processed_datasets") / dataset
-
 archivo = next(RUTA_DATASET.iterdir(), None)
 
 if dataset == "iadiza":
     df = pd.read_csv(archivo, sep="\t")
 else:
     df = pd.read_csv(archivo)
-    
-
-# Llamar al ejercicio 3.A - Ana Freitas
-gr.graficar_registros_por_ubicacion()
 
 
-# Llamar al ejercicio 3.C - Agustin Garcia
-gr.grafico_distribucion_taxonomica(df, dataset)
+tab_ubicacion, tab_taxonomica, tab_nulos, tab_temporal = st.tabs([
+    "registros por ubicación",
+    "distribución taxonomica",
+    "porcentaje nulos",
+    "registros por año"
+])
+
+with tab_ubicacion:
+    # Llamar al ejercicio 3.A - Ana Freitas
+    st.subheader("Grafico distribución geográfica de registros")
+    gr.graficar_registros_por_ubicacion()
 
 
-# Llamar al ejercicio 3.D - Fe Cordoba
-gr.gr_porcentaje_nulos(dataset,archivo)
+with tab_taxonomica:
+    # Llamar al ejercicio 3.C - Agustin Garcia
+    st.subheader("Grafico distribucion taxonomica")
+    gr.graficar_distribucion_taxonomica(df, dataset)
 
 
-st.subheader("cantidad de registros por año")
-if "eventDate" in df.columns:
-    df_temporal=df.copy()
-    df_temporal["eventDate"] = pd.to_datetime(df_temporal["eventDate"],errors='coerce',format='mixed',utc=True).dt.tz_localize(None)
-    excluidos=len(df)-df_temporal["eventDate"].notna().sum()
-    
-    if df_temporal["eventDate"].notna().sum()>0:
-        df_definitivo=df_temporal[["eventDate"]].dropna().copy()
-        df_definitivo["año"]=df_definitivo["eventDate"].dt.year
-        años=df_definitivo.groupby("año").size()
-        st.line_chart(años)
-        st.write(f"registros excluidos: {excluidos}")
+with tab_nulos:
+    # Llamar al ejercicio 3.D - Fe Cordoba
+    st.subheader("Grafico sobre el porcentaje de datos no nulos por columna")
+    gr.graficar_porcentaje_nulos(dataset, archivo)
+
+
+# Función 3.B - Sofia Martins
+with tab_temporal:
+    st.subheader("Grafico cantidad de registros por año")
+    if "eventDate" in df.columns:
+        df_temporal = df.copy()
+        df_temporal["eventDate"] = pd.to_datetime(df_temporal["eventDate"], errors='coerce', format='mixed', utc=True).dt.tz_localize(None)
+        excluidos = len(df) - df_temporal["eventDate"].notna().sum()
+        
+        if df_temporal["eventDate"].notna().sum() > 0:
+            df_definitivo = df_temporal[["eventDate"]].dropna().copy()
+            df_definitivo["año"] = df_definitivo["eventDate"].dt.year
+            años = df_definitivo.groupby("año").size()
+            
+            st.line_chart(años)
+            st.write(f"registros excluidos: {excluidos}")
+        else:
+            st.warning("no hay registros con fechas validas para el grafico")
     else:
-        st.warning("no hay registros con fechas validas para el grafico")
-else:
-    st.warning("no existe la columna eventDate en el dataset")
+        st.warning("no existe la columna eventDate en el dataset")
 
 
-#Ejercicio 3.E - Lucía Cipolla
+# Ejercicio 3.E - Lucía Cipolla)
+st.markdown("---")
 st.subheader('Tabla comparativa')
 datos_raw = wb.tabla_comparativa_datasets()
 dataframe_tabla = pd.DataFrame(datos_raw).T

@@ -1,121 +1,67 @@
 from pathlib import Path
+from datetime import datetime
 
 import streamlit as st 
 import pandas as pd
-import matplotlib.pyplot as plt
 
 import src.utils.web_manager as wm
 import src.operaciones.validaciones as va
 import src.operaciones.eliminaciones as e
 import src.operaciones.actualizaciones as act
-import src.utils.rutas as rt
+import src.operaciones.registros as re
 
-# Función 4.A (segunda parte)- Ana Freitas
-def insertar_nuevo_registro():
+
+def insertar_nuevo_registro(df, archivo_target, separador):
     """
-    Crea un formulario dinámico para ingresar un nuevo registro en el dataset activo, validando los campos y guardando los cambios.
+    Crea un formulario dinámico para ingresar un nuevo registro en el dataset activo, 
+    validando los campos y guardando los cambios.
     """
-    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
-        st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
-        return
-
-    # Ahora es 100% seguro obtener el nombre porque sabemos que no es None
-    dataset_nombre = st.session_state.dataset_actual
-    
-    # Si el dataset es 'iadiza', usamos tabulador (\t), de lo contrario usamos coma (,)
-    separador = "\t" if dataset_nombre.lower() == "iadiza" else "," 
-    
-    # Construye la ruta de forma segura sin peligro de TypeError
-    ruta_carpeta = Path("processed_datasets") / dataset_nombre 
-    archivo_target = None
-
-    if ruta_carpeta.exists():
-        for archivo in ruta_carpeta.iterdir():
-            if archivo.is_file():
-                archivo_target = archivo
-                break
-
-    if not archivo_target:
-        st.error("No se encontró el archivo de datos.")
-        return
-
-    # Carga el DataFrame actual (Ejercicio 1.A)
-    df = wm.dataframe_dataset(archivo_target, separador=separador)
+    dataset_nombre = Path(archivo_target).parent.name
 
     st.subheader(f"Insertar registro en: {dataset_nombre.capitalize()}")
 
-    # 2. DEFINICIÓN DE ATRIBUTOS PRINCIPALES: Seleccionamos las columnas clave del estándar Darwin Core
-    # Esto evita abrumar al usuario si el dataset tiene 50 columnas, mostrando solo las más importantes
     columnas_clave = ['scientificname', 'eventdate', 'country', 'stateprovince', 'locality', 'recordedby', 'individualcount']
     
-    # Filtramos las columnas reales del dataset que coincidan con nuestros atributos principales
     campos_formulario = [col for col in df.columns if col.lower() in columnas_clave]
 
-    # Si por alguna razón no coincide ninguna, usamos las primeras 5 columnas por defecto
     if not campos_formulario:
         campos_formulario = df.columns.tolist()[:5]
 
-    # 3. CREACIÓN DEL FORMULARIO DE STREAMLIT (st.form)
-    # Usar st.form es obligatorio para que la página no se recargue con cada letra que escribe el usuario
     with st.form(key="formulario_insercion"):
         st.write("Complete los datos del nuevo registro:")
         
-        # Diccionario para almacenar lo que el usuario escribe en cada campo
         datos_ingresados = {}
         
-        # Generamos los campos de entrada de forma dinámica recorriendo la lista
         for campo in campos_formulario:
-            # Si la columna es de tipo numérico (como conteo de individuos), usamos un input numérico
             if df[campo].dtype in ['int64', 'float64']:
                 datos_ingresados[campo] = st.number_input(f"{campo}:", min_value=0, value=0)
             else:
-                # Para texto libre (nombres, fechas, localidades) usamos entrada de texto común
                 datos_ingresados[campo] = st.text_input(f"{campo}:", value="")
         
-        # Botón de envío obligatorio dentro de todo st.form
         boton_enviar = st.form_submit_button(label="Confirmar Inserción")
 
-    # 4. PROCESAMIENTO Y VALIDACIÓN AL HACER CLICK EN EL BOTÓN
     if boton_enviar:
-        # Bandera para controlar si todo el formulario es válido
         formulario_valido = True
-        
-        # REQUERIMIENTO: Mostrar mensajes de error específicos por campo (Ejercicio 4.A)
         for campo, valor in datos_ingresados.items():
-            # Validación básica local: verificar que no se envíen campos obligatorios vacíos
             if str(valor).strip() == "":
                 st.error(f"El campo '{campo}' no puede estar vacío.")
                 formulario_valido = False
     
-
         if not va.validar(**datos_ingresados):
             st.error("La validación de la estructura o consistencia de datos ha fallado.")
             formulario_valido = False
 
-        # 5. INSERCIÓN REAL Y PERSISTENCIA (Si todo es válido)
         if formulario_valido:
             try:
-                # Convertimos el diccionario de datos ingresados en un nuevo DataFrame de una sola fila
                 nuevo_registro_df = pd.DataFrame([datos_ingresados])
-                
-                # Concatenamos (añadimos) el nuevo registro al DataFrame original
                 df_actualizado = pd.concat([df, nuevo_registro_df], ignore_index=True)
-                
-                # Guardamos el DataFrame actualizado sobrescribiendo el archivo en processed_datasets
                 df_actualizado.to_csv(archivo_target, sep=separador, index=False, encoding='utf-8')
                 
-                # REQUERIMIENTO: Informar al usuario sobre el resultado exitoso
                 st.success("¡Registro insertado con éxito en el dataset!")
-                
-                # ut.registrar_operacion("INSERT", dataset_nombre, "Éxito: Registro añadido manualmente")
-                
-                # Forzamos a Streamlit a limpiar el formulario mostrando los datos actualizados
                 st.balloons()
                 
             except Exception as un_error:
-                # Si algo falla en la escritura o procesamiento, informamos el error y lo registramos en el log
                 st.error(f"Error crítico al insertar el registro: {un_error}")
-                # ut.registrar_operacion("ERROR", dataset_nombre, f"Fallo en INSERT: {un_error}")
 
 
 # Ejercicio 4.B - Agustin Garcia
@@ -162,7 +108,7 @@ def buscar_registro(df, nombre_dataset):
     st.dataframe(registro.to_frame().T, use_container_width=True, hide_index=True)  # Mostrar el registro encontrado
 
 
-#Ejercicio 4.C - Lucía Cipolla
+# Función 4.C - Lucía Cipolla
 @st.fragment
 def editar_registro ():
     """
@@ -236,6 +182,7 @@ def editar_registro ():
                 st.error(f'Error al actualizar {e}')
 
 
+# Función 4.D - Sofia Martins
 def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,df): 
   df_vistaprevia=pd.DataFrame()
   st.subheader("Seccion para eliminacion de registros")

@@ -5,8 +5,9 @@ import folium
 import pandas as pd
 import streamlit as st
 
+import src.utils.constantes as const
 import src.operaciones.validaciones as va
-from src.utils.web_manager import COLUMNAS_RELEVANTES
+
 
 def mostrar_mapa_interactivo(df_busqueda):
     total_inicial = len(df_busqueda)
@@ -132,30 +133,6 @@ def mostrar_mapa_interactivo(df_busqueda):
 
 
 # Ejercicio 6.C - Agustin Garcia
-
-TRADUCCION_COLUMNAS = {
-    "scientificName":   "Nombre científico",
-    "recordedBy":       "Observador",
-    "eventDate":        "Fecha",
-    "stateProvince":    "Provincia",
-    "countryCode":      "País",
-    "country":          "País",
-    "decimalLatitude":  "Latitud",
-    "decimalLongitude": "Longitud",
-    "latitudeDecimal":  "Latitud",
-    "longitudeDecimal": "Longitud",
-    "species":          "Especie",
-    "family":           "Familia",
-    "basisOfRecord":    "Tipo de registro",
-    "inaturalistLogin": "Usuario iNaturalist",
-    "taxonRank":        "Rango taxonómico",
-    "captive":          "¿Cautivo?",
-    "vernacularName":   "Nombre común",
-    "locality":         "Localidad",
-    "behavior":         "Comportamiento",
-    "sex":              "Sexo",
-}
-
 def mostrar_ficha_registro(df_busqueda, nombre_dataset):
     """
     Muestra una ficha con la información taxonómica, lugar y fecha
@@ -184,13 +161,13 @@ def mostrar_ficha_registro(df_busqueda, nombre_dataset):
         return
 
     registro = coincidencias.iloc[0]
-    columnas_ficha = COLUMNAS_RELEVANTES.get(nombre_dataset, [])
+    columnas_ficha = const.COLUMNAS_RELEVANTES.get(nombre_dataset, [])
 
     st.markdown("---")
     st.subheader("Ficha del registro")
 
     ficha = {
-        TRADUCCION_COLUMNAS.get(campo, campo): registro[campo]
+        const.TRADUCCION_COLUMNAS.get(campo, campo): registro[campo]
         for campo in columnas_ficha
         if campo in registro.index and pd.notna(registro[campo]) and str(registro[campo]).strip() != ""
     }

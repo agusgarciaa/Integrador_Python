@@ -1,4 +1,3 @@
-# pages/06_Datasets.py
 import os
 from datetime import datetime
 import src.utils.file_manager as fm
@@ -9,7 +8,6 @@ from pathlib import Path
 from src.operaciones import lecturas as lc
 from src.utils import helpers as hp
 
-st.set_page_config(page_title="Exploración - Datasets", layout="wide")
 
 st.title("Exploración de Datasets")
 st.markdown("Vista general y comparativa de todos los datasets disponibles en el sistema.")

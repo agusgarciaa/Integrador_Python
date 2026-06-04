@@ -1,13 +1,9 @@
 import streamlit as st
+
 import src.utils.web_manager as wb
 
-wb.opcion_sidebar()
-dataset = st.session_state.get("dataset_actual")
-
-# --- TÍTULO DE LA APLICACIÓN ---
 st.title("BioData Explorer: Gestión de Biodiversidad")
 
-# --- PROPÓSITO E IMPORTANCIA ---
 st.header("Propósito de la aplicación")
 st.write(""" Esta aplicación ha sido diseñada como una herramienta interactiva para la gestión y el análisis 
 de datos biológicos. Su objetivo es centralizar la información recolectada en campo para facilitar 
