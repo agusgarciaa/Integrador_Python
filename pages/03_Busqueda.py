@@ -15,10 +15,10 @@ wb.opcion_sidebar()
 dataset = st.session_state.dataset_actual
 if not dataset:
     st.warning("Por favor seleccioná un dataset desde el menú lateral.")
-    st.stop()  # Detiene la ejecución del resto de la página
+    st.stop() 
 RUTA_DATASET = Path("processed_datasets") / dataset
 
-# filtro de 2.a
+# Filtro para ejercicio 2.a
 df_resultados, archivo_encontrado, columna_seleccionada, termino_busqueda = wb.mostrar_busqueda_texto_libre()
 
 if df_resultados is not None:
@@ -27,7 +27,7 @@ if df_resultados is not None:
     
 st.divider()
 
-# filtro de 2.b
+# Filtros para ejercicio 2.b - Fe Cordoba
 archivo = next(RUTA_DATASET.iterdir(), None)
 if archivo is None:
     st.error("No hay archivo en la carpeta")
@@ -38,7 +38,7 @@ if dataset == "iadiza":
 else:
     df = pd.read_csv(archivo)
     
-# Opciones sacadas del dataframe
+
 nombres_cientificos = hp.obtener_opciones(df, "scientificName")
 if (dataset != 'xenocanto'):
     provincias = hp.obtener_opciones(df, "stateProvince")
@@ -46,7 +46,7 @@ if (dataset != 'xenocanto'):
 else: 
     paises = hp.obtener_opciones(df, "country")
 
-# Interfaz
+
 st.title("Búsqueda de ocurrencias")
 filtro_nombre = st.multiselect("Nombre científico", nombres_cientificos )
 filtro_observador = st.text_input("Observador")
@@ -62,9 +62,6 @@ else:
     fecha_fin = None
     fecha_inicio = None
 
-#st.write(df['recordedBy']) # era para ver q valores tenia esa columna y probar que ande
-
-# Aplicar filtros
 df_filtrado = wb.aplicar_filtros(
     df,
     nombres_cientificos=filtro_nombre,
@@ -80,21 +77,16 @@ st.dataframe(df_filtrado, use_container_width=True)
 
 st.divider()
 
-# boton para redirigir con criterios en session state
 if st.button("Ver ficha", type="primary"):
-    # Guardamos siempre la ruta porque es obligatoria para la P7
     st.session_state["dataset_path"] = str(archivo)
     
-    # si 'df_resultados' existe, si no está vacío y si hay un término buscado
     if df_resultados is not None and not df_resultados.empty and termino_busqueda:
         st.session_state["columna_busqueda"] = columna_seleccionada
         st.session_state["texto_busqueda"] = termino_busqueda
     else:
-        # Si no usó el buscador, limpiamos las variables
         st.session_state["columna_busqueda"] = None
         st.session_state["texto_busqueda"] = None
 
-    # si 'df_filtrado' arrojó resultados
     if not df_filtrado.empty:
         st.session_state["filtro_nombre"] = filtro_nombre
         st.session_state["filtro_observador"] = filtro_observador
@@ -103,7 +95,6 @@ if st.button("Ver ficha", type="primary"):
         st.session_state["fecha_inicio"] = fecha_inicio
         st.session_state["fecha_fin"] = fecha_fin
     else:
-        # sino se usaron o no dieron resultados, pasamos todo "limpio"
         st.session_state["filtro_nombre"] = []
         st.session_state["filtro_observador"] = ""
         st.session_state["filtro_pais"] = []

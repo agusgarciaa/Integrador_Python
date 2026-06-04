@@ -11,27 +11,21 @@ def filtrar_logs(ruta):
     df_logs = pd.read_csv(ruta, sep="|", names=["fecha", "dataset", "operacion", "registros", "estado"])
     df_logs['operacion'] = df_logs['operacion'].str.strip()
 
-    # Columna de fecha a tipo datetime para poder comparar
     df_logs['fecha'] = pd.to_datetime(df_logs['fecha'])
 
-    # Widgets de filtrado
     st.subheader("Filtros de búsqueda")
 
     opciones = ["INSERT", "UPDATE", "DELETE", "VALIDATION"]
     operaciones_seleccionadas = st.multiselect("Filtrar por operación:", options=opciones)
 
-    # Pedimos las fechas por separado usando columnas para que queden lado a lado
     col_inicio, col_fin = st.columns(2)
 
     with col_inicio:
-     # Widget para fecha de inicio
         input_inicio = st.date_input("Seleccione la fecha de inicio:")
 
     with col_fin:
-     # Widget para fecha de fin
         input_fin = st.date_input("Seleccione la fecha de fin:")
 
-    # Filtros 
     df_filtrado = df_logs.copy() 
 
     if len(operaciones_seleccionadas) > 0:
@@ -39,7 +33,6 @@ def filtrar_logs(ruta):
 
     df_filtrado = df_filtrado[(df_filtrado['fecha'].dt.date >= input_inicio) & (df_filtrado['fecha'].dt.date <= input_fin)]
 
-    # Métricas resumidas
     st.write("### Métricas resumidas del log filtrado")
 
     total_insert = len(df_filtrado[df_filtrado['operacion'] == 'INSERT'])
@@ -57,12 +50,10 @@ def filtrar_logs(ruta):
     with c4:
         st.write(f"**Validaciones:** {total_validation}")
 
-    # Mostrar la tabla interactiva
     st.write("### Logs filtrados")
     st.dataframe(df_filtrado)
 
 
-# 8.c Mostrar logs tabulados y sus metricas
 def logs_tabulados(ruta):
     """Muestra todos los logs tabulados y sus métricas."""
 

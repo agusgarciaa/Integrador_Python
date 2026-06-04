@@ -89,25 +89,20 @@ def dataset_detallado():
             separador = "\t" if dataset_elegido == "iadiza" else "," 
 
             archivo_dataset = None
-        
-            # Buscamos el archivo dentro de la carpeta iterando 
+         
             if ruta.exists():
                 for archivo in ruta.iterdir():
                     if archivo.is_file():
                         archivo_dataset = archivo
 
             if archivo_dataset:
-                # me quedo con las columnas
                 df = pd.read_csv(archivo_dataset, sep=separador)
                 lista_columnas = df.columns.to_list()
             
-                # me quedo con el total de regs
                 total_registros = lc.total_registros(archivo_dataset, separador)
             
-                # me quedo con los % de nulos por cols
                 diccionario_nulos = lc.porcentaje_nulos(archivo_dataset, separador) 
 
-                # Mostrar la información
                 st.subheader(f"Ficha técnica del dataset: {dataset_elegido.capitalize()}")
                 st.write("Total de registros:", total_registros)
             
@@ -115,7 +110,6 @@ def dataset_detallado():
                 st.write(lista_columnas)
                 
                 st.write("Porcentaje de valores nulos por columna")
-                # Convertimos el diccionario a DataFrame para que quede como una tabla linda
                 df_nulos = pd.DataFrame(list(diccionario_nulos.items()), columns=["Columna", "% de Nulos"])
                 st.dataframe(df_nulos)
             else:
