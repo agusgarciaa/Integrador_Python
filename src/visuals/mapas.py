@@ -1,11 +1,13 @@
 from streamlit_folium import st_folium
+from folium.plugins import MarkerCluster
 
 import folium
 import pandas as pd
 import streamlit as st
 
+import src.utils.constantes as const
 import src.operaciones.validaciones as va
-from src.utils.web_manager import COLUMNAS_RELEVANTES
+
 
 def mostrar_mapa_interactivo(df_busqueda):
     total_inicial = len(df_busqueda)
@@ -73,7 +75,19 @@ def mostrar_mapa_interactivo(df_busqueda):
         # Creamos el mapa centrado en el promedio geográfico de los puntos a mostrar
         centro_lat = df_render[col_lat].mean()
         centro_lon = df_render[col_lon].mean()
-        mapa = folium.Map(location=[centro_lat, centro_lon], zoom_start=4)
+
+        mapa = folium.Map(location=[centro_lat, centro_lon], zoom_start=4, tiles=None)
+
+        folium.raster_layers.TileLayer(
+            tiles="https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{y}.png",
+            attr="Instituto Geográfico Nacional (IGN) - República Argentina",
+            name="Argenmap (IGN)",
+            overlay=False,
+            control=True,
+            tms=True  
+        ).add_to(mapa)
+
+        marker_cluster = MarkerCluster().add_to(mapa)
         
         # Asignar los colores únicos según las categorías del criterio
         mapeo_colores = {}
@@ -102,12 +116,13 @@ def mostrar_mapa_interactivo(df_busqueda):
                 valor_fila = fila[columna_color]
                 color_marcador = mapeo_colores.get(valor_fila, 'blue')
 
+
             folium.Marker(
                 location=[fila[col_lat], fila[col_lon]],
                 popup=folium.Popup(info_popup, max_width=300),
                 tooltip=valor_id,
-                icon=folium.Icon(color=color_marcador, icon="info-sign")  # <--- Usamos la variable dinámica
-            ).add_to(mapa)
+                icon=folium.Icon(color=color_marcador, icon="info-sign") 
+            ).add_to(marker_cluster)
             
         mapa_data = st_folium(mapa, width=1100, height=500)
 
@@ -118,30 +133,6 @@ def mostrar_mapa_interactivo(df_busqueda):
 
 
 # Ejercicio 6.C - Agustin Garcia
-
-TRADUCCION_COLUMNAS = {
-    "scientificName":   "Nombre científico",
-    "recordedBy":       "Observador",
-    "eventDate":        "Fecha",
-    "stateProvince":    "Provincia",
-    "countryCode":      "País",
-    "country":          "País",
-    "decimalLatitude":  "Latitud",
-    "decimalLongitude": "Longitud",
-    "latitudeDecimal":  "Latitud",
-    "longitudeDecimal": "Longitud",
-    "species":          "Especie",
-    "family":           "Familia",
-    "basisOfRecord":    "Tipo de registro",
-    "inaturalistLogin": "Usuario iNaturalist",
-    "taxonRank":        "Rango taxonómico",
-    "captive":          "¿Cautivo?",
-    "vernacularName":   "Nombre común",
-    "locality":         "Localidad",
-    "behavior":         "Comportamiento",
-    "sex":              "Sexo",
-}
-
 def mostrar_ficha_registro(df_busqueda, nombre_dataset):
     """
     Muestra una ficha con la información taxonómica, lugar y fecha
@@ -170,13 +161,13 @@ def mostrar_ficha_registro(df_busqueda, nombre_dataset):
         return
 
     registro = coincidencias.iloc[0]
-    columnas_ficha = COLUMNAS_RELEVANTES.get(nombre_dataset, [])
+    columnas_ficha = const.COLUMNAS_RELEVANTES.get(nombre_dataset, [])
 
     st.markdown("---")
     st.subheader("Ficha del registro")
 
     ficha = {
-        TRADUCCION_COLUMNAS.get(campo, campo): registro[campo]
+        const.TRADUCCION_COLUMNAS.get(campo, campo): registro[campo]
         for campo in columnas_ficha
         if campo in registro.index and pd.notna(registro[campo]) and str(registro[campo]).strip() != ""
     }

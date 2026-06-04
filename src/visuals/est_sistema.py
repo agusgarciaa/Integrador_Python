@@ -3,7 +3,6 @@ import pandas as pd
 import os
 import csv
 
-
 def filtrar_logs(ruta):
 
     """Muestra la interfaz de filtrado y métricas para el archivo de logs."""

@@ -2,16 +2,13 @@ import streamlit as st
 import pandas as pd
 
 import src.utils.web_manager as wb 
-from src.visuals.mapas import mostrar_mapa_interactivo
-from src.visuals.mapas import mostrar_ficha_registro
-from src.visuals.multimedia import mostrar_multimedia
-
-st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
+import src.visuals.mapas as ma
+import src.visuals.multimedia as mult
 
 st.title("Ficha de Datos")
 st.markdown("Visualización geográfica de las ocurrencias seleccionadas.")
 
-if "dataset_path" not in st.session_state:
+if "dataset_path" not in st.session_state: 
     st.warning(
         "⚠️ No se encontraron parámetros de búsqueda activos. Por favor, realice una consulta en la página de búsqueda primero."
     )
@@ -58,8 +55,8 @@ try:
         st.info("La búsqueda combinada no arrojó resultados para graficar en el mapa.")
     else:
 
-        mostrar_mapa_interactivo(df_busqueda_final)
-        mostrar_ficha_registro(df_busqueda_final, st.session_state.dataset_actual)
+        ma.mostrar_mapa_interactivo(df_busqueda_final)
+        ma.mostrar_ficha_registro(df_busqueda_final, st.session_state.dataset_actual)
         match st.session_state.dataset_actual:
             case 'xenocanto':
                 st.subheader('Galería de Audio')
@@ -67,7 +64,10 @@ try:
                 st.subheader('Galería de Imágenes')
             case _:
                 st.info('El dataset no tiene multimedia')
-        mostrar_multimedia(st.session_state.dataset_actual)
+        mult.mostrar_multimedia(st.session_state.dataset_actual)
 
 except Exception as e:
     st.error(f"Error al reconstruir los datos para el mapa: {e}")
+
+if st.button("Volver a la Búsqueda", type="primary"):
+    st.switch_page("pages/03_Busqueda.py")

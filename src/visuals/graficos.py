@@ -34,8 +34,6 @@ def graficar_registros_por_ubicacion():
 
     df = wm.dataframe_dataset(archivo, separador=separador)
 
-    st.subheader("Distribución geográfica de registros")
-
     # Mapeo de columnas a minúsculas para evitar problemas de formato
     columnas_mapeadas = {col.lower(): col for col in df.columns}
     col_pais = columnas_mapeadas.get('country') 
@@ -118,7 +116,7 @@ def graficar_registros_por_ubicacion():
 
 
 # Función 3.C - Agustin Garcia
-def grafico_distribucion_taxonomica(df, nombre_dataset):
+def graficar_distribucion_taxonomica(df, nombre_dataset):
     """
     Muestra un gráfico de barras con la distribución de registros
     por nivel taxonómico (clase, orden o familia).
@@ -166,10 +164,9 @@ def grafico_distribucion_taxonomica(df, nombre_dataset):
 
 
 # Funcion 3.D - Fe Cordoba
-def gr_porcentaje_nulos(nombre_dataset, archivo):
+def graficar_porcentaje_nulos(nombre_dataset, archivo):
     """Crea un grafico de barras horizontales de los valores no nulos por columna."""
 
-    st.subheader("Grafico sobre el porcentaje de datos no nulos por columna")
     if(nombre_dataset == "iadiza"):
         separador = "\t"
     else:

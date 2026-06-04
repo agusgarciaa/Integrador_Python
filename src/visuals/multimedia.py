@@ -3,7 +3,6 @@ from pathlib import Path
 import streamlit as st
 import pandas as pd
 
-
 def mostrar_multimedia(nombre_dataset):
     id_mapa = st.session_state.get("id_multimedia")
 

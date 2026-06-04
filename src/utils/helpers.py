@@ -113,6 +113,7 @@ def calcular_coordenada(lector, indice):
 
 # Funcion de apoyo para el ejercicio 3.A - Sofia Martins
 def numero(dato):
+    dato = str(dato)
     aux=dato.strip().replace('-','',1).replace('.','',1)
     return aux.isdigit()and dato.strip() !=""
 
