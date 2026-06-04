@@ -38,7 +38,6 @@ try:
     else:
         df_busqueda1 = df_original.copy()
 
-    # Usamos .get() por si algún filtro quedó vacío, para que devuelva None y no rompa la función
     df_busqueda2 = wb.aplicar_filtros(
     	df_original,
     	nombres_cientificos=st.session_state.get("filtro_nombre"),
@@ -54,11 +53,6 @@ try:
         ignore_index=True
     ).drop_duplicates()
 
-    #st.write("Resultados 2.a:", len(df_busqueda1))
-    #st.write("Resultados 2.b:", len(df_busqueda2))
-    #st.write("Resultado final:", len(df_busqueda_final))
-
-    # Envio el dataset final cruzado al mapa
     if df_busqueda_final.empty:
         st.info("La búsqueda combinada no arrojó resultados para graficar en el mapa.")
     else:

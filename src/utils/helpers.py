@@ -281,8 +281,7 @@ def obtener_nombres_datasets():
     return datasets
 
 
-# para 2.b Fe Cordoba
-# obtener valores de una columna 
+# Para 2.b - Fe Cordoba
 def obtener_opciones(df, columna):
     """
     Obtiene los valores únicos, no nulos y como texto de una columna.
@@ -296,7 +295,7 @@ def obtener_opciones(df, columna):
     )
 
 
-# obtiene los country code del dataframe
+# Para 2.b - Fe Cordoba
 def obtener_paises_validos(df):
     """
     Filtra y obtiene los country codes válidos del dataframe.

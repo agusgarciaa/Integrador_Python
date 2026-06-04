@@ -39,10 +39,10 @@ def opcion_sidebar(separador=','):
 
     opciones = ["Seleccionar dataset:"] + datasets
 
-    indice_dataset = 0  # Muestra por defecto seleccionar dataset: como placeholder
+    indice_dataset = 0  
 
     if dataset_actual in datasets:
-        indice_dataset = datasets.index(dataset_actual) + 1  # +1 por el placeholder
+        indice_dataset = datasets.index(dataset_actual) + 1  
 
     dataset_seleccionado = st.sidebar.selectbox(
         "Seleccione un dataset:",
@@ -55,7 +55,6 @@ def opcion_sidebar(separador=','):
         st.session_state.fecha_seleccion = None
         return
 
-    # Detecta cambio de dataset
     if dataset_seleccionado != st.session_state.dataset_actual:
         st.session_state.dataset_actual = dataset_seleccionado
         st.session_state.fecha_seleccion = datetime.now()
@@ -171,14 +170,12 @@ def aplicar_filtros(
     """Filtra el DataFrame según los parámetros de búsqueda seleccionados."""
     df_filtrado = df.copy()
 
-    # Nombre científico
     if nombres_cientificos:
 
         df_filtrado = df_filtrado[
             df_filtrado["scientificName"].isin(nombres_cientificos)
         ]
 
-    # Observador
     if observador:
 
         df_filtrado = df_filtrado[
@@ -208,9 +205,7 @@ def aplicar_filtros(
             patron_paises = "|".join(paises)
             df_filtrado = df_filtrado[df_filtrado['country'].str.contains(patron_paises, case=False, na=False)]
 
-    # Fechas 
     if "eventDate" in df_filtrado.columns:
-        # Convertimos la columna completa de forma vectorizada
         df_filtrado["eventDate"] = pd.to_datetime(df_filtrado["eventDate"], errors="coerce", utc=True)
 
         if fecha_inicio and fecha_fin:
