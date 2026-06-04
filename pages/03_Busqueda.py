@@ -18,25 +18,16 @@ if not dataset:
     st.stop()  # Detiene la ejecución del resto de la página
 RUTA_DATASET = Path("processed_datasets") / dataset
 
-
+# filtro de 2.a
 df_resultados, archivo_encontrado, columna_seleccionada, termino_busqueda = wb.mostrar_busqueda_texto_libre()
 
 if df_resultados is not None:
     st.write(f"Registros encontrados: {len(df_resultados)}")
     st.dataframe(df_resultados, use_container_width=True)
     
-    if not df_resultados.empty:
-        if st.button("Ver ficha", type="primary"):
-            st.session_state["dataset_path"] = str(archivo_encontrado)
-            st.session_state["columna_busqueda"] = columna_seleccionada
-            st.session_state["texto_busqueda"] = termino_busqueda
-
-            st.switch_page("pages/07_Ficha_de_datos.py")
-
 st.divider()
 
-# 2.b Fe Cordoba
-# Cargar dataset
+# filtro de 2.b
 archivo = next(RUTA_DATASET.iterdir(), None)
 if archivo is None:
     st.error("No hay archivo en la carpeta")
@@ -84,7 +75,45 @@ df_filtrado = wb.aplicar_filtros(
     fecha_fin=fecha_fin
 )
 
-st.divider() 
+st.write(f"### Registros encontrados: {len(df_filtrado)}")
+st.dataframe(df_filtrado, use_container_width=True)
+
+st.divider()
+
+# boton para redirigir con criterios en session state
+if st.button("Ver ficha", type="primary"):
+    # Guardamos siempre la ruta porque es obligatoria para la P7
+    st.session_state["dataset_path"] = str(archivo)
+    
+    # si 'df_resultados' existe, si no está vacío y si hay un término buscado
+    if df_resultados is not None and not df_resultados.empty and termino_busqueda:
+        st.session_state["columna_busqueda"] = columna_seleccionada
+        st.session_state["texto_busqueda"] = termino_busqueda
+    else:
+        # Si no usó el buscador, limpiamos las variables
+        st.session_state["columna_busqueda"] = None
+        st.session_state["texto_busqueda"] = None
+
+    # si 'df_filtrado' arrojó resultados
+    if not df_filtrado.empty:
+        st.session_state["filtro_nombre"] = filtro_nombre
+        st.session_state["filtro_observador"] = filtro_observador
+        st.session_state["filtro_pais"] = filtro_pais
+        st.session_state["filtro_provincia"] = filtro_provincia
+        st.session_state["fecha_inicio"] = fecha_inicio
+        st.session_state["fecha_fin"] = fecha_fin
+    else:
+        # sino se usaron o no dieron resultados, pasamos todo "limpio"
+        st.session_state["filtro_nombre"] = []
+        st.session_state["filtro_observador"] = ""
+        st.session_state["filtro_pais"] = []
+        st.session_state["filtro_provincia"] = []
+        st.session_state["fecha_inicio"] = None
+        st.session_state["fecha_fin"] = None
+
+    st.switch_page("pages/07_Ficha_de_datos.py")
+
+    st.divider()
 
 # 2.C
 wb.mostrar_resultados(df_filtrado, st.session_state.dataset_actual)
