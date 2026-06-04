@@ -85,6 +85,7 @@ def mostrar_mapa_interactivo(df_busqueda):
       # Dibujamos sobre df_render
         for indice, fila in df_render.iterrows():
             # Buscamos el valor real usando .get() encadenado
+            valor_id = str(fila.get('id', '') or fila.get('gbifID', '') or fila.get('occurrenceID', '')).strip()
             valor_especie = fila.get('scientificName') or fila.get('species') or fila.get('genus') or 'No disponible'
             valor_pais = fila.get('country') or fila.get('countryCode') or 'No disponible'
             valor_institucion = fila.get('institutionCode') or fila.get('collectionCode') or 'No disponible'
@@ -104,6 +105,7 @@ def mostrar_mapa_interactivo(df_busqueda):
             folium.Marker(
                 location=[fila[col_lat], fila[col_lon]],
                 popup=folium.Popup(info_popup, max_width=300),
+                tooltip=valor_id,
                 icon=folium.Icon(color=color_marcador, icon="info-sign")  # <--- Usamos la variable dinámica
             ).add_to(mapa)
             
@@ -111,6 +113,8 @@ def mostrar_mapa_interactivo(df_busqueda):
 
         if mapa_data and mapa_data.get("last_object_clicked"):
             st.session_state.punto_seleccionado = mapa_data["last_object_clicked"]
+            if mapa_data.get("last_object_clicked_tooltip"):
+                st.session_state.id_multimedia = mapa_data["last_object_clicked_tooltip"]
 
 
 # Ejercicio 6.C - Agustin Garcia

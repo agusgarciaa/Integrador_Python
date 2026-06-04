@@ -3,6 +3,7 @@ import streamlit as st
 import src.utils.web_manager as wb 
 from src.visuals.mapas import mostrar_mapa_interactivo
 from src.visuals.mapas import mostrar_ficha_registro
+from src.visuals.multimedia import mostrar_multimedia
 
 st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
 
@@ -39,6 +40,14 @@ try:
 
     mostrar_mapa_interactivo(df_busqueda)
     mostrar_ficha_registro(df_busqueda, st.session_state.dataset_actual)
+    match st.session_state.dataset_actual:
+        case 'xenocanto':
+            st.subheader('Galería de Audio')
+        case 'inaturalist':
+            st.subheader('Galería de Imágenes')
+        case _:
+            st.info('El dataset no tiene multimedia')
+    mostrar_multimedia(st.session_state.dataset_actual)
 
 except Exception as e:
     st.error(f"Error al reconstruir los datos para el mapa: {e}")
