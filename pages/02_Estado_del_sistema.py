@@ -15,5 +15,5 @@ ruta = rut.obtener_ruta_log("logs", "operations.log")
 # 4.E - Fe Cordoba
 est.filtrar_logs(ruta)
 
-# 8.c - Fe Cordoba
+# 8.C - Fe Cordoba
 est.logs_tabulados(ruta)

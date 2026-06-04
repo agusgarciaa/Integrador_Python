@@ -176,19 +176,12 @@ def gr_porcentaje_nulos(nombre_dataset, archivo):
        separador = ","
     diccionario_nulos = lc.porcentaje_nulos(archivo,separador)
 
-    # Creamos una Serie de Pandas con ese diccionario
     serie_nulos = pd.Series(diccionario_nulos)
 
-    # Restamos a cada valor
     serie_no_nulos = 100.0 - serie_nulos
 
-    # Ordenamos de menor a mayor por que el grafico se construye de abajo hacia arriba
     serie_ordenada = serie_no_nulos.sort_values(ascending=True)
 
-    #st.write(serie_ordenada.head(20)) las primeras 20 filas que son todas nulas
-    #st.write(serie_ordenada.tail(20)) las ultimas 20 filas que son todas completas
-
-    # Creamos gráfico
     if(nombre_dataset == "iadiza"):
         ax = serie_ordenada.plot(
         kind='barh',
@@ -200,20 +193,15 @@ def gr_porcentaje_nulos(nombre_dataset, archivo):
         figsize=(12, 12)
         )
 
-    # Título
     ax.set_title("Porcentaje de valores no nulos por columna")
 
-    # Etiquetas de ejes
     ax.set_xlabel("Porcentaje")
     ax.set_ylabel("Columnas")
 
-    # Tamaño de texto del eje Y
     ax.tick_params(axis='y', labelsize=6)
 
-    # Ajuste automático
     plt.tight_layout()
 
-    # Obtener figura
     fig = ax.get_figure()
 
     st.pyplot(fig)
