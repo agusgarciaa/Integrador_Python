@@ -4,7 +4,9 @@ import pandas as pd
 import streamlit as st
 
 import src.operaciones.validaciones as va
-import src.utils.web_manager as wm
+import src.utils.web_manager as wm  
+import src.utils.helpers as hp
+import src.operaciones.lecturas as lc
 
 
 def generar_tabla_comparativa():
@@ -84,3 +86,54 @@ def generar_tabla_comparativa():
     if datos_comparativos:
         return pd.DataFrame(datos_comparativos)
     return None
+
+
+# Funcion 5.B - Fe Cordoba
+def dataset_detallado():
+    """Muestra un pequeño resumen de 3 aspectos sobre el dataset seleccionado."""
+
+    st.header("Datasets en detalle")
+
+    datasets = hp.obtener_nombres_datasets()
+
+    if datasets:
+        dataset_elegido = st.selectbox("Seleccione un dataset para ver en detalle:", datasets)
+
+        if dataset_elegido:
+            ruta = Path("processed_datasets") / dataset_elegido
+            separador = "\t" if dataset_elegido == "iadiza" else "," 
+
+            archivo_dataset = None
+        
+            # Buscamos el archivo dentro de la carpeta iterando 
+            if ruta.exists():
+                for archivo in ruta.iterdir():
+                    if archivo.is_file():
+                        archivo_dataset = archivo
+
+            if archivo_dataset:
+                # me quedo con las columnas
+                df = pd.read_csv(archivo_dataset, sep=separador)
+                lista_columnas = df.columns.to_list()
+            
+                # me quedo con el total de regs
+                total_registros = lc.total_registros(archivo_dataset, separador)
+            
+                # me quedo con los % de nulos por cols
+                diccionario_nulos = lc.porcentaje_nulos(archivo_dataset, separador) 
+
+                # Mostrar la información
+                st.subheader(f"Ficha técnica del dataset: {dataset_elegido.capitalize()}")
+                st.write("Total de registros:", total_registros)
+            
+                st.write("Ver lista completa de columnas:")
+                st.write(lista_columnas)
+                
+                st.write("Porcentaje de valores nulos por columna")
+                # Convertimos el diccionario a DataFrame para que quede como una tabla linda
+                df_nulos = pd.DataFrame(list(diccionario_nulos.items()), columns=["Columna", "% de Nulos"])
+                st.dataframe(df_nulos)
+            else:
+                st.error(f"No se encontró ningún archivo dentro de la carpeta {dataset_elegido}")
+    else:
+        st.error("No hay datasets disponibles")
