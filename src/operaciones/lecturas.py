@@ -1,6 +1,6 @@
-import csv
-
 from collections import Counter
+
+import csv
 
 import src.utils.helpers as hp
 

@@ -1,4 +1,3 @@
-# src/exploraciones.py
 from pathlib import Path
 
 import pandas as pd
@@ -11,13 +10,25 @@ import src.operaciones.lecturas as lc
 
 
 def generar_tabla_comparativa():
+    """Genera un DataFrame con métricas de calidad por dataset procesado.
+
+    Recorre processed_datasets/ y calcula porcentaje de coordenadas
+    válidas, fechas válidas y completitud promedio de campos.
+
+    Returns:
+        pandas.DataFrame: Una fila por dataset con las métricas calculadas.
+        None: Si la carpeta no existe, está vacía o no hay registros válidos.
+    """
     ruta_procesados = Path("processed_datasets")
 
     if not ruta_procesados.exists():
         st.warning("No se encontró la carpeta 'processed_datasets'.")
         return None
 
-    datasets_disponibles = [carpeta.name for carpeta in ruta_procesados.iterdir() if carpeta.is_dir()]
+    datasets_disponibles = [
+        carpeta.name for carpeta in ruta_procesados.iterdir()
+        if carpeta.is_dir()
+    ]
 
     if not datasets_disponibles:
         st.warning("No se encontraron datasets procesados en el sistema.")
@@ -39,18 +50,22 @@ def generar_tabla_comparativa():
             with st.spinner(f"Analizando {dataset}..."):
                 df = wm.dataframe_dataset(archivo_encontrado, separador=separador)
                 total_registros = len(df)
-                
+
                 if total_registros == 0:
                     continue
 
                 lats_validas = df.apply(va.validar_campo_latitud, axis=1)
                 lons_validas = df.apply(va.validar_campo_longitud, axis=1)
-                
-                coordenadas_ok = (lats_validas == True) & (lons_validas == True)
+
+                coordenadas_ok = lats_validas & lons_validas
                 porcentaje_coordenadas = (coordenadas_ok.sum() / total_registros) * 100
 
-                col_fecha = 'eventDate' if 'eventDate' in df.columns else ('fecha' if 'fecha' in df.columns else None)
-                
+                col_fecha = (
+                    "eventDate" if "eventDate" in df.columns
+                    else "fecha" if "fecha" in df.columns
+                    else None
+                )
+
                 if col_fecha:
                     fechas_validadas = df[col_fecha].apply(va.chequear_fecha)
                     porcentaje_fechas = (fechas_validadas.notnull().sum() / total_registros) * 100
@@ -58,8 +73,8 @@ def generar_tabla_comparativa():
                     porcentaje_fechas = 0.0
 
                 proporcion_nulos_global = df.isnull().mean().mean()
-                promedio_campos_completos = (1 - proporcion_nulos_global) * 100 
-                
+                promedio_campos_completos = (1 - proporcion_nulos_global) * 100
+
                 datos_comparativos.append({
                     "Dataset": dataset,
                     "Cantidad de registros": total_registros,
@@ -89,25 +104,20 @@ def dataset_detallado():
             separador = "\t" if dataset_elegido == "iadiza" else "," 
 
             archivo_dataset = None
-        
-            # Buscamos el archivo dentro de la carpeta iterando 
+         
             if ruta.exists():
                 for archivo in ruta.iterdir():
                     if archivo.is_file():
                         archivo_dataset = archivo
 
             if archivo_dataset:
-                # me quedo con las columnas
                 df = pd.read_csv(archivo_dataset, sep=separador)
                 lista_columnas = df.columns.to_list()
             
-                # me quedo con el total de regs
                 total_registros = lc.total_registros(archivo_dataset, separador)
             
-                # me quedo con los % de nulos por cols
                 diccionario_nulos = lc.porcentaje_nulos(archivo_dataset, separador) 
 
-                # Mostrar la información
                 st.subheader(f"Ficha técnica del dataset: {dataset_elegido.capitalize()}")
                 st.write("Total de registros:", total_registros)
             
@@ -115,7 +125,6 @@ def dataset_detallado():
                 st.write(lista_columnas)
                 
                 st.write("Porcentaje de valores nulos por columna")
-                # Convertimos el diccionario a DataFrame para que quede como una tabla linda
                 df_nulos = pd.DataFrame(list(diccionario_nulos.items()), columns=["Columna", "% de Nulos"])
                 st.dataframe(df_nulos)
             else:
