@@ -52,7 +52,7 @@ def mostrar_multimedia(nombre_dataset):
         audios_validos = 0
         for i,fila in coincidencias.iterrows():
             url_audio = fila.get(columna_url, '')
-            url_audio_txt = str(fila.get(columna_url, '')).strip().lower()
+            url_audio_txt = str(fila.get(columna_url, '')).strip()
             formato = str(fila.get('type', ''))
             if (formato.lower() == 'sound') and (pd.notna(url_audio)) and (url_audio_txt.startswith('http')):
                 st.audio(url_audio_txt)
