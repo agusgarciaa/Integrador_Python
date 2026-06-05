@@ -1,6 +1,5 @@
-from pathlib import Path
-import pandas as pd
 import streamlit as st
+
 import src.utils.rutas as rut
 import src.utils.web_manager as wb
 import src.visuals.formularios as form

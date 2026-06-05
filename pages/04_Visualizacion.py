@@ -1,13 +1,11 @@
 from pathlib import Path
-from datetime import datetime
 
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
 
 import src.utils.web_manager as wb 
 import src.visuals.graficos as gr
-import src.operaciones.lecturas as lec
+import src.visuals.tablas as tb
 
 
 st.title("Página de Visualización")
@@ -38,7 +36,7 @@ tab_ubicacion, tab_taxonomica, tab_nulos, tab_temporal = st.tabs([
 with tab_ubicacion:
     # Llamar al ejercicio 3.A - Ana Freitas
     st.subheader("Grafico distribución geográfica de registros")
-    gr.graficar_registros_por_ubicacion()
+    gr.graficar_registros_por_ubicacion(df)
 
 
 with tab_taxonomica:
@@ -77,7 +75,7 @@ with tab_temporal:
 # Ejercicio 3.E - Lucía Cipolla)
 st.markdown("---")
 st.subheader('Tabla comparativa')
-datos_raw = wb.tabla_comparativa_datasets()
+datos_raw = tb.tabla_comparativa_datasets()
 dataframe_tabla = pd.DataFrame(datos_raw).T
 if not dataframe_tabla.empty:
     tabla_formateada = dataframe_tabla.style.format({

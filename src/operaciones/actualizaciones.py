@@ -2,7 +2,6 @@ import csv
 import os
 
 import src.utils.file_manager as fm
-import src.utils.helpers as hp
 import src.operaciones.validaciones as va
 import src.operaciones.registros as re
 import src.operaciones.lecturas as le
@@ -51,7 +50,7 @@ def registrar_filtro (path,c_delimiter=',',c_encoding='utf-8',**kwargs):
                 if (str(cel).strip().lower() != val[n]):
                     valido = False
                     break
-            if (valido==True):
+            if (valido):
                 ret.append(fila)
 
     return ret

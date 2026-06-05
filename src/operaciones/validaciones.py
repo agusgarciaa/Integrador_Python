@@ -1,7 +1,6 @@
-import csv
-import os
-
 from datetime import datetime
+
+import csv
 
 import src.utils.helpers as hp
 import src.operaciones.registros as re

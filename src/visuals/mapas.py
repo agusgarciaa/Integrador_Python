@@ -63,8 +63,6 @@ def mostrar_mapa_interactivo(df_busqueda):
     df_mapa[col_lon] = df_mapa[col_lon].astype(float)
 
     if len(df_mapa) > 0:
-        # Si el usuario NO filtró nada, recortamos a 100 primeros
-        # Si filtró un registro específico, entra directo al else sin recortar.
         MAX_PUNTOS = 100
         if len(df_mapa) > MAX_PUNTOS:
             st.info(f"💡 Mostrando los primeros {MAX_PUNTOS} registros.")
@@ -72,7 +70,6 @@ def mostrar_mapa_interactivo(df_busqueda):
         else:
             df_render = df_mapa 
         
-        # Creamos el mapa centrado en el promedio geográfico de los puntos a mostrar
         centro_lat = df_render[col_lat].mean()
         centro_lon = df_render[col_lon].mean()
 
@@ -87,18 +84,22 @@ def mostrar_mapa_interactivo(df_busqueda):
             tms=True  
         ).add_to(mapa)
 
-        marker_cluster = MarkerCluster().add_to(mapa)
+        # --- MODIFICACIÓN DE SEGURIDAD ---
+        # Solo creamos el clúster si hay muchos puntos sueltos. 
+        # Si filtramos y quedan pocos, los metemos directo al mapa para que no se dupliquen.
+        usar_cluster = len(df_render) > 10
+        if usar_cluster:
+            contenedor_puntos = MarkerCluster().add_to(mapa)
+        else:
+            contenedor_puntos = mapa
         
-        # Asignar los colores únicos según las categorías del criterio
         mapeo_colores = {}
         if columna_color:
             categorias_unicas = df_render[columna_color].unique().tolist()
             for contador, categoria in enumerate(categorias_unicas):
                 mapeo_colores[categoria] = colores_disponibles[contador % len(colores_disponibles)]
 
-      # Dibujamos sobre df_render
         for indice, fila in df_render.iterrows():
-            # Buscamos el valor real usando .get() encadenado
             valor_id = str(fila.get('id', '') or fila.get('gbifID', '') or fila.get('occurrenceID', '')).strip()
             valor_especie = fila.get('scientificName') or fila.get('species') or fila.get('genus') or 'No disponible'
             valor_pais = fila.get('country') or fila.get('countryCode') or 'No disponible'
@@ -110,27 +111,36 @@ def mostrar_mapa_interactivo(df_busqueda):
                 f"<b>Institución:</b> {valor_institucion}"
             )
 
-            # determinar el color
-            color_marcador = 'blue'  # Color base por defecto
+            color_marcador = 'blue'
             if columna_color:
                 valor_fila = fila[columna_color]
                 color_marcador = mapeo_colores.get(valor_fila, 'blue')
 
-
+            # Agregamos el marcador al contenedor correspondiente (mapa o clúster)
             folium.Marker(
                 location=[fila[col_lat], fila[col_lon]],
                 popup=folium.Popup(info_popup, max_width=300),
                 tooltip=valor_id,
                 icon=folium.Icon(color=color_marcador, icon="info-sign") 
-            ).add_to(marker_cluster)
+            ).add_to(contenedor_puntos) # <--- CAMBIADO AQUÍ
             
-        mapa_data = st_folium(mapa, width=1100, height=500)
+        # --- CLAVE DINÁMICA ABSOLUTA ---
+        # Usamos un truco combinando el largo del DataFrame y el ID del primer elemento.
+        # Esto genera un identificador único por búsqueda que destruye el mapa viejo del navegador.
+        id_primer_registro = df_render.iloc[0].get('id', 0) if len(df_render) > 0 else 0
+        mapa_key = f"mapa_folium_dinamico_{len(df_render)}_{id_primer_registro}"
+
+        mapa_data = st_folium(
+            mapa, 
+            width=1100, 
+            height=500,
+            key=mapa_key # <--- SE ASIGNA LA KEY ÚNICA
+        )
 
         if mapa_data and mapa_data.get("last_object_clicked"):
             st.session_state.punto_seleccionado = mapa_data["last_object_clicked"]
             if mapa_data.get("last_object_clicked_tooltip"):
                 st.session_state.id_multimedia = mapa_data["last_object_clicked_tooltip"]
-
 
 # Ejercicio 6.C - Agustin Garcia
 def mostrar_ficha_registro(df_busqueda, nombre_dataset):
@@ -173,4 +183,8 @@ def mostrar_ficha_registro(df_busqueda, nombre_dataset):
     }
 
     df_ficha = pd.DataFrame(ficha.items(), columns=["Campo", "Valor en el registro"])
+    df_ficha["Valor en el registro"] = df_ficha["Valor en el registro"].astype(str)
+
     st.table(df_ficha)
+
+    return registro

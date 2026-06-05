@@ -23,48 +23,49 @@ texto = st.session_state.get("texto_busqueda")
 
 try:
     separador_caracter = "\t" if "iadiza" in str(path_archivo).lower() else ","
+    df_busqueda_final = wb.dataframe_dataset(path_archivo, separador=separador_caracter)
     
-    df_original = wb.dataframe_dataset(path_archivo, separador=separador_caracter)
-    
-    if texto:
-        mascara = df_original[columna].astype(str).str.contains(
-            texto, 
+
+    if columna and texto and str(texto).strip() != "":
+        mascara = df_busqueda_final[columna].astype(str).str.contains(
+            str(texto).strip(), 
             case=False, 
             na=False
         )
-        df_busqueda1 = df_original[mascara].copy()
-    else:
-        df_busqueda1 = df_original.copy()
+        df_busqueda_final = df_busqueda_final[mascara].copy()
 
-    df_busqueda2 = wb.aplicar_filtros(
-    	df_original,
-    	nombres_cientificos=st.session_state.get("filtro_nombre"),
-    	observador=st.session_state.get("filtro_observador"),
-    	paises=st.session_state.get("filtro_pais"),
-    	provincias=st.session_state.get("filtro_provincia"),
-    	fecha_inicio=st.session_state.get("fecha_inicio"),
-    	fecha_fin=st.session_state.get("fecha_fin")
-	)
-
-    df_busqueda_final = pd.concat(
-        [df_busqueda1, df_busqueda2],
-        ignore_index=True
-    ).drop_duplicates()
+    tiene_filtros_avanzados = any(st.session_state.get(f) for f in ["filtro_nombre", "filtro_observador", "filtro_pais", "filtro_provincia"])
+    
+    if tiene_filtros_avanzados and not df_busqueda_final.empty:
+        df_busqueda_final = wb.aplicar_filtros(
+            df_busqueda_final, 
+            nombres_cientificos=st.session_state.get("filtro_nombre"),
+            observador=st.session_state.get("filtro_observador"),
+            paises=st.session_state.get("filtro_pais"),
+            provincias=st.session_state.get("filtro_provincia"),
+            fecha_inicio=st.session_state.get("fecha_inicio"),
+            fecha_fin=st.session_state.get("fecha_fin")
+        )
 
     if df_busqueda_final.empty:
         st.info("La búsqueda combinada no arrojó resultados para graficar en el mapa.")
     else:
-
         ma.mostrar_mapa_interactivo(df_busqueda_final)
-        ma.mostrar_ficha_registro(df_busqueda_final, st.session_state.dataset_actual)
-        match st.session_state.dataset_actual:
-            case 'xenocanto':
+        
+        registro_activo = ma.mostrar_ficha_registro(df_busqueda_final, st.session_state.dataset_actual)
+        
+        if registro_activo is not None and not registro_activo.empty:
+            df_un_registro = pd.DataFrame([registro_activo])
+            
+            dataset_limpio = str(st.session_state.dataset_actual).lower().strip()
+            if 'xenocanto' in dataset_limpio:
                 st.subheader('Galería de Audio')
-            case 'inaturalist':
+            elif 'inaturalist' in dataset_limpio:
                 st.subheader('Galería de Imágenes')
-            case _:
+            else:
                 st.info('El dataset no tiene multimedia')
-        mult.mostrar_multimedia(st.session_state.dataset_actual)
+                
+            mult.mostrar_multimedia(st.session_state.dataset_actual)
 
 except Exception as e:
     st.error(f"Error al reconstruir los datos para el mapa: {e}")
