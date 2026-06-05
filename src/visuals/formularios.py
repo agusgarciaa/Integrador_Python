@@ -1,14 +1,11 @@
 from pathlib import Path
-from datetime import datetime
 
 import streamlit as st 
 import pandas as pd
 
-import src.utils.web_manager as wm
 import src.operaciones.validaciones as va
 import src.operaciones.eliminaciones as e
 import src.operaciones.actualizaciones as act
-import src.operaciones.registros as re
 
 
 def insertar_nuevo_registro(df, archivo_target, separador):
@@ -183,50 +180,75 @@ def editar_registro ():
 
 
 # Función 4.D - Sofia Martins
-def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,df): 
-  df_vistaprevia=pd.DataFrame()
-  st.subheader("Seccion para eliminacion de registros")
-  modalidad=st.selectbox("Selecione la modalidad de eliminacion",["por identificador unico","por valor de una columna","por condicion sobre una columna"])
-  if modalidad=="por identificador unico":
-      id_unico=st.text_input("ingrese el identificador del registro a eliminar")
-      if id_unico:
-          posibles_id=df.filter(items=["id","gbifID","ocurrenceID"])
-          filtro=(posibles_id.astype(str)==id_unico).any(axis=1)
-          df_vistaprevia=df[filtro]
-  if modalidad=="por valor de una columna":
-      columna=st.selectbox("seleccione la columna donde desea eliminar registros",df.columns)
-      valores=st.text_input("ingresa los valores a eliminar separados por comas")
-      if valores: 
-        lista=valores.split(",")
-        df_vistaprevia=df[df[columna].astype(str).isin(lista)]
-  if modalidad=="por condicion sobre una columna":
-      columna=st.selectbox("seleccione la columna donde desea eliminar registros",df.columns)
-      valor=st.text_input("ingresa el valor a comparar")
-      condicion=st.selectbox("seleccione la condicion de eliminacion",["==",">","<",">=","<=","!="])
-      if valor:
-        try:
-          valor_num=float(valor)
-          numero=pd.to_numeric(df[columna], errors='coerce')
-          if condicion == "==": df_vistaprevia = df[numero == valor_num]
-          elif condicion == ">": df_vistaprevia = df[numero > valor_num]
-          elif condicion == "<": df_vistaprevia = df[numero < valor_num]
-          elif condicion == ">=": df_vistaprevia = df[numero >= valor_num]
-          elif condicion == "<=": df_vistaprevia = df[numero <= valor_num]
-          elif condicion == "!=": df_vistaprevia = df[numero != valor_num]
-        except ValueError:
-          if condicion == "==": df_vistaprevia = df[df[columna].astype(str) == valor]
-          elif condicion == "!=": df_vistaprevia = df[df[columna].astype(str) != valor]
-          else: st.error("condicion no valida para valores no numericos")
+def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations, delimiter, df): 
+    df_vistaprevia = pd.DataFrame()
+    
+    st.subheader("Seccion para eliminacion de registros")
+    modalidad = st.selectbox(
+        "Selecione la modalidad de eliminacion",
+        ["por identificador unico", "por valor de una columna", "por condicion sobre una columna"]
+    )
+    
+    if modalidad == "por identificador unico":
+        id_unico = st.text_input("ingrese el identificador del registro a eliminar")
         
-  if not df_vistaprevia.empty:
-      st.subheader("vista previa de los registros que seran eliminados")
-      st.dataframe(df_vistaprevia)
-      if st.button("confirmar la eliminacion"):
-          if modalidad=="por identificador unico":
-              e.eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations, id_unico)
-          elif modalidad=="por valor de una columna":
-              e.eliminar_registros_por_valor(ruta_raw, ruta_processed, ruta_operations, columna, lista,delimiter)
-          elif modalidad=="por condicion sobre una columna":
-              e.eliminar_por_condicion(ruta_raw, ruta_processed, ruta_operations, columna, condicion,valor,delimiter)
-          st.success("se eliminaron los registros")
-          st.rerun()
+        if id_unico:
+            posibles_id = df.filter(items=["id", "gbifID", "ocurrenceID"])
+            filtro = (posibles_id.astype(str) == id_unico).any(axis=1)
+            df_vistaprevia = df[filtro]
+            
+    if modalidad == "por valor de una columna":
+        columna = st.selectbox("seleccione la columna donde desea eliminar registros", df.columns)
+        valores = st.text_input("ingresa los valores a eliminar separados por comas")
+        
+        if valores: 
+            lista = valores.split(",")
+            df_vistaprevia = df[df[columna].astype(str).isin(lista)]
+            
+    if modalidad == "por condicion sobre una columna":
+        columna = st.selectbox("seleccione la columna donde desea eliminar registros", df.columns)
+        valor = st.text_input("ingresa el valor a comparar")
+        condicion = st.selectbox("seleccione la condicion de eliminacion", ["==", ">", "<", ">=", "<=", "!="])
+        
+        if valor:
+            try:
+                valor_num = float(valor)
+                numero = pd.to_numeric(df[columna], errors='coerce')
+                
+                if condicion == "==": 
+                    df_vistaprevia = df[numero == valor_num]
+                elif condicion == ">": 
+                    df_vistaprevia = df[numero > valor_num]
+                elif condicion == "<": 
+                    df_vistaprevia = df[numero < valor_num]
+                elif condicion == ">=": 
+                    df_vistaprevia = df[numero >= valor_num]
+                elif condicion == "<=": 
+                    df_vistaprevia = df[numero <= valor_num]
+                elif condicion == "!=": 
+                    df_vistaprevia = df[numero != valor_num]
+                
+            except ValueError:
+                if condicion == "==": 
+                    df_vistaprevia = df[df[columna].astype(str) == valor]
+                elif condicion == "!=": 
+                    df_vistaprevia = df[df[columna].astype(str) != valor]
+                else: 
+                    st.error("condicion no valida para valores no numericos")
+
+    if not df_vistaprevia.empty:
+        st.subheader("vista previa de los registros que seran eliminados")
+        st.dataframe(df_vistaprevia)
+        
+        if st.button("confirmar la eliminacion"):
+            if modalidad == "por identificador unico":
+                e.eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations, id_unico)
+                
+            elif modalidad == "por valor de una columna":
+                e.eliminar_registros_por_valor(ruta_raw, ruta_processed, ruta_operations, columna, lista, delimiter)
+                
+            elif modalidad == "por condicion sobre una columna":
+                e.eliminar_por_condicion(ruta_raw, ruta_processed, ruta_operations, columna, condicion, valor, delimiter)
+                
+            st.success("se eliminaron los registros")
+            st.rerun()

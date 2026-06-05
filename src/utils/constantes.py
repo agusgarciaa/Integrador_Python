@@ -63,3 +63,10 @@ TRADUCCION_COLUMNAS = {
     "behavior":         "Comportamiento",
     "sex":              "Sexo",
 }
+
+# función 5.a
+DATASETS = {
+    "iadiza": "occurrence.txt",
+    "inaturalist": "observations.csv",
+    "xenocanto": "Occurrence.txt",
+}

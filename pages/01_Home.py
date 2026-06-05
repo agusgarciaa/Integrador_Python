@@ -1,7 +1,5 @@
 import streamlit as st
 
-import src.utils.web_manager as wb
-
 st.title("BioData Explorer: Gestión de Biodiversidad")
 
 st.header("Propósito de la aplicación")

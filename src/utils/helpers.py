@@ -1,7 +1,8 @@
 from collections import Counter
-from datetime import datetime
 from pathlib import Path
+
 import csv
+
 import src.operaciones.validaciones as va
 
 # ----------------------------------------- Constantes de apoyo - sirven de base para los ejercicios del proyecto. -----------------------------------------
