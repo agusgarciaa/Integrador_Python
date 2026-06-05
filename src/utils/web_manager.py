@@ -145,10 +145,10 @@ def aplicar_filtros(
 #Funcion 2.D - Lucía Cipolla
 def exportar_resultados (reg=None):
     """
-        reg: Debe recibir lo que retorne mostrar_busqueda_texto_libre(). Puede ser un tipo DataFrame o None.
+        reg: Debe recibir lo que retorne el conjunto de todos los datos filtrados. Puede ser un tipo DataFrame o None.
     """
     if (reg.empty):
-        st.warning('No se puede importar un archivo vacío')
+        st.warning('No se puede exportar un archivo vacío')
         return
     else:
         if (isinstance(reg,pd.DataFrame)):

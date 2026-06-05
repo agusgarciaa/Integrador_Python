@@ -82,24 +82,23 @@ with st.expander("Búsqueda de ocurrencias", expanded=False):
     st.write(f"### Registros encontrados: {len(df_filtrado)}")
     st.dataframe(df_filtrado, use_container_width=True, key="tabla_avanzada")
 
-
-# Función 2.D - Botón de descarga de la tabla en formato CSV - Lúcia Cipolla
-    para_exportar = wb.exportar_resultados(df_filtrado) 
-    if para_exportar is not None:
-        st.download_button(
-            label='Exportar Resultados Filtrados (CSV)',
-            data=para_exportar,
-            file_name=f"{dataset}-{datetime.now().strftime('%d-%m-%y')}.csv",
-            mime='text/csv',
-            use_container_width=True
-        )
-
+match dataset:
+    case 'iadiza':
+        col_id = 'gbifID'
+    case 'xenocanto':
+        col_id = 'id'
+    case 'inaturalist':
+        col_id = 'id'
 
 if df_resultados is not None and not df_resultados.empty and termino_busqueda:
     if df_filtrado is not None and not df_filtrado.empty and (filtro_nombre or filtro_observador or filtro_pais or filtro_provincia):
-        df_final_busqueda = pd.concat([df_resultados, df_filtrado], ignore_index=True).drop_duplicates()
+        df_final_busqueda = pd.concat([df_resultados, df_filtrado], ignore_index=True)
     else:
         df_final_busqueda = df_resultados.copy()
+    if col_id in df_final_busqueda.columns:
+        df_final_busqueda = df_final_busqueda.drop_duplicates(subset=[col_id])
+    else:
+        df_final_busqueda = df_final_busqueda.drop_duplicates()
 else:
     tiene_filtros_avanzados = any([filtro_nombre, filtro_observador, filtro_pais, filtro_provincia])
     if tiene_filtros_avanzados:
@@ -138,6 +137,16 @@ if st.button("Ver mapa y ficha técnica del subconjunto", type="primary", use_co
 
     st.switch_page("pages/07_Ficha_de_datos.py")
 
+# Función 2.D - Botón de descarga de la tabla en formato CSV - Lúcia Cipolla
+para_exportar = wb.exportar_resultados(df_final_busqueda) 
+if para_exportar is not None:
+    st.download_button(
+        label='Exportar Resultados Filtrados (CSV)',
+        data=para_exportar,
+        file_name=f"{dataset}-{datetime.now().strftime('%d-%m-%y')}.csv",
+        mime='text/csv',
+        use_container_width=True
+    )
 st.markdown("---")
 
 # Función 2.C - Agustin Garcia
