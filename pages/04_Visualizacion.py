@@ -26,11 +26,12 @@ else:
     df = pd.read_csv(archivo)
 
 
-tab_ubicacion, tab_taxonomica, tab_nulos, tab_temporal = st.tabs([
+tab_ubicacion, tab_taxonomica, tab_nulos, tab_temporal, tab_comparativa = st.tabs([
     "registros por ubicación",
     "distribución taxonomica",
     "porcentaje nulos",
-    "registros por año"
+    "registros por año",
+    "tabla comparativa"
 ])
 
 with tab_ubicacion:
@@ -71,19 +72,18 @@ with tab_temporal:
     else:
         st.warning("no existe la columna eventDate en el dataset")
 
-
-# Ejercicio 3.E - Lucía Cipolla)
-st.markdown("---")
-st.subheader('Tabla comparativa')
-datos_raw = tb.tabla_comparativa_datasets()
-dataframe_tabla = pd.DataFrame(datos_raw).T
-if not dataframe_tabla.empty:
-    tabla_formateada = dataframe_tabla.style.format({
-        'Registros Totales':'{:.0f}',
-        'Coordenadas Validas':'{:.0f}',
-        'Fechas Validas':'{:.0f}',
-        'Registros Completos':'{:.0f}'
-    }).set_properties(**{'text-align':'center'})
-    st.table(tabla_formateada)
-else:
-    st.info('La tabla está vacía')
+with tab_comparativa:
+    # Ejercicio 3.E - Lucía Cipolla)
+    st.subheader('Tabla comparativa')
+    datos_raw = tb.tabla_comparativa_datasets()
+    dataframe_tabla = pd.DataFrame(datos_raw).T
+    if not dataframe_tabla.empty:
+        tabla_formateada = dataframe_tabla.style.format({
+            'Registros Totales':'{:.0f}',
+            'Coordenadas Validas':'{:.0f}',
+            'Fechas Validas':'{:.0f}',
+            'Registros Completos':'{:.0f}'
+        }).set_properties(**{'text-align':'center'})
+        st.table(tabla_formateada)
+    else:
+        st.info('La tabla está vacía')
