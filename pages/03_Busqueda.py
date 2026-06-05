@@ -109,6 +109,7 @@ else:
     col_pais = "countryCode"
     col_provincia = "stateProvince"
     
+# ejercicio 2.e sofia martins
 st.subheader("Resumen estadistico del subconjunto mostrado:")
 if len(df_filtrado)>0:
     especies = df_filtrado[col_especie].nunique() if col_especie in df_filtrado.columns else 0

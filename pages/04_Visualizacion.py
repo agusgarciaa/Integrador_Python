@@ -42,7 +42,7 @@ gr.grafico_distribucion_taxonomica(df, dataset)
 # Llamar al ejercicio 3.D - Fe Cordoba
 gr.gr_porcentaje_nulos(dataset,archivo)
 
-
+#ejercicio 3.b sofia martins
 st.subheader("cantidad de registros por año")
 if "eventDate" in df.columns:
     df_temporal=df.copy()

@@ -235,7 +235,7 @@ def editar_registro ():
             except Exception as e:
                 st.error(f'Error al actualizar {e}')
 
-
+# funcion 4.d sofia martins
 def modalidades_eliminacion(ruta_raw, ruta_processed, ruta_operations,delimiter,df): 
   df_vistaprevia=pd.DataFrame()
   st.subheader("Seccion para eliminacion de registros")
