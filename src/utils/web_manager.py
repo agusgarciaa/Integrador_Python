@@ -10,8 +10,12 @@ import src.operaciones.lecturas as lec
 
 #funcion 1.a sofia martins
 def dataframe_dataset(nombre,separador=','):
-    dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
-    return dataframe
+    try:
+      dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
+      return dataframe
+    except Exception as e:
+        st.error(f"error al realizar del dataframe: {e}")
+        return None
 
 #Funcion 1.b y C - Fe Cordoba, Agustin Garcia
 def opcion_sidebar(separador=','):
