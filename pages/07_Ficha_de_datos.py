@@ -23,28 +23,45 @@ texto = st.session_state.get("texto_busqueda")
 
 try:
     separador_caracter = "\t" if "iadiza" in str(path_archivo).lower() else ","
-    df_busqueda_final = wb.dataframe_dataset(path_archivo, separador=separador_caracter)
-    
+    df_original = wb.dataframe_dataset(path_archivo, separador=separador_caracter)
+    resultados = []
 
     if columna and texto and str(texto).strip() != "":
-        mascara = df_busqueda_final[columna].astype(str).str.contains(
+        mascara = df_original[columna].astype(str).str.contains(
             str(texto).strip(), 
             case=False, 
             na=False
         )
-        df_busqueda_final = df_busqueda_final[mascara].copy()
+        df_busqueda_libre = df_original[mascara].copy()
+        resultados.append(df_busqueda_libre)
 
     tiene_filtros_avanzados = any(st.session_state.get(f) for f in ["filtro_nombre", "filtro_observador", "filtro_pais", "filtro_provincia"])
     
-    if tiene_filtros_avanzados and not df_busqueda_final.empty:
-        df_busqueda_final = wb.aplicar_filtros(
-            df_busqueda_final, 
+    if tiene_filtros_avanzados:
+        df_busqueda_ocurrencias = wb.aplicar_filtros(
+            df_original, 
             nombres_cientificos=st.session_state.get("filtro_nombre"),
             observador=st.session_state.get("filtro_observador"),
             paises=st.session_state.get("filtro_pais"),
             provincias=st.session_state.get("filtro_provincia"),
             fecha_inicio=st.session_state.get("fecha_inicio"),
             fecha_fin=st.session_state.get("fecha_fin")
+        )
+        resultados.append(df_busqueda_ocurrencias)
+    
+    if len(resultados) == 0:
+        df_busqueda_final = df_original.copy()
+
+    elif len(resultados) == 1:
+        df_busqueda_final = resultados[0]
+
+    else:
+        df_busqueda_final = (
+            pd.concat(
+                resultados,
+                ignore_index=True
+            )
+            .drop_duplicates()
         )
 
     if df_busqueda_final.empty:

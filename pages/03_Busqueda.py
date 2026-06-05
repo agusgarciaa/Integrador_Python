@@ -102,7 +102,7 @@ if df_resultados is not None and not df_resultados.empty and termino_busqueda:
 else:
     tiene_filtros_avanzados = any([filtro_nombre, filtro_observador, filtro_pais, filtro_provincia])
     if tiene_filtros_avanzados:
-        df_final_busqueda = df_filtrado.copy()
+        df_final_busqueda = df_filtrado.copy().drop_duplicates()
     else:
         df_final_busqueda = df.copy()
 
