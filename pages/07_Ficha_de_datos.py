@@ -1,15 +1,15 @@
 import streamlit as st
+import pandas as pd
 
 import src.utils.web_manager as wb 
-from src.visuals.mapas import mostrar_mapa_interactivo
-from src.visuals.mapas import mostrar_ficha_registro
-
-st.set_page_config(page_title="Ficha de Datos - Mapa", layout="wide")
+import src.visuals.mapas as ma
+import src.visuals.multimedia as mult
 
 st.title("Ficha de Datos")
 st.markdown("Visualización geográfica de las ocurrencias seleccionadas.")
+st.markdown("---")
 
-if "dataset_path" not in st.session_state:
+if "dataset_path" not in st.session_state: 
     st.warning(
         "⚠️ No se encontraron parámetros de búsqueda activos. Por favor, realice una consulta en la página de búsqueda primero."
     )
@@ -17,28 +17,84 @@ if "dataset_path" not in st.session_state:
         st.switch_page("pages/03_Busqueda.py")
     st.stop()
 
-# Levantamos las 3 variables guardadas
-path_archivo = st.session_state["dataset_path"]
-columna = st.session_state["columna_busqueda"]
-texto = st.session_state["texto_busqueda"]
+path_archivo = st.session_state.get("dataset_path")
+columna = st.session_state.get("columna_busqueda")
+texto = st.session_state.get("texto_busqueda")
+
+if "punto_seleccionado" not in st.session_state:
+    st.session_state.punto_seleccionado = None
+
+if "id_multimedia" not in st.session_state:
+    st.session_state.id_multimedia = None
+
+if "_ultimo_tooltip" not in st.session_state:
+    st.session_state._ultimo_tooltip = None
 
 try:
-    separador_caracter = "\t" if "iadiza" in path_archivo.lower() else ","
-    
+    separador_caracter = "\t" if "iadiza" in str(path_archivo).lower() else ","
     df_original = wb.dataframe_dataset(path_archivo, separador=separador_caracter)
-    
-    if texto:
+    resultados = []
+
+    if columna and texto and str(texto).strip() != "":
         mascara = df_original[columna].astype(str).str.contains(
-            texto, 
+            str(texto).strip(), 
             case=False, 
             na=False
         )
-        df_busqueda = df_original[mascara].copy()
-    else:
-        df_busqueda = df_original.copy()
+        df_busqueda_libre = df_original[mascara].copy()
+        resultados.append(df_busqueda_libre)
 
-    mostrar_mapa_interactivo(df_busqueda)
-    mostrar_ficha_registro(df_busqueda, st.session_state.dataset_actual)
+    tiene_filtros_avanzados = any(st.session_state.get(filtro) for filtro in ["filtro_nombre", "filtro_observador", "filtro_pais", "filtro_provincia"])
+    
+    if tiene_filtros_avanzados:
+        df_busqueda_ocurrencias = wb.aplicar_filtros(
+            df_original, 
+            nombres_cientificos=st.session_state.get("filtro_nombre"),
+            observador=st.session_state.get("filtro_observador"),
+            paises=st.session_state.get("filtro_pais"),
+            provincias=st.session_state.get("filtro_provincia"),
+            fecha_inicio=st.session_state.get("fecha_inicio"),
+            fecha_fin=st.session_state.get("fecha_fin")
+        )
+        resultados.append(df_busqueda_ocurrencias)
+    
+    if len(resultados) == 0:
+        df_busqueda_final = df_original.copy()
+
+    elif len(resultados) == 1:
+        df_busqueda_final = resultados[0]
+
+    else:
+        df_busqueda_final = (
+            pd.concat(
+                resultados,
+                ignore_index=True
+            )
+            .drop_duplicates()
+        )
+
+    if df_busqueda_final.empty:
+        st.info("La búsqueda combinada no arrojó resultados para graficar en el mapa.")
+    else:
+        ma.mostrar_mapa_interactivo(df_busqueda_final)
+        
+        registro_activo = ma.mostrar_ficha_registro(df_busqueda_final, st.session_state.dataset_actual)
+        
+        if registro_activo is not None and not registro_activo.empty:
+            df_un_registro = pd.DataFrame([registro_activo])
+            
+            dataset_limpio = str(st.session_state.dataset_actual).lower().strip()
+            if 'xenocanto' in dataset_limpio:
+                st.subheader('Galería de Audio')
+            elif 'inaturalist' in dataset_limpio:
+                st.subheader('Galería de Imágenes')
+            else:
+                st.info('El dataset no tiene multimedia')
+                
+            mult.mostrar_multimedia(st.session_state.dataset_actual)
 
 except Exception as e:
     st.error(f"Error al reconstruir los datos para el mapa: {e}")
+
+if st.button("Volver a la Búsqueda", type="primary"):
+    st.switch_page("pages/03_Busqueda.py")

@@ -23,8 +23,8 @@ def eliminar_por_identificador(ruta_raw, ruta_processed, ruta_operations,identif
     ruta_entrada = ruta_processed if os.path.exists(ruta_processed) else ruta_raw
 
     with open(ruta_entrada, 'r', newline='', encoding='utf-8') as archivo:
-        aux = archivo.read(2048)
-        aux2 = csv.Sniffer().sniff(aux)
+        muestra = archivo.read(2048)
+        aux2 = csv.Sniffer().sniff(muestra)
         terminator = aux2.lineterminator
         archivo.seek(0)
 

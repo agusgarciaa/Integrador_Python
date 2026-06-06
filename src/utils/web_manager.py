@@ -1,23 +1,24 @@
 from pathlib import Path
 from datetime import datetime
-import csv
-import statistics
 
 import pandas as pd
 import streamlit as st 
-import matplotlib.pyplot as plt
 
 import src.utils.helpers as hp
-import src.operaciones.validaciones as va
 import src.operaciones.lecturas as lec
-import src.operaciones.actualizaciones as act
-import src.utils.file_manager as fm
 
 
 #funcion 1.a sofia martins
 def dataframe_dataset(nombre,separador=','):
-    dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
-    return dataframe
+    """
+    Carga un archivo de datos (CSV o TXT) y lo devuelve como un DataFrame de Pandas.
+    """
+    try:
+      dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
+      return dataframe
+    except Exception as e:
+        st.error(f"error al realizar del dataframe: {e}")
+        return None
 
 #Funcion 1.b y C - Fe Cordoba, Agustin Garcia
 def opcion_sidebar(separador=','):
@@ -39,10 +40,10 @@ def opcion_sidebar(separador=','):
 
     opciones = ["Seleccionar dataset:"] + datasets
 
-    indice_dataset = 0  # Muestra por defecto seleccionar dataset: como placeholder
+    indice_dataset = 0  
 
     if dataset_actual in datasets:
-        indice_dataset = datasets.index(dataset_actual) + 1  # +1 por el placeholder
+        indice_dataset = datasets.index(dataset_actual) + 1  
 
     dataset_seleccionado = st.sidebar.selectbox(
         "Seleccione un dataset:",
@@ -55,7 +56,6 @@ def opcion_sidebar(separador=','):
         st.session_state.fecha_seleccion = None
         return
 
-    # Detecta cambio de dataset
     if dataset_seleccionado != st.session_state.dataset_actual:
         st.session_state.dataset_actual = dataset_seleccionado
         st.session_state.fecha_seleccion = datetime.now()
@@ -81,81 +81,6 @@ def opcion_sidebar(separador=','):
                     **Fecha y hora de selección:**  
                     {st.session_state.fecha_seleccion.strftime('%d/%m/%Y | %H:%M:%S')} \n
                     """)
-    
-
-# Función 2.A - Ana Freitas
-def mostrar_busqueda_texto_libre():
-    """
-    Se encarga de la interfaz de búsqueda por texto libre.
-    Lee el dataset activo en la sesión y aplica el filtro reutilizando la función registrar_filtro (5.A) de la primera etapa.
-    """
-    # Verificamos que exista un dataset seleccionado en la sesión
-    if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
-        st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
-        return
-
-    nombre_dataset = st.session_state.dataset_actual
-    
-    # Determinamos el separador 
-    separador_caracter = "\t" if nombre_dataset == "iadiza" else ","
-    
-    # Buscamos el archivo físico dentro de processed_datasets
-    ruta_carpeta = Path("processed_datasets") / nombre_dataset
-    archivo_encontrado = None
-    
-    if ruta_carpeta.exists():
-        for elemento_archivo in ruta_carpeta.iterdir():
-            if elemento_archivo.is_file():
-                archivo_encontrado = elemento_archivo
-                break
-
-    if not archivo_encontrado:
-        st.error("No se encontró el archivo de datos para este dataset.")
-        return
-
-    # Cargamos el DataFrame completo en memoria usando la función de la Etapa 1
-    dataframe_completo = dataframe_dataset(archivo_encontrado, separador=separador_caracter)
-
-    st.subheader("Búsqueda por texto libre")
-    
-    # 1. El usuario selecciona la columna  
-    columnas_disponibles = dataframe_completo.columns.tolist()
-    columna_seleccionada = st.selectbox(
-        "Seleccione la columna por la que desea buscar:",
-        options=columnas_disponibles
-    )
-    
-    # 2. El usuario ingresa el valor que pretende encontrar 
-    termino_busqueda = st.text_input(f"Ingrese el valor que pretende encontrar en '{columna_seleccionada}':").strip()
-    
-    # Si el usuario no escribió nada, mostramos el DataFrame completo tal como estaba originalmente
-    # ... (Todo el código de tu función queda exactamente igual arriba)
-
-    # Si el usuario no escribió nada, devolvemos el completo y los datos base
-    if not termino_busqueda:
-        return dataframe_completo, archivo_encontrado, columna_seleccionada, termino_busqueda
-
-    # --- INTEGRACIÓN DEL EJERCICIO 5.A ---
-    filas_filtradas_lista = act.registrar_filtro(
-        path=str(archivo_encontrado), 
-        c_delimiter=separador_caracter, 
-        **{columna_seleccionada: termino_busqueda}
-    )
-    
-    if filas_filtradas_lista:
-        dataframe_filtrado = pd.DataFrame(filas_filtradas_lista, columns=columnas_disponibles)
-        
-        mascara_busqueda = dataframe_filtrado[columna_seleccionada].astype(str).str.contains(
-            termino_busqueda, 
-            case=False,   
-            na=False      
-        )
-        # RETORNO CUANDO HAY FILTRO CON ÉXITO
-        return dataframe_filtrado[mascara_busqueda], archivo_encontrado, columna_seleccionada, termino_busqueda
-    else:
-        # RETORNO CUANDO EL FILTRO DA VACÍO
-        df_vacio = pd.DataFrame(columns=columnas_disponibles)
-        return df_vacio, archivo_encontrado, columna_seleccionada, termino_busqueda
 
 
 # 2.b Fe Cordoba
@@ -171,14 +96,12 @@ def aplicar_filtros(
     """Filtra el DataFrame según los parámetros de búsqueda seleccionados."""
     df_filtrado = df.copy()
 
-    # Nombre científico
     if nombres_cientificos:
 
         df_filtrado = df_filtrado[
             df_filtrado["scientificName"].isin(nombres_cientificos)
         ]
 
-    # Observador
     if observador:
 
         df_filtrado = df_filtrado[
@@ -208,9 +131,7 @@ def aplicar_filtros(
             patron_paises = "|".join(paises)
             df_filtrado = df_filtrado[df_filtrado['country'].str.contains(patron_paises, case=False, na=False)]
 
-    # Fechas 
     if "eventDate" in df_filtrado.columns:
-        # Convertimos la columna completa de forma vectorizada
         df_filtrado["eventDate"] = pd.to_datetime(df_filtrado["eventDate"], errors="coerce", utc=True)
 
         if fecha_inicio and fecha_fin:
@@ -228,217 +149,16 @@ def aplicar_filtros(
 
     return df_filtrado
 
-# Función 2.C - Agustin Garcia
-COLUMNAS_RELEVANTES = {
-    "iadiza": [
-    "scientificName",
-    "recordedBy",
-    "eventDate",
-    "stateProvince",
-    "countryCode",
-    "decimalLatitude",
-    "decimalLongitude",
-    "species",             
-    "family",              
-    "basisOfRecord",
-    ],
-    "inaturalist": [
-    "scientificName",
-    "inaturalistLogin", 
-    "eventDate",
-    "stateProvince",
-    "countryCode",
-    "decimalLatitude",
-    "decimalLongitude",
-    "taxonRank",
-    "family",
-    "captive", 
-    ],
-    "xenocanto": [
-    "scientificName",
-    "vernacularName",
-    "recordedBy",
-    "eventDate",
-    "country",
-    "locality",
-    "latitudeDecimal",
-    "longitudeDecimal",
-    "behavior", 
-    "sex",
-    ]
-}
-
-REGISTROS_POR_PAGINA = 10 # Por convención
-
-
-def mostrar_resultados(df_resultados, nombre_dataset):
-    """
-    Muestra los resultados de búsqueda con:
-    - Cantidad de registros encontrados
-    - Columnas relevantes con ordenamiento
-    - Paginación
-    - Detalle de registro
-    """
-    st.markdown(f"**Registros encontrados: {len(df_resultados)}**")
-
-    if df_resultados.empty:
-        st.info("No se encontraron registros con los criterios seleccionados.")
-        return
-
-    # Columnas relevantes
-    columnas_presentes = hp.obtener_columnas_relevantes(nombre_dataset, df_resultados.columns.tolist(), COLUMNAS_RELEVANTES)
-    df_vista = df_resultados[columnas_presentes].copy()
-    df_vista["_index_original"] = df_resultados.index
-
-    # Ordenamiento
-    col_orden, col_dir = st.columns(2)
-    with col_orden:
-        columna_orden = st.selectbox("Ordenar por:", columnas_presentes, key="orden_col")
-    with col_dir:
-        direccion = st.radio("Dirección:", ["Ascendente", "Descendente"], horizontal=True, key="orden_dir")
-
-    df_vista = df_vista.sort_values(by=columna_orden, ascending=direccion == "Ascendente")
-
-    # Paginación
-    if "pagina_actual" not in st.session_state:
-        st.session_state.pagina_actual = 1
-
-    # Resetear página si cambia el resultado
-    if st.session_state.get("_ultimo_hash") != len(df_resultados):
-        st.session_state.pagina_actual = 1
-        st.session_state._ultimo_hash = len(df_resultados)
-
-    df_pagina, inicio, fin, total_paginas = hp.paginar(df_vista, st.session_state.pagina_actual, REGISTROS_POR_PAGINA)
-
-    st.dataframe(df_pagina[columnas_presentes], use_container_width=True, hide_index=True)
-
-    # Controles de paginación
-    col_ant, col_info, col_sig = st.columns([1, 2, 1])
-
-    with col_ant:
-        if st.button("← Anterior", disabled=st.session_state.pagina_actual == 1, key="btn_ant"):
-            st.session_state.pagina_actual -= 1
-            st.rerun()
-
-    with col_info:
-        st.write(f"Página {st.session_state.pagina_actual} de {total_paginas} — mostrando {inicio + 1} a {fin} de {len(df_resultados)}")
-
-    with col_sig:
-        if st.button("Siguiente →", disabled=st.session_state.pagina_actual == total_paginas, key="btn_sig"):
-            st.session_state.pagina_actual += 1
-            st.rerun()
-
-    # Detalle de registro
-    st.markdown("---")
-
-    opciones = {f"Registro #{inicio + i + 1}": idx for i, idx in enumerate(df_pagina["_index_original"])}
-    seleccion = st.selectbox("Ver detalle de un registro:", list(opciones.keys()), key="detalle_sel")
-
-    index_original = opciones[seleccion]
-    registro = df_resultados.loc[index_original]
-    with st.expander(f"Detalle — {seleccion}", expanded=True):
-        for campo, valor in registro.items():
-            st.write(f"**{campo}:** {valor}")
-                
-
 #Funcion 2.D - Lucía Cipolla
 def exportar_resultados (reg=None):
     """
-        reg: Debe recibir lo que retorne mostrar_busqueda_texto_libre(). Puede ser un tipo DataFrame o None.
+        reg: Debe recibir lo que retorne el conjunto de todos los datos filtrados. Puede ser un tipo DataFrame o None.
     """
     if (reg.empty):
-        st.warning('No se puede importar un archivo vacío')
+        st.warning('No se puede exportar un archivo vacío')
         return
     else:
         if (isinstance(reg,pd.DataFrame)):
             return reg.to_csv(index=False).encode('utf-8')
         else:
             st.warning('Ocurrió un problema inesperado')
-
-
-#Función 3.E - Lucía Cipolla
-def tabla_comparativa_datasets():
-    """
-        Si hay 2 o más datasets toma todos los datos y retorna lo necesario para armar la tabla comparativa.
-        Si hay menos de 2 datasets en "processed_datasets" muestra una advertencia y retorna vacío.
-        Si en el proceso de análisis no encuentra los archivos muestra una advertencia y retorna vacío.
-    """
-    datasets = hp.obtener_nombres_datasets()
-    if len(datasets)<2:
-        st.warning('Se necesitan al menos dos datasets para comparar')
-        return
-    
-    registros_por_dataset = {}
-    for nombre_dataset in datasets:
-        datos = 'occurrence.txt' if (nombre_dataset=='iadiza') else 'observations.csv' if (nombre_dataset=='inaturalist') else 'Occurrence.txt'
-        ruta_dat = Path("processed_datasets") / nombre_dataset / datos
-        if (ruta_dat.is_file()):
-            if (nombre_dataset == 'iadiza'):
-                registros_por_dataset[nombre_dataset] = lec.total_registros(ruta_dat,'\t')
-            else:
-                registros_por_dataset[nombre_dataset] = lec.total_registros(ruta_dat)
-        else:
-            st.error(f'No se encontró el archivo {datos}')
-            return
-    
-    cant_registros_coordenadas_validas = {}
-    for nombre_dataset in datasets:
-        datos = 'occurrence.txt' if (nombre_dataset=='iadiza') else 'observations.csv' if (nombre_dataset=='inaturalist') else 'Occurrence.txt'
-        separador = '\t' if (nombre_dataset=='iadiza') else ','
-        ruta = fm.obtener_raiz_proyecto() / 'processed_datasets' / nombre_dataset / datos
-        if (ruta.is_file()):
-            with open(ruta,encoding='utf-8') as archivo:
-                lector = csv.DictReader(archivo ,delimiter=separador)
-                cant_registros_coordenadas_validas[nombre_dataset] = 0
-                for fila in lector:
-                    if (va.es_coordenada_valida(fila)):
-                        cant_registros_coordenadas_validas[nombre_dataset] += 1
-        else:
-            st.error(f'No se encontró el archivo {datos}')
-            return
-    
-    cant_registros_fecha_valida = {}
-    for nombre_dataset in datasets:
-        datos = 'occurrence.txt' if (nombre_dataset=='iadiza') else 'observations.csv' if (nombre_dataset=='inaturalist') else 'Occurrence.txt'
-        separador = '\t' if (nombre_dataset=='iadiza') else ','
-        ruta = fm.obtener_raiz_proyecto() / 'processed_datasets' / nombre_dataset / datos
-        if (ruta.is_file()):
-            with open(ruta,encoding='utf-8') as archivo:
-                lector = csv.DictReader(archivo ,delimiter=separador)
-                if ('eventDate' not in lector.fieldnames) and ('verbatimEventDate' not in lector.fieldnames):
-                    st.warning(f'No hay columnas de fecha en {nombre_dataset}')
-                    continue
-                
-                cant_registros_fecha_valida[nombre_dataset] = 0
-                for fila in lector:
-                    if (va.chequear_fecha(fila.get('eventDate')) is not None) or (va.chequear_fecha(fila.get('verbatimEventDate')) is not None):
-                        cant_registros_fecha_valida[nombre_dataset] += 1
-        else:
-            st.error(f'No se encontró el archivo {datos}')
-            return
-        
-    cant_campos_completos_promedio = {}
-    for nombre_dataset in datasets:
-        datos = 'occurrence.txt' if (nombre_dataset=='iadiza') else 'observations.csv' if (nombre_dataset=='inaturalist') else 'Occurrence.txt'
-        separador = '\t' if (nombre_dataset=='iadiza') else ','
-        ruta = fm.obtener_raiz_proyecto() / 'processed_datasets' / nombre_dataset / datos
-        if (ruta.is_file()):
-            lector = pd.read_csv(ruta,delimiter=separador,encoding='utf-8')
-            lector = lector.replace(r'^\s*$', None, regex=True)
-            porcentaje_completadas = lector.notna().mean().mean() * 100
-            
-            if (porcentaje_completadas > 0):
-              cant_campos_completos_promedio[nombre_dataset] = porcentaje_completadas
-            else:
-                cant_campos_completos_promedio[nombre_dataset] = 0
-        else:
-            st.error(f'No se encontró el archivo {datos}')
-            return
-    
-    ret = {}
-    for nombre in datasets:
-        ret[nombre] = {'Registros Totales': registros_por_dataset.get(nombre,0),
-                       'Coordenadas Validas': cant_registros_coordenadas_validas.get(nombre,0),
-                       'Fechas Validas': cant_registros_fecha_valida.get(nombre,0),
-                       'Registros Completos': cant_campos_completos_promedio.get(nombre,0)}
-    return ret
