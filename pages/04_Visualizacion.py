@@ -9,6 +9,9 @@ import src.visuals.tablas as tb
 
 
 st.title("Página de Visualización")
+st.markdown("Vista gráfica, analítica y comparativa de la distribución de especies y métricas clave del sistema.")
+st.markdown("---")
+
 wb.opcion_sidebar()
 
 dataset = st.session_state.dataset_actual

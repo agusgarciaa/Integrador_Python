@@ -18,6 +18,7 @@ def busqueda_texto_libre():
     Se encarga de la interfaz de búsqueda por texto libre usando Pandas 
     para garantizar compatibilidad absoluta con todos los datasets.
     """
+    
     if "dataset_actual" not in st.session_state or st.session_state.dataset_actual is None or st.session_state.dataset_actual == "":
         st.warning("Por favor, seleccione un dataset válido en el menú lateral antes de continuar.")
         return None, None, None, None
@@ -62,6 +63,7 @@ def busqueda_texto_libre():
     dataframe_filtrado = dataframe_completo[mascara_busqueda]
     
     return dataframe_filtrado, archivo_encontrado, columna_seleccionada, termino_busqueda
+
 
 #Función 2.C - Agustin Garcia
 def mostrar_resultados(df_resultados, nombre_dataset):

@@ -12,7 +12,6 @@ st.write("""El análisis de datos es fundamental para comprender la salud de los
 patrones de distribución, detectar especies en peligro y evaluar el impacto de los cambios ambientales 
 en la biodiversidad global.""")
 
-# --- ESTÁNDAR DARWIN CORE ---
 st.header("Estándar Darwin Core (DwC)")
 st.info("""El estándar **Darwin Core (DwC)** es un conjunto de términos y definiciones diseñado para 
 facilitar el intercambio de información sobre biodiversidad. 
@@ -21,7 +20,6 @@ facilitar el intercambio de información sobre biodiversidad.
 * **¿Para qué se utiliza?**: Se utiliza para estandarizar registros biológicos (observaciones, muestras). 
 Permite que datos de distintas instituciones puedan integrarse y compararse sin ambigüedades. """)
 
-# --- INSTRUCCIONES DE USO ---
 st.header("Instrucciones básicas de uso")
 st.markdown("""
 Para explorar la aplicación, utilice el **menú lateral**:

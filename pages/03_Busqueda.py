@@ -10,6 +10,9 @@ import src.visuals.tablas as tb
 
 
 st.title("Página de Búsqueda")
+st.markdown("Vista filtrada, analítica y comparativa de las observaciones del dataset seleccionado.")
+st.markdown("---")
+
 wb.opcion_sidebar()
 
 dataset = st.session_state.dataset_actual

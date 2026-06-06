@@ -7,6 +7,7 @@ import src.visuals.multimedia as mult
 
 st.title("Ficha de Datos")
 st.markdown("Visualización geográfica de las ocurrencias seleccionadas.")
+st.markdown("---")
 
 if "dataset_path" not in st.session_state: 
     st.warning(
@@ -16,7 +17,6 @@ if "dataset_path" not in st.session_state:
         st.switch_page("pages/03_Busqueda.py")
     st.stop()
 
-# Levantamos las variables guardadas
 path_archivo = st.session_state.get("dataset_path")
 columna = st.session_state.get("columna_busqueda")
 texto = st.session_state.get("texto_busqueda")
@@ -35,7 +35,7 @@ try:
         df_busqueda_libre = df_original[mascara].copy()
         resultados.append(df_busqueda_libre)
 
-    tiene_filtros_avanzados = any(st.session_state.get(f) for f in ["filtro_nombre", "filtro_observador", "filtro_pais", "filtro_provincia"])
+    tiene_filtros_avanzados = any(st.session_state.get(filtro) for filtro in ["filtro_nombre", "filtro_observador", "filtro_pais", "filtro_provincia"])
     
     if tiene_filtros_avanzados:
         df_busqueda_ocurrencias = wb.aplicar_filtros(
