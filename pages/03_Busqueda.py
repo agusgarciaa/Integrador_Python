@@ -4,8 +4,8 @@ from datetime import datetime
 import pandas as pd
 import streamlit as st
 
-import src.web_manager as wb 
-import src.helpers as hp
+import src.utils.web_manager as wb 
+import src.utils.helpers as hp
 
 st.set_page_config(page_title="Búsqueda - Tablas", layout="wide")
 
@@ -19,7 +19,7 @@ if not dataset:
 RUTA_DATASET = Path("processed_datasets") / dataset
 
 
-df_resultados = wb.mostrar_busqueda_texto_libre()
+df_resultados, archivo_encontrado, columna_seleccionada, termino_busqueda = wb.mostrar_busqueda_texto_libre()
 
 if df_resultados is not None:
     st.write(f"Registros encontrados: {len(df_resultados)}")
@@ -27,7 +27,10 @@ if df_resultados is not None:
     
     if not df_resultados.empty:
         if st.button("Ver ficha", type="primary"):
-            st.session_state["resultados_busqueda"] = df_resultados
+            st.session_state["dataset_path"] = str(archivo_encontrado)
+            st.session_state["columna_busqueda"] = columna_seleccionada
+            st.session_state["texto_busqueda"] = termino_busqueda
+
             st.switch_page("pages/07_Ficha_de_datos.py")
 
 st.divider()

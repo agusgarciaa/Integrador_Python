@@ -3,10 +3,10 @@ import os
 
 from collections import Counter
 
-import src.file_manager as fm
-import src.helpers as hp
-import src.validaciones as va
-import src.registros as re
+import src.utils.file_manager as fm
+import src.utils.helpers as hp
+import src.operaciones.validaciones as va
+import src.operaciones.registros as re
 
 # --------------------------------------------------------------- Ejercicios 6 - Eliminación de registros en datasets --------------------------------------------------------------
     

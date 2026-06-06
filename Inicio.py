@@ -1,5 +1,5 @@
 import streamlit as st 
-import src.web_manager as wb 
+import src.utils.web_manager as wb 
 
 # Configuración de la página (P1)
 st.set_page_config(page_title="BioData Explorer - Inicio", page_icon="🌿", layout="wide")

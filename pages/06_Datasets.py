@@ -1,13 +1,13 @@
 # pages/06_Datasets.py
 import os
 from datetime import datetime
-import src.file_manager as fm
+import src.utils.file_manager as fm
 import streamlit as st
-from src.exploraciones import generar_tabla_comparativa
+from src.operaciones.exploraciones import generar_tabla_comparativa
 import pandas as pd 
 from pathlib import Path
-from src import lecturas as lc
-from src import helpers as hp
+from src.operaciones import lecturas as lc
+from src.utils import helpers as hp
 
 st.set_page_config(page_title="Exploración - Datasets", layout="wide")
 
