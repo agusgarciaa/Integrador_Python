@@ -10,6 +10,13 @@ import src.operaciones.validaciones as va
 
 
 def mostrar_mapa_interactivo(df_busqueda):
+    """
+    Genera y renderiza un mapa interactivo con Folium utilizando los registros filtrados.
+    
+    Filtra coordenadas válidas, aplica colores según el criterio seleccionado,
+    agrupa marcadores y captura los clics del usuario en el mapa.
+    """
+    
     total_inicial = len(df_busqueda)
     
     if total_inicial == 0:
@@ -29,7 +36,6 @@ def mostrar_mapa_interactivo(df_busqueda):
 
     st.subheader("Mapa Interactivo")
     
-    # Mapeamos las opciones legibles con los nombres reales de las columnas, adaptado a los encabezados de los 3 datasets
     columnas_posibles = {
         'Especie': ['scientificName', 'species', 'genus'],
         'País': ['country', 'countryCode'],
@@ -38,11 +44,10 @@ def mostrar_mapa_interactivo(df_busqueda):
 
     opciones_criterio = {}
     for legible, lista_campos in columnas_posibles.items():
-        # Buscamos cuál de los nombres posibles existe realmente en el dataset actual
         for campo in lista_campos:
             if campo in df_mapa.columns:
                 opciones_criterio[legible] = campo
-                break  # Encontró uno, pasa al siguiente criterio
+                break  
 
     columna_color = None
 
@@ -50,15 +55,12 @@ def mostrar_mapa_interactivo(df_busqueda):
         criterio_elegido = st.selectbox("Seleccione el criterio para colorear los puntos:", list(opciones_criterio.keys()))
         columna_color = opciones_criterio[criterio_elegido]
 
-    # Lista de colores estables que soporta Folium nativamente
     colores_disponibles = ['blue', 'green', 'red', 'purple', 'orange', 'darkred', 'lightred', 'darkblue', 'darkgreen', 'cadetblue', 
                            'darkpurple', 'pink', 'lightblue', 'lightgreen', 'gray', 'black']
 
-    # Identificamos los nombres reales de las columnas en el dataset
     col_lat = 'decimalLatitude' if 'decimalLatitude' in df_mapa.columns else 'latitudeDecimal'
     col_lon = 'decimalLongitude' if 'decimalLongitude' in df_mapa.columns else 'longitudeDecimal'
     
-    # Convertimos a float para que Folium pueda graficar
     df_mapa[col_lat] = df_mapa[col_lat].astype(float)
     df_mapa[col_lon] = df_mapa[col_lon].astype(float)
 
@@ -84,9 +86,6 @@ def mostrar_mapa_interactivo(df_busqueda):
             tms=True  
         ).add_to(mapa)
 
-        # --- MODIFICACIÓN DE SEGURIDAD ---
-        # Solo creamos el clúster si hay muchos puntos sueltos. 
-        # Si filtramos y quedan pocos, los metemos directo al mapa para que no se dupliquen.
         usar_cluster = len(df_render) > 10
         if usar_cluster:
             contenedor_puntos = MarkerCluster().add_to(mapa)
@@ -116,17 +115,13 @@ def mostrar_mapa_interactivo(df_busqueda):
                 valor_fila = fila[columna_color]
                 color_marcador = mapeo_colores.get(valor_fila, 'blue')
 
-            # Agregamos el marcador al contenedor correspondiente (mapa o clúster)
             folium.Marker(
                 location=[fila[col_lat], fila[col_lon]],
                 popup=folium.Popup(info_popup, max_width=300),
                 tooltip=valor_id,
                 icon=folium.Icon(color=color_marcador, icon="info-sign") 
-            ).add_to(contenedor_puntos) # <--- CAMBIADO AQUÍ
+            ).add_to(contenedor_puntos) 
             
-        # --- CLAVE DINÁMICA ABSOLUTA ---
-        # Usamos un truco combinando el largo del DataFrame y el ID del primer elemento.
-        # Esto genera un identificador único por búsqueda que destruye el mapa viejo del navegador.
         id_primer_registro = df_render.iloc[0].get('id', 0) if len(df_render) > 0 else 0
         mapa_key = f"mapa_folium_dinamico_{len(df_render)}_{id_primer_registro}"
 
@@ -134,13 +129,14 @@ def mostrar_mapa_interactivo(df_busqueda):
             mapa, 
             width=1100, 
             height=500,
-            key=mapa_key # <--- SE ASIGNA LA KEY ÚNICA
+            key=mapa_key
         )
 
         if mapa_data and mapa_data.get("last_object_clicked"):
             st.session_state.punto_seleccionado = mapa_data["last_object_clicked"]
             if mapa_data.get("last_object_clicked_tooltip"):
                 st.session_state.id_multimedia = mapa_data["last_object_clicked_tooltip"]
+
 
 # Ejercicio 6.C - Agustin Garcia
 def mostrar_ficha_registro(df_busqueda, nombre_dataset):

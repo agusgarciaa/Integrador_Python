@@ -13,6 +13,7 @@ def insertar_nuevo_registro(df, archivo_target, separador):
     Crea un formulario dinámico para ingresar un nuevo registro en el dataset activo, 
     validando los campos y guardando los cambios.
     """
+    
     dataset_nombre = Path(archivo_target).parent.name
 
     st.subheader(f"Insertar registro en: {dataset_nombre.capitalize()}")

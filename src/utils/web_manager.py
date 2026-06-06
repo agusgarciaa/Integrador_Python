@@ -10,6 +10,9 @@ import src.operaciones.lecturas as lec
 
 #funcion 1.a sofia martins
 def dataframe_dataset(nombre,separador=','):
+    """
+    Carga un archivo de datos (CSV o TXT) y lo devuelve como un DataFrame de Pandas.
+    """
     try:
       dataframe=pd.read_csv(nombre,sep=separador,encoding='utf-8')
       return dataframe

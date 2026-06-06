@@ -5,6 +5,9 @@ import src.utils.web_manager as wb
 import src.visuals.formularios as form
 
 st.title("Gestión de Registros")
+st.markdown("Vista administrativa, analítica y comparativa para el control, inserción y modificación de registros.")
+st.markdown("---")
+
 wb.opcion_sidebar()
 
 dataset = st.session_state.get('dataset_actual')
