@@ -154,13 +154,11 @@ def mostrar_ficha_registro(df_busqueda, nombre_dataset):
         st.info("Seleccioná un punto en el mapa para ver su ficha.")
         return
 
-    # Buscar por ID (tooltip) si está disponible, es más preciso que por coordenadas
     if id_seleccionado:
         col_id = next((c for c in ["id", "gbifID", "occurrenceID", "catalogNumber"] if c in df_busqueda.columns), None)
         if col_id:
             coincidencias = df_busqueda[df_busqueda[col_id].astype(str) == str(id_seleccionado)]
 
-    # Fallback: buscar por coordenadas si no encontró por ID
     if not id_seleccionado or coincidencias.empty:
         col_lat = "decimalLatitude" if "decimalLatitude" in df_busqueda.columns else "latitudeDecimal"
         col_lon = "decimalLongitude" if "decimalLongitude" in df_busqueda.columns else "longitudeDecimal"
