@@ -37,9 +37,26 @@ else:
 with st.expander("Búsqueda por texto Libre", expanded=False):
     df_resultados, archivo_encontrado, columna_seleccionada, termino_busqueda = tb.busqueda_texto_libre()
 
-    if df_resultados is not None:
+    if df_resultados is not None and not df_resultados.empty:
         st.write(f"Registros encontrados: {len(df_resultados)}")
-        st.dataframe(df_resultados, use_container_width=True, key="tabla_libre")
+
+        if "pagina_libre" not in st.session_state:
+            st.session_state.pagina_libre = 1
+
+        df_pagina, inicio, fin, total_paginas = hp.paginar(df_resultados, st.session_state.pagina_libre, 1000)
+        st.dataframe(df_pagina, use_container_width=True)
+
+        col_ant, col_info, col_sig = st.columns([1, 2, 1])
+        with col_ant:
+            if st.button("← Anterior", disabled=st.session_state.pagina_libre == 1, key="ant_libre"):
+                st.session_state.pagina_libre -= 1
+                st.rerun()
+        with col_info:
+            st.write(f"Página {st.session_state.pagina_libre} de {total_paginas} ({inicio+1} al {fin})")
+        with col_sig:
+            if st.button("Siguiente →", disabled=st.session_state.pagina_libre == total_paginas, key="sig_libre"):
+                st.session_state.pagina_libre += 1
+                st.rerun()
     else:
         df_resultados = None
         termino_busqueda = None
@@ -83,7 +100,31 @@ with st.expander("Búsqueda de ocurrencias", expanded=False):
     )
 
     st.write(f"### Registros encontrados: {len(df_filtrado)}")
-    st.dataframe(df_filtrado, use_container_width=True, key="tabla_avanzada")
+
+    if len(df_filtrado) > 1000:
+        if "pagina_avanzada" not in st.session_state:
+            st.session_state.pagina_avanzada = 1
+
+        if st.session_state.get("_ultimo_hash_avanzada") != len(df_filtrado):
+            st.session_state.pagina_avanzada = 1
+            st.session_state._ultimo_hash_avanzada = len(df_filtrado)
+
+        df_pagina, inicio, fin, total_paginas = hp.paginar(df_filtrado, st.session_state.pagina_avanzada, 1000)
+        st.dataframe(df_pagina, use_container_width=True, key="tabla_avanzada")
+
+        col_ant, col_info, col_sig = st.columns([1, 2, 1])
+        with col_ant:
+            if st.button("← Anterior", disabled=st.session_state.pagina_avanzada == 1, key="ant_avanzada"):
+                st.session_state.pagina_avanzada -= 1
+                st.rerun()
+        with col_info:
+            st.write(f"Página {st.session_state.pagina_avanzada} de {total_paginas} ({inicio+1} al {fin})")
+        with col_sig:
+            if st.button("Siguiente →", disabled=st.session_state.pagina_avanzada == total_paginas, key="sig_avanzada"):
+                st.session_state.pagina_avanzada += 1
+                st.rerun()
+    else:
+        st.dataframe(df_filtrado, use_container_width=True, key="tabla_avanzada")
 
 match dataset:
     case 'iadiza':

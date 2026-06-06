@@ -21,6 +21,15 @@ path_archivo = st.session_state.get("dataset_path")
 columna = st.session_state.get("columna_busqueda")
 texto = st.session_state.get("texto_busqueda")
 
+if "punto_seleccionado" not in st.session_state:
+    st.session_state.punto_seleccionado = None
+
+if "id_multimedia" not in st.session_state:
+    st.session_state.id_multimedia = None
+
+if "_ultimo_tooltip" not in st.session_state:
+    st.session_state._ultimo_tooltip = None
+
 try:
     separador_caracter = "\t" if "iadiza" in str(path_archivo).lower() else ","
     df_original = wb.dataframe_dataset(path_archivo, separador=separador_caracter)

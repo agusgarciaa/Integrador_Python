@@ -131,14 +131,16 @@ def mostrar_mapa_interactivo(df_busqueda):
             height=500,
             key=mapa_key
         )
+        if mapa_data and mapa_data.get("last_object_clicked_tooltip"):
+            tooltip_actual = mapa_data["last_object_clicked_tooltip"]
+    
+            if st.session_state.get("_ultimo_tooltip") != tooltip_actual:
+                st.session_state.punto_seleccionado = mapa_data["last_object_clicked"]
+                st.session_state.id_multimedia = tooltip_actual
+                st.session_state._ultimo_tooltip = tooltip_actual
+        else:
+            st.session_state._ultimo_tooltip = None
 
-        if mapa_data and mapa_data.get("last_object_clicked"):
-            st.session_state.punto_seleccionado = mapa_data["last_object_clicked"]
-            if mapa_data.get("last_object_clicked_tooltip"):
-                st.session_state.id_multimedia = mapa_data["last_object_clicked_tooltip"]
-
-
-# Ejercicio 6.C - Agustin Garcia
 def mostrar_ficha_registro(df_busqueda, nombre_dataset):
     """
     Muestra una ficha con la información taxonómica, lugar y fecha
@@ -146,28 +148,33 @@ def mostrar_ficha_registro(df_busqueda, nombre_dataset):
     """
 
     punto = st.session_state.get("punto_seleccionado")
+    id_seleccionado = st.session_state.get("id_multimedia")
 
-    if not punto:
+    if not punto and not id_seleccionado:
         st.info("Seleccioná un punto en el mapa para ver su ficha.")
         return
 
-    col_lat = "decimalLatitude" if "decimalLatitude" in df_busqueda.columns else "latitudeDecimal"
-    col_lon = "decimalLongitude" if "decimalLongitude" in df_busqueda.columns else "longitudeDecimal"
+    if id_seleccionado:
+        col_id = next((c for c in ["id", "gbifID", "occurrenceID", "catalogNumber"] if c in df_busqueda.columns), None)
+        if col_id:
+            coincidencias = df_busqueda[df_busqueda[col_id].astype(str) == str(id_seleccionado)]
 
-    lat = punto.get("lat")
-    lon = punto.get("lng")
-
-    coincidencias = df_busqueda[
-        (df_busqueda[col_lat].astype(float) == lat) &
-        (df_busqueda[col_lon].astype(float) == lon)
-    ]
+    if not id_seleccionado or coincidencias.empty:
+        col_lat = "decimalLatitude" if "decimalLatitude" in df_busqueda.columns else "latitudeDecimal"
+        col_lon = "decimalLongitude" if "decimalLongitude" in df_busqueda.columns else "longitudeDecimal"
+        lat = punto.get("lat")
+        lon = punto.get("lng")
+        coincidencias = df_busqueda[
+            (df_busqueda[col_lat].astype(float) == lat) &
+            (df_busqueda[col_lon].astype(float) == lon)
+        ]
 
     if coincidencias.empty:
         st.warning("No se encontró el registro seleccionado.")
         return
 
     registro = coincidencias.iloc[0]
-    columnas_ficha = const.COLUMNAS_RELEVANTES.get(nombre_dataset, [])
+    columnas_ficha = const.COLUMNAS_FICHA.get(nombre_dataset, [])
 
     st.markdown("---")
     st.subheader("Ficha del registro")
@@ -180,7 +187,6 @@ def mostrar_ficha_registro(df_busqueda, nombre_dataset):
 
     df_ficha = pd.DataFrame(ficha.items(), columns=["Campo", "Valor en el registro"])
     df_ficha["Valor en el registro"] = df_ficha["Valor en el registro"].astype(str)
-
     st.table(df_ficha)
 
     return registro
