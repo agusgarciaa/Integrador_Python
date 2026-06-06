@@ -93,7 +93,7 @@ def graficar_distribucion_taxonomica(df, nombre_dataset):
     COLUMNAS_TAXONOMICAS = {
         "iadiza":      {"Clase": "class", "Orden": "order", "Familia": "family"},
         "inaturalist": {"Clase": "class", "Orden": "order", "Familia": "family"},
-        "xenocanto":   {"Familia": "family"},  # xenocanto no tiene class ni order
+        "xenocanto":   {"Familia": "family"},
     }
     
     columnas = COLUMNAS_TAXONOMICAS.get(nombre_dataset, {})
@@ -117,7 +117,6 @@ def graficar_distribucion_taxonomica(df, nombre_dataset):
     if nombre_dataset == 'xenocanto':
         st.info("Xenocanto solo posee el nivel taxonómico 'Familia'")
 
-    # Grafico
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.bar(conteo.index, conteo.values, color="steelblue")
     ax.set_title(f"Distribución por {nivel} — Top {len(conteo)}")
@@ -127,7 +126,7 @@ def graficar_distribucion_taxonomica(df, nombre_dataset):
     plt.tight_layout()
 
     st.pyplot(fig)
-    plt.close(fig)  # libera memoria
+    plt.close(fig)
 
 
 # Funcion 3.D - Fe Cordoba

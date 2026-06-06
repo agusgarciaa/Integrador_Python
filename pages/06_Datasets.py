@@ -13,7 +13,7 @@ st.title("Exploración de Datasets")
 st.markdown("Vista general, analítica y comparativa de todos los datasets disponibles en el sistema.")
 st.markdown("---")
 
-# Función 5.A - Agustin Garcia
+# Ejercicio 5.A - Agustin Garcia
 st.header("Archivos físicos del sistema")
 
 filas = []
