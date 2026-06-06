@@ -114,7 +114,6 @@ def mostrar_mapa_interactivo(df_busqueda):
 
 
 # Ejercicio 6.C - Agustin Garcia
-
 TRADUCCION_COLUMNAS = {
     "scientificName":   "Nombre científico",
     "recordedBy":       "Observador",
